@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diario de Trading da Equipa</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+<style>
+  :root {
+    --bg: #F7F4EC;
+    --panel: #FFFFFF;
+    --panelAlt: #FBF8F1;
+    --border: #E8E0CB;
+    --borderStrong: #D9CBA3;
+    --text: #241F16;
+    --textSoft: #6E6450;
+    --textMuted: #A0947A;
+    --accent: #B8912B;
+    --accentSoft: #E9D9A8;
+    --accentDeep: #93701A;
+    --win: #1B8F55;
+    --loss: #C4433C;
+    --be: #9C927A;
+    --shadow: 0 4px 18px rgba(35, 26, 8, 0.08);
+    --shadow-sm: 0 2px 8px rgba(35, 26, 8, 0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  }
+  .mono { font-family: 'IBM Plex Mono', 'Courier New', monospace; }
+  #app {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 22px 18px 60px;
+  }
+  input, select, textarea, button {
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .input {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--panelAlt);
+    color: var(--text);
+    width: 100%;
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accentSoft);
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--textSoft);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .btn {
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--textSoft);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.1s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-accent {
+    border: 1px solid var(--accent);
+    background: linear-gradient(180deg, #CDA53A, #B8912B);
+    color: #FFFDF7;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(184, 145, 43, 0.35);
+  }
+  .btn-accent-outline {
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accentDeep);
+    font-weight: 600;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .hidden { display: none !important; }
+  #login-screen {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #login-box { max-width: 340px; width: 100%; }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accentDeep);
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .title { font-size: 22px; font-weight: 600; }
+  .subtitle { font-size: 12px; color: var(--textSoft); margin-top: 2px; }
+  #sync-status { font-size: 11px; color: var(--textMuted); }
+  #sync-status.online { color: var(--win); }
+  #sync-status.offline { color: var(--loss); }
+  #tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--textSoft);
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  .tab-btn.active {
+    border-color: var(--accent);
+    background: var(--accentSoft);
+    color: var(--accentDeep);
+  }
+  #board {
+    display: flex;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 8px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  .board-item { text-align: center; flex: 1; min-width: 90px; }
+  .board-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 600; }
+  .board-label { font-size: 11px; color: var(--textMuted); letter-spacing: 1.2px; text-transform: uppercase; margin-top: 4px; }
+  #room-summaries {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    margin-bottom: 22px;
+  }
+  .room-card {
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    cursor: pointer;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.1s ease;
+  }
+  .room-card:hover { transform: translateY(-2px); }
+  #form-panel { margin-bottom: 22px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  #filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  #entries-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .ticket {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .ticket-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 4px 11px;
+    border-radius: 999px;
+  }
+  .ticket img { width: 100%; border-radius: 12px; margin-bottom: 10px; display: block; border: 1px solid var(--border); }
+  #admin-modal { margin-bottom: 18px; }
+  #empty-state { color: var(--textMuted); font-size: 14px; text-align: center; padding: 40px 0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="login-screen">
+    <div id="login-box" class="panel">
+      <div class="eyebrow">Diario de trading</div>
+      <div style="font-size:20px; font-weight:600; margin-bottom:18px;">Como te chamas?</div>
+      <input id="name-input" class="input" placeholder="O teu nome ou alcunha" />
+      <button id="name-submit" class="btn btn-accent" style="width:100%; margin-top:14px;">Entrar no diario</button>
+      <div style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;">
+        As tuas trades ficam visiveis para toda a equipa em tempo real. Este nome fica guardado neste dispositivo.
+      </div>
+    </div>
+  </div>
+
+  <div id="main-screen" class="hidden">
+    <div class="header-row">
+      <div>
+        <div class="eyebrow">Diario de trading</div>
+        <div class="title">Registo de trades da equipa</div>
+        <div class="subtitle">a operar como <span id="who" style="color:var(--accent);"></span> · <span id="sync-status" class="mono">a ligar...</span></div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:6px; padding:6px 10px;">modo admin</span>
+        <button id="admin-exit-btn" class="btn hidden">sair</button>
+        <button id="admin-open-btn" class="btn">administrador</button>
+        <button id="new-ticket-btn" class="btn btn-accent">+ Novo ticket</button>
+      </div>
+    </div>
+
+    <div id="admin-modal" class="panel hidden">
+      <div id="admin-modal-title" style="font-size:14px; font-weight:600; margin-bottom:4px;"></div>
+      <div id="admin-modal-desc" style="font-size:12px; color:var(--textSoft); margin-bottom:10px;"></div>
+      <input id="pin-input" type="password" class="input" placeholder="PIN" />
+      <div id="pin-error" style="font-size:12px; color:var(--loss); margin-top:6px;"></div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button id="pin-submit" class="btn btn-accent">Confirmar</button>
+        <button id="admin-cancel-btn" class="btn">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="tabs"></div>
+
+    <div id="board"></div>
+
+    <div id="room-summaries"></div>
+
+    <div id="form-panel" class="panel hidden">
+      <div id="form-title" style="font-size:13px; font-weight:600; margin-bottom:12px;">Novo ticket</div>
+      <div class="form-grid">
+        <div>
+          <label class="label">Data</label>
+          <input id="f-date" type="date" class="input" />
+        </div>
+        <div>
+          <label class="label">Ativo / par</label>
+          <input id="f-asset" class="input" placeholder="ex: EURUSD, BTC, AAPL" />
+        </div>
+        <div>
+          <label class="label">Numero de trades</label>
+          <input id="f-numtrades" type="number" min="1" class="input" value="1" />
+        </div>
+        <div>
+          <label class="label">Resultado</label>
+          <select id="f-result" class="input">
+            <option value="win">Win</option>
+            <option value="loss">Loss</option>
+            <option value="be">Breakeven</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <label class="label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input id="f-setup" type="checkbox" checked /> Segui o setup planeado
+        </label>
+      </div>
+      <div style="margin-top:12px;">
+        <label class="label">Comentario</label>
+        <textarea id="f-comment" class="input" style="min-height:70px; resize:vertical;" placeholder="O que correu bem, o que falhou, licoes..."></textarea>
+      </div>
+      <div style="margin-top:12px;">
+        <label class="label">Foto da trade</label>
+        <input id="f-image" type="file" accept="image/*" />
+        <img id="f-preview" class="hidden" style="margin-top:10px; max-width:100%; max-height:220px; border-radius:6px; border:1px solid var(--border); display:block;" />
+      </div>
+      <button id="form-submit" class="btn btn-accent" style="margin-top:16px;">Guardar ticket</button>
+    </div>
+
+    <div id="filter-row">
+      <div id="filter-title" style="font-size:13px; color:var(--textSoft);">Todos os tickets da equipa</div>
+      <select id="f-filter-result" class="input" style="width:auto;">
+        <option value="all">Todos os resultados</option>
+        <option value="win">Win</option>
+        <option value="loss">Loss</option>
+        <option value="be">Breakeven</option>
+      </select>
+    </div>
+
+    <div id="empty-state" class="hidden">Ainda sem tickets. Regista a primeira trade do dia.</div>
+    <div id="entries-grid"></div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAblNBb2EXC4snhIho4HFqHtVfsCBB_FNo",
+  authDomain: "diario-trading-equipa.firebaseapp.com",
+  projectId: "diario-trading-equipa",
+  storageBucket: "diario-trading-equipa.firebasestorage.app",
+  messagingSenderId: "14129350413",
+  appId: "1:14129350413:web:6dbfc9a125b50b68e1d244"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const RESULT_META = {
+  win: { label: "WIN", color: "#1B8F55" },
+  loss: { label: "LOSS", color: "#C4433C" },
+  be: { label: "B/E", color: "#9C927A" }
+};
+
+let traderName = localStorage.getItem("tj-trader-name") || null;
+let entries = [];
+let activeRoom = "all";
+let filterResult = "all";
+let isAdmin = false;
+let adminPin = null;
+let editingId = null;
+let pendingImage = null;
+
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+
+function el(id) { return document.getElementById(id); }
+
+function compressImage(file, maxWidth = 760, quality = 0.62) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function computeStats(list) {
+  const total = list.length;
+  const wins = list.filter(e => e.result === "win").length;
+  const setups = list.filter(e => e.setupFollowed).length;
+  const totalTrades = list.reduce((s, e) => s + (e.numTrades || 0), 0);
+  return {
+    total,
+    winRate: total ? Math.round((wins / total) * 100) : 0,
+    setupRate: total ? Math.round((setups / total) * 100) : 0,
+    totalTrades
+  };
+}
+
+function getTraders() {
+  const s = new Set(entries.map(e => e.trader));
+  if (traderName) s.add(traderName);
+  return Array.from(s).sort((a, b) => {
+    if (a === traderName) return -1;
+    if (b === traderName) return 1;
+    return a.localeCompare(b);
+  });
+}
+
+// ---- Firestore listeners ----
+function startEntriesListener() {
+  db.collection("entries").orderBy("createdAt", "desc").onSnapshot((snap) => {
+    entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    render();
+  }, (err) => {
+    console.error("Erro a ouvir entradas", err);
+  });
+}
+
+function startConnectivityWatch() {
+  function update() {
+    const s = el("sync-status");
+    if (navigator.onLine) {
+      s.textContent = "sincronizado";
+      s.className = "mono online";
+    } else {
+      s.textContent = "sem ligacao";
+      s.className = "mono offline";
+    }
+  }
+  window.addEventListener("online", update);
+  window.addEventListener("offline", update);
+  update();
+}
+
+async function loadAdminPin() {
+  try {
+    const doc = await db.collection("meta").doc("admin").get();
+    if (doc.exists) adminPin = doc.data().pin;
+  } catch (e) { console.error(e); }
+}
+
+// ---- Actions ----
+function login() {
+  const n = el("name-input").value.trim();
+  if (!n) return;
+  traderName = n;
+  localStorage.setItem("tj-trader-name", n);
+  showMain();
+}
+
+function resetForm() {
+  el("form-panel").classList.add("hidden");
+  editingId = null;
+  el("f-date").value = todayISO();
+  el("f-asset").value = "";
+  el("f-numtrades").value = 1;
+  el("f-result").value = "win";
+  el("f-setup").checked = true;
+  el("f-comment").value = "";
+  el("f-image").value = "";
+  el("f-preview").classList.add("hidden");
+  pendingImage = null;
+  el("form-title").textContent = "Novo ticket";
+  el("form-submit").textContent = "Guardar ticket";
+}
+
+function startEdit(entry) {
+  el("form-panel").classList.remove("hidden");
+  editingId = entry.id;
+  el("f-date").value = entry.date;
+  el("f-asset").value = entry.asset || "";
+  el("f-numtrades").value = entry.numTrades || 1;
+  el("f-result").value = entry.result;
+  el("f-setup").checked = !!entry.setupFollowed;
+  el("f-comment").value = entry.comment || "";
+  pendingImage = entry.image || null;
+  if (entry.image) {
+    el("f-preview").src = entry.image;
+    el("f-preview").classList.remove("hidden");
+  } else {
+    el("f-preview").classList.add("hidden");
+  }
+  el("form-title").textContent = "Editar ticket";
+  el("form-submit").textContent = "Guardar alteracoes";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function submitEntry() {
+  if (!traderName) return;
+  const btn = el("form-submit");
+  btn.disabled = true;
+  btn.textContent = "A guardar...";
+  const original = editingId ? entries.find(e => e.id === editingId) : null;
+  const data = {
+    date: el("f-date").value || todayISO(),
+    trader: original ? original.trader : traderName,
+    asset: el("f-asset").value.trim(),
+    numTrades: Number(el("f-numtrades").value) || 1,
+    result: el("f-result").value,
+    setupFollowed: el("f-setup").checked,
+    comment: el("f-comment").value.trim(),
+    image: pendingImage,
+    createdAt: original ? original.createdAt : Date.now()
+  };
+  try {
+    if (editingId) {
+      await db.collection("entries").doc(editingId).set(data, { merge: true });
+    } else {
+      await db.collection("entries").add(data);
+    }
+    resetForm();
+  } catch (e) {
+    console.error("Erro ao guardar", e);
+    alert("Nao foi possivel guardar. Verifica a ligacao a internet.");
+  }
+  btn.disabled = false;
+}
+
+async function deleteEntry(id) {
+  if (!confirm("Apagar este ticket?")) return;
+  try {
+    await db.collection("entries").doc(id).delete();
+  } catch (e) {
+    console.error("Erro ao apagar", e);
+  }
+}
+
+function openAdminModal() {
+  el("admin-modal").classList.remove("hidden");
+  el("pin-input").value = "";
+  el("pin-error").textContent = "";
+  el("admin-modal-title").textContent = adminPin === null
+    ? "Define o PIN de administrador"
+    : "Introduz o PIN de administrador";
+  el("admin-modal-desc").textContent = adminPin === null
+    ? "Este PIN fica guardado para toda a equipa. So quem o souber tem acesso de administrador."
+    : "So o administrador pode editar ou apagar tickets de qualquer pessoa.";
+}
+
+async function submitPin() {
+  const pin = el("pin-input").value.trim();
+  if (pin.length < 4) {
+    el("pin-error").textContent = "O PIN deve ter pelo menos 4 caracteres.";
+    return;
+  }
+  if (adminPin === null) {
+    try {
+      await db.collection("meta").doc("admin").set({ pin });
+      adminPin = pin;
+      isAdmin = true;
+      el("admin-modal").classList.add("hidden");
+      render();
+    } catch (e) { console.error(e); }
+    return;
+  }
+  if (pin === adminPin) {
+    isAdmin = true;
+    el("admin-modal").classList.add("hidden");
+    render();
+  } else {
+    el("pin-error").textContent = "PIN incorreto.";
+  }
+}
+
+// ---- Rendering ----
+function showMain() {
+  el("login-screen").classList.add("hidden");
+  el("main-screen").classList.remove("hidden");
+  el("who").textContent = traderName;
+  render();
+}
+
+function render() {
+  renderTabs();
+  renderBoard();
+  renderRoomSummaries();
+  renderList();
+  el("admin-badge").classList.toggle("hidden", !isAdmin);
+  el("admin-exit-btn").classList.toggle("hidden", !isAdmin);
+  el("admin-open-btn").classList.toggle("hidden", isAdmin);
+}
+
+function renderTabs() {
+  const traders = getTraders();
+  const wrap = el("tabs");
+  wrap.innerHTML = "";
+  const allBtn = document.createElement("button");
+  allBtn.className = "tab-btn" + (activeRoom === "all" ? " active" : "");
+  allBtn.textContent = "Visao geral";
+  allBtn.onclick = () => { activeRoom = "all"; render(); };
+  wrap.appendChild(allBtn);
+  traders.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "tab-btn" + (activeRoom === t ? " active" : "");
+    b.textContent = "sala de " + t + (t === traderName ? " (tu)" : "");
+    b.onclick = () => { activeRoom = t; render(); };
+    wrap.appendChild(b);
+  });
+}
+
+function getRoomEntries() {
+  if (activeRoom === "all") return entries;
+  return entries.filter(e => e.trader === activeRoom);
+}
+
+function renderBoard() {
+  const stats = computeStats(getRoomEntries());
+  const wrap = el("board");
+  wrap.innerHTML = "";
+  const items = [
+    { label: "Trades no total", value: stats.totalTrades, color: "var(--text)" },
+    { label: "Entradas", value: stats.total, color: "var(--text)" },
+    { label: "Win rate", value: stats.winRate + "%", color: "var(--win)" },
+    { label: "Seguiu o setup", value: stats.setupRate + "%", color: "var(--accent)" }
+  ];
+  items.forEach(it => {
+    const d = document.createElement("div");
+    d.className = "board-item";
+    d.innerHTML = `<div class="board-value" style="color:${it.color}">${it.value}</div><div class="board-label">${it.label}</div>`;
+    wrap.appendChild(d);
+  });
+}
+
+function renderRoomSummaries() {
+  const wrap = el("room-summaries");
+  wrap.innerHTML = "";
+  if (activeRoom !== "all") return;
+  getTraders().forEach(t => {
+    const list = entries.filter(e => e.trader === t);
+    const s = computeStats(list);
+    const card = document.createElement("button");
+    card.className = "room-card";
+    card.innerHTML = `<div style="font-size:13px; font-weight:600; margin-bottom:6px;">${t}${t === traderName ? " (tu)" : ""}</div>
+      <div class="mono" style="font-size:11px; color:var(--textSoft);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>`;
+    card.onclick = () => { activeRoom = t; render(); };
+    wrap.appendChild(card);
+  });
+}
+
+function renderList() {
+  const list = getRoomEntries().filter(e => filterResult === "all" || e.result === filterResult);
+  el("filter-title").textContent = activeRoom === "all" ? "Todos os tickets da equipa" : "Tickets de " + activeRoom;
+  const grid = el("entries-grid");
+  grid.innerHTML = "";
+  el("empty-state").classList.toggle("hidden", list.length > 0);
+  list.forEach(entry => {
+    const meta = RESULT_META[entry.result] || RESULT_META.be;
+    const card = document.createElement("div");
+    card.className = "ticket";
+    card.style.borderLeft = `3px solid ${meta.color}`;
+    card.innerHTML = `
+      <div class="ticket-top">
+        <div>
+          <div class="mono" style="font-size:12px; color:var(--textMuted);">${entry.date}</div>
+          <div style="font-size:16px; font-weight:600;">${entry.asset || "sem ativo"}</div>
+        </div>
+        <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
+      </div>
+      <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
+        ${entry.trader} · ${entry.numTrades} trade${entry.numTrades === 1 ? "" : "s"} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
+      </div>
+      ${entry.image ? `<img src="${entry.image}" alt="foto da trade" />` : ""}
+      ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
+      <div class="ticket-actions" style="display:${isAdmin ? "flex" : "none"}; gap:14px; margin-top:10px;">
+        <button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar ticket</button>
+        <button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar ticket</button>
+      </div>
+    `;
+    card.querySelector(".edit-btn").onclick = () => startEdit(entry);
+    card.querySelector(".del-btn").onclick = () => deleteEntry(entry.id);
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ---- Wire up events ----
+el("name-submit").onclick = login;
+el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+
+el("new-ticket-btn").onclick = () => {
+  const panel = el("form-panel");
+  if (panel.classList.contains("hidden")) {
+    resetForm();
+    panel.classList.remove("hidden");
+  } else {
+    resetForm();
+  }
+};
+
+el("form-submit").onclick = submitEntry;
+
+el("f-image").addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  try {
+    const dataUrl = await compressImage(file);
+    pendingImage = dataUrl;
+    el("f-preview").src = dataUrl;
+    el("f-preview").classList.remove("hidden");
+  } catch (err) { console.error(err); }
+});
+
+el("f-filter-result").addEventListener("change", (e) => {
+  filterResult = e.target.value;
+  renderList();
+});
+
+el("admin-open-btn").onclick = openAdminModal;
+el("admin-cancel-btn").onclick = () => el("admin-modal").classList.add("hidden");
+el("pin-submit").onclick = submitPin;
+el("pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitPin(); });
+el("admin-exit-btn").onclick = () => { isAdmin = false; render(); };
+
+// ---- Init ----
+el("f-date").value = todayISO();
+startConnectivityWatch();
+loadAdminPin();
+startEntriesListener();
+if (traderName) showMain();
+</script>
+</body>
+</html>
