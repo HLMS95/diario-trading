@@ -313,6 +313,23 @@ Diario trading · HTML
       </div>
     </div>
  
+    <div id="pinned-panel" class="panel" style="margin-bottom:22px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div style="flex:1;">
+          <div class="eyebrow" style="margin-bottom:4px;">Nota fixada da equipa</div>
+          <div id="pinned-text" style="font-size:14px; line-height:1.5; white-space:pre-wrap;"></div>
+        </div>
+        <button id="pinned-edit-btn" class="btn hidden" style="white-space:nowrap;">editar</button>
+      </div>
+      <div id="pinned-edit-box" class="hidden" style="margin-top:10px;">
+        <textarea id="pinned-input" class="input" style="min-height:70px; resize:vertical;" placeholder="ex: Regra da semana, plano da equipa..."></textarea>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button id="pinned-save-btn" class="btn btn-accent">Guardar</button>
+          <button id="pinned-cancel-btn" class="btn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+ 
     <div id="news-panel" class="panel" style="margin-bottom:22px;">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
         <div>
@@ -322,16 +339,24 @@ Diario trading · HTML
         <button id="news-add-btn" class="btn btn-accent-outline btn">+ Noticia</button>
       </div>
  
-      <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
-        <button id="vote-yes-btn" class="btn" style="flex:1; min-width:150px; border-color: var(--win); color: var(--win);">
-          🟢 Hoje e dia de operar <span id="vote-yes-count" class="mono"></span>
-        </button>
-        <button id="vote-no-btn" class="btn" style="flex:1; min-width:150px; border-color: var(--loss); color: var(--loss);">
-          🔴 Hoje nao e dia de operar <span id="vote-no-count" class="mono"></span>
-        </button>
+      <div id="vote-status" style="font-size:11px; color:var(--textMuted); margin-bottom:8px;"></div>
+      <div id="vote-open-box">
+        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+          <button id="vote-yes-btn" class="btn" style="flex:1; min-width:150px; border-color: var(--win); color: var(--win);">
+            🟢 Hoje e dia de operar <span id="vote-yes-count" class="mono"></span>
+          </button>
+          <button id="vote-no-btn" class="btn" style="flex:1; min-width:150px; border-color: var(--loss); color: var(--loss);">
+            🔴 Hoje nao e dia de operar <span id="vote-no-count" class="mono"></span>
+          </button>
+        </div>
+        <div style="height:8px; border-radius:999px; background:var(--border); overflow:hidden; margin-bottom:16px;">
+          <div id="vote-bar" style="height:100%; background:var(--win); width:50%;"></div>
+        </div>
       </div>
-      <div style="height:8px; border-radius:999px; background:var(--border); overflow:hidden; margin-bottom:16px;">
-        <div id="vote-bar" style="height:100%; background:var(--win); width:50%;"></div>
+      <div id="vote-closed-box" class="hidden" style="margin-bottom:16px; padding:14px; border-radius:12px; background:var(--panelAlt); border:1px solid var(--border);">
+        <div style="font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--textMuted); margin-bottom:4px;">Veredito do dia (fixado as 9h)</div>
+        <div id="vote-verdict" style="font-size:16px; font-weight:600;"></div>
+        <div id="vote-verdict-news" style="margin-top:10px;"></div>
       </div>
  
       <div id="news-form" class="hidden" style="background:var(--panelAlt); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;">
@@ -349,6 +374,9 @@ Diario trading · HTML
         </div>
         <label class="label" style="margin-top:10px;">Comentario</label>
         <textarea id="news-comment" class="input" style="min-height:60px; resize:vertical;" placeholder="Contexto, motivo, o que esperar..."></textarea>
+        <label class="label" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:10px;">
+          <input id="news-important" type="checkbox" /> Marcar como importante para o veredito do dia
+        </label>
         <div style="display:flex; gap:8px; margin-top:12px;">
           <button id="news-submit" class="btn btn-accent">Publicar</button>
           <button id="news-cancel" class="btn">Cancelar</button>
@@ -360,9 +388,26 @@ Diario trading · HTML
  
     <div id="tabs"></div>
  
+    <div id="profile-panel" class="panel hidden" style="margin-bottom:22px;">
+      <div class="eyebrow" style="margin-bottom:4px;">Perfil do trader</div>
+      <div id="profile-view">
+        <div id="profile-text" style="font-size:14px; line-height:1.5; white-space:pre-wrap; color:var(--textSoft);"></div>
+        <button id="profile-edit-btn" class="btn hidden" style="margin-top:10px;">editar perfil</button>
+      </div>
+      <div id="profile-edit-box" class="hidden">
+        <textarea id="profile-input" class="input" style="min-height:60px; resize:vertical;" placeholder="ex: Day trading em EURUSD, estilo breakout, timeframe M15..."></textarea>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button id="profile-save-btn" class="btn btn-accent">Guardar</button>
+          <button id="profile-cancel-btn" class="btn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+ 
     <div id="board"></div>
  
     <div id="room-summaries"></div>
+ 
+    <div id="profiles-table-wrap" style="overflow-x:auto; margin-bottom:22px;"></div>
  
     <div id="stats-panel" class="panel">
       <div id="stats-header">
@@ -377,6 +422,12 @@ Diario trading · HTML
       <div class="chart-wrap"><canvas id="bar-chart"></canvas></div>
       <div class="chart-caption">Evolucao acumulada (win +1, loss -1)</div>
       <div class="chart-wrap"><canvas id="line-chart"></canvas></div>
+      <div id="multi-chart-block" class="hidden">
+        <div class="chart-caption" style="margin-top:18px;">Evolucao por trader</div>
+        <div class="chart-wrap"><canvas id="line-chart-multi"></canvas></div>
+      </div>
+      <div class="chart-caption" style="margin-top:18px;">Sentimento da equipa vs. resultado real</div>
+      <div id="sentiment-table" style="font-size:12px;"></div>
     </div>
  
     <div id="form-panel" class="panel hidden">
@@ -471,6 +522,10 @@ let barChartInstance = null;
 let lineChartInstance = null;
 let newsItems = [];
 let todayVotes = {};
+let pinnedNote = "";
+let profiles = {};
+let allVotesByDate = {};
+const VOTE_CUTOFF_HOUR = 9;
  
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 function el(id) { return document.getElementById(id); }
@@ -556,7 +611,7 @@ function startNewsListener() {
 }
  
 function startVotesListener() {
-  const dateDoc = db.collection("votes").doc(todayISO()).collection("entries");
+  const dateDoc = db.collection("votes").doc(todayISO()).collection("voters");
   dateDoc.onSnapshot((snap) => {
     todayVotes = {};
     snap.docs.forEach(d => { todayVotes[d.id] = d.data(); });
@@ -566,12 +621,63 @@ function startVotesListener() {
  
 async function castVote(choice) {
   if (!traderName) return;
+  if (!isVotingOpen()) return;
   const id = slugify(traderName);
   try {
-    await db.collection("votes").doc(todayISO()).collection("entries").doc(id).set({
+    await db.collection("votes").doc(todayISO()).collection("voters").doc(id).set({
       trader: traderName, choice, updatedAt: Date.now()
     });
   } catch (e) { console.error("Erro ao votar", e); }
+}
+ 
+function isVotingOpen() {
+  return new Date().getHours() < VOTE_CUTOFF_HOUR;
+}
+ 
+function startPinnedNoteListener() {
+  db.collection("meta").doc("pinned-note").onSnapshot((doc) => {
+    pinnedNote = doc.exists ? (doc.data().text || "") : "";
+    renderPinnedNote();
+  }, (err) => console.error("Erro a ouvir nota fixada", err));
+}
+ 
+async function savePinnedNote() {
+  const text = el("pinned-input").value.trim();
+  try {
+    await db.collection("meta").doc("pinned-note").set({ text, updatedBy: traderName, updatedAt: Date.now() });
+    el("pinned-edit-box").classList.add("hidden");
+  } catch (e) { console.error(e); }
+}
+ 
+function startProfilesListener() {
+  db.collection("profiles").onSnapshot((snap) => {
+    profiles = {};
+    snap.docs.forEach(d => { profiles[d.id] = d.data(); });
+    renderProfilePanel();
+  }, (err) => console.error("Erro a ouvir perfis", err));
+}
+ 
+async function saveProfile() {
+  const text = el("profile-input").value.trim();
+  try {
+    await db.collection("profiles").doc(slugify(traderName)).set({ trader: traderName, style: text, updatedAt: Date.now() });
+    el("profile-edit-box").classList.add("hidden");
+  } catch (e) { console.error(e); }
+}
+ 
+function startAllVotesListener() {
+  db.collectionGroup("voters").onSnapshot((snap) => {
+    allVotesByDate = {};
+    snap.docs.forEach(d => {
+      const data = d.data();
+      if (data.choice !== "yes" && data.choice !== "no") return;
+      const parentDate = d.ref.parent.parent ? d.ref.parent.parent.id : null;
+      if (!parentDate) return;
+      if (!allVotesByDate[parentDate]) allVotesByDate[parentDate] = [];
+      allVotesByDate[parentDate].push(data);
+    });
+    renderCharts();
+  }, (err) => console.error("Erro a ouvir historico de votos", err));
 }
  
 async function submitNews() {
@@ -585,6 +691,7 @@ async function submitNews() {
       title,
       impact: el("news-impact").value,
       comment: el("news-comment").value.trim(),
+      important: el("news-important").checked,
       trader: traderName,
       date: todayISO(),
       createdAt: Date.now()
@@ -592,6 +699,7 @@ async function submitNews() {
     el("news-title").value = "";
     el("news-comment").value = "";
     el("news-impact").value = "medio";
+    el("news-important").checked = false;
     el("news-form").classList.add("hidden");
   } catch (e) {
     console.error("Erro ao publicar noticia", e);
@@ -789,8 +897,11 @@ function render() {
   renderTabs();
   renderBoard();
   renderRoomSummaries();
+  renderProfilesTable();
+  renderProfilePanel();
   renderList();
   renderCharts();
+  renderPinnedNote();
   el("admin-badge").classList.toggle("hidden", !isAdmin);
   el("admin-exit-btn").classList.toggle("hidden", !isAdmin);
   el("admin-open-btn").classList.toggle("hidden", isAdmin);
@@ -865,6 +976,7 @@ function cssVar(name) {
 }
  
 function renderCharts() {
+  renderSentimentTable();
   const list = getRoomEntries();
  
   // Bar chart: win rate per period
@@ -958,6 +1070,48 @@ function renderCharts() {
       }
     }
   });
+ 
+  // Multi-line chart: evolution per trader (only in "all" view)
+  const multiBlock = el("multi-chart-block");
+  if (activeRoom === "all") {
+    multiBlock.classList.remove("hidden");
+    const PALETTE = ["#B8912B", "#2E86AB", "#6A4C93", "#1B8F55", "#C4433C", "#DA7422", "#4B4E6D", "#0E7C7B"];
+    const traders = getTraders();
+    const allDates = Array.from(new Set(list.map(e => e.date).filter(Boolean))).sort();
+    const datasets = traders.map((t, i) => {
+      let run = 0;
+      const data = allDates.map(d => {
+        const dayEntries = list.filter(e => e.trader === t && e.date === d);
+        dayEntries.forEach(e => { run += e.result === "win" ? 1 : e.result === "loss" ? -1 : 0; });
+        return run;
+      });
+      return {
+        label: t,
+        data,
+        borderColor: PALETTE[i % PALETTE.length],
+        backgroundColor: "transparent",
+        tension: 0.25,
+        pointRadius: 2
+      };
+    });
+    const multiCtx = el("line-chart-multi").getContext("2d");
+    if (window.__multiChartInstance) window.__multiChartInstance.destroy();
+    window.__multiChartInstance = new Chart(multiCtx, {
+      type: "line",
+      data: { labels: allDates, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: "bottom", labels: { color: textMuted, boxWidth: 12, font: { size: 11 } } } },
+        scales: {
+          y: { ticks: { color: textMuted }, grid: { color: border } },
+          x: { ticks: { color: textMuted, maxTicksLimit: 8 }, grid: { display: false } }
+        }
+      }
+    });
+  } else {
+    multiBlock.classList.add("hidden");
+  }
 }
  
 function renderVotes() {
@@ -974,6 +1128,111 @@ function renderVotes() {
   el("vote-yes-btn").style.color = mine && mine.choice === "yes" ? "#FFFFFF" : "var(--win)";
   el("vote-no-btn").style.background = mine && mine.choice === "no" ? "var(--loss)" : "var(--panel)";
   el("vote-no-btn").style.color = mine && mine.choice === "no" ? "#FFFFFF" : "var(--loss)";
+ 
+  const open = isVotingOpen();
+  el("vote-open-box").classList.toggle("hidden", !open);
+  el("vote-closed-box").classList.toggle("hidden", open);
+  if (open) {
+    el("vote-status").textContent = "Votacao aberta ate as " + VOTE_CUTOFF_HOUR + "h00";
+  } else {
+    el("vote-status").textContent = "Votacao encerrada as " + VOTE_CUTOFF_HOUR + "h00";
+    let verdict = "Empate";
+    let color = "var(--be)";
+    if (yes > no) { verdict = "🟢 OPERAR"; color = "var(--win)"; }
+    else if (no > yes) { verdict = "🔴 NAO OPERAR"; color = "var(--loss)"; }
+    el("vote-verdict").innerHTML = `<span style="color:${color}">${verdict}</span> <span class="mono" style="font-size:12px; color:var(--textMuted);">(${yes} vs ${no})</span>`;
+    const important = newsItems.filter(n => n.date === todayISO() && n.important);
+    const newsBox = el("vote-verdict-news");
+    if (important.length === 0) {
+      newsBox.innerHTML = '<div style="font-size:12px; color:var(--textMuted);">Sem noticias marcadas como importantes hoje.</div>';
+    } else {
+      newsBox.innerHTML = important.map(n => {
+        const meta = IMPACT_META[n.impact] || IMPACT_META.medio;
+        return `<div style="font-size:12px; padding:6px 0; border-top:1px solid var(--border);">
+          <span style="font-weight:600;">${escapeHtml(n.title)}</span>
+          <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55; margin-left:6px;">${meta.label}</span>
+        </div>`;
+      }).join("");
+    }
+  }
+}
+ 
+function renderPinnedNote() {
+  el("pinned-text").textContent = pinnedNote || "Sem notas fixadas de momento.";
+  el("pinned-edit-btn").classList.toggle("hidden", !isAdmin);
+  el("pinned-input").value = pinnedNote;
+}
+ 
+function renderProfilePanel() {
+  const panel = el("profile-panel");
+  if (activeRoom === "all" || !activeRoom) { panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  const prof = profiles[slugify(activeRoom)];
+  const isSelf = activeRoom === traderName;
+  el("profile-text").textContent = (prof && prof.style) ? prof.style : (isSelf ? "Ainda nao definiste o teu estilo de trading." : activeRoom + " ainda nao definiu o estilo de trading.");
+  el("profile-edit-btn").classList.toggle("hidden", !isSelf);
+  el("profile-input").value = (prof && prof.style) || "";
+}
+ 
+function renderProfilesTable() {
+  const wrap = el("profiles-table-wrap");
+  if (!wrap) return;
+  if (activeRoom !== "all") { wrap.innerHTML = ""; return; }
+  const traders = getTraders();
+  let cols = "";
+  traders.forEach(t => {
+    const prof = profiles[slugify(t)];
+    const list = entries.filter(e => e.trader === t);
+    const s = computeStats(list);
+    cols += `<td style="padding:14px 16px; border:1px solid var(--border); background:var(--panel); border-radius:14px; min-width:170px; vertical-align:top;">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px;">${t}${t === traderName ? " (tu)" : ""}</div>
+      <div style="font-size:12px; color:var(--textSoft); line-height:1.5; margin-bottom:8px; min-height:36px;">${prof && prof.style ? escapeHtml(prof.style) : "sem perfil definido"}</div>
+      <div class="mono" style="font-size:11px; color:var(--textMuted);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>
+      <button class="btn" style="margin-top:8px; padding:6px 12px; font-size:11px;" onclick="window.__goRoom('${t.replace(/'/g, "\\'")}')">ver sala</button>
+    </td>`;
+  });
+  wrap.innerHTML = `<div class="chart-caption">Perfis da equipa</div>
+    <table style="border-collapse:separate; border-spacing:10px 0;"><tr>${cols}</tr></table>`;
+}
+window.__goRoom = function (t) { activeRoom = t; render(); };
+ 
+function renderSentimentTable() {
+  const wrap = el("sentiment-table");
+  if (!wrap) return;
+  const dates = Object.keys(allVotesByDate).sort().reverse().slice(0, 14);
+  if (dates.length === 0) {
+    wrap.innerHTML = '<div style="color:var(--textMuted); padding:8px 0;">Ainda sem historico de votos suficiente.</div>';
+    return;
+  }
+  let rows = "";
+  dates.forEach(date => {
+    const votes = allVotesByDate[date];
+    const yes = votes.filter(v => v.choice === "yes").length;
+    const no = votes.filter(v => v.choice === "no").length;
+    const verdict = yes > no ? "Operar" : no > yes ? "Nao operar" : "Empate";
+    const verdictColor = yes > no ? "var(--win)" : no > yes ? "var(--loss)" : "var(--be)";
+    const dayEntries = entries.filter(e => e.date === date);
+    const stats = computeStats(dayEntries);
+    const traded = dayEntries.length > 0;
+    let matchIcon = "—";
+    if (traded && verdict !== "Empate") {
+      const goodDay = stats.winRate >= 50;
+      const aligned = (verdict === "Operar" && goodDay) || (verdict === "Nao operar" && !goodDay);
+      matchIcon = aligned ? "✅" : "⚠️";
+    }
+    rows += `<tr>
+      <td class="mono" style="padding:6px 8px; border-bottom:1px solid var(--border);">${date}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid var(--border); color:${verdictColor}; font-weight:600;">${verdict} <span class="mono" style="color:var(--textMuted); font-weight:400;">(${yes}/${no})</span></td>
+      <td style="padding:6px 8px; border-bottom:1px solid var(--border);">${traded ? stats.total + " ticket(s), " + stats.winRate + "% win" : "ninguem operou"}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid var(--border); text-align:center;">${matchIcon}</td>
+    </tr>`;
+  });
+  wrap.innerHTML = `<table style="width:100%; border-collapse:collapse;">
+    <thead><tr style="color:var(--textMuted); text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
+      <th style="padding:6px 8px;">Data</th><th style="padding:6px 8px;">Veredito da equipa</th><th style="padding:6px 8px;">Resultado real</th><th style="padding:6px 8px; text-align:center;">Intuicao acertou?</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
  
 const IMPACT_META = {
@@ -1111,7 +1370,18 @@ loadAdminPin();
 loadAccessPin();
 startEntriesListener();
 startNewsListener();
+el("pinned-edit-btn").onclick = () => el("pinned-edit-box").classList.remove("hidden");
+el("pinned-cancel-btn").onclick = () => el("pinned-edit-box").classList.add("hidden");
+el("pinned-save-btn").onclick = savePinnedNote;
+ 
+el("profile-edit-btn").onclick = () => { el("profile-view").classList.add("hidden"); el("profile-edit-box").classList.remove("hidden"); };
+el("profile-cancel-btn").onclick = () => { el("profile-edit-box").classList.add("hidden"); el("profile-view").classList.remove("hidden"); };
+el("profile-save-btn").onclick = async () => { await saveProfile(); el("profile-view").classList.remove("hidden"); };
+ 
 startVotesListener();
+startPinnedNoteListener();
+startProfilesListener();
+startAllVotesListener();
 </script>
 </body>
 </html>
