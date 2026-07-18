@@ -1,3 +1,6 @@
+
+
+Diario trading · HTML
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -24,12 +27,31 @@
     --shadow: 0 4px 18px rgba(35, 26, 8, 0.08);
     --shadow-sm: 0 2px 8px rgba(35, 26, 8, 0.06);
   }
+  html[data-theme="dark"] {
+    --bg: #15110A;
+    --panel: #1E1810;
+    --panelAlt: #241D13;
+    --border: #34291A;
+    --borderStrong: #4A3B22;
+    --text: #F3ECDD;
+    --textSoft: #B8AA8C;
+    --textMuted: #8A7C60;
+    --accent: #D9B44A;
+    --accentSoft: #4A3B1A;
+    --accentDeep: #F0D375;
+    --win: #35C77E;
+    --loss: #E8635C;
+    --be: #B8AA8C;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   .mono { font-family: 'IBM Plex Mono', 'Courier New', monospace; }
   #app {
@@ -80,6 +102,7 @@
     font-weight: 600;
     box-shadow: 0 4px 14px rgba(184, 145, 43, 0.35);
   }
+  html[data-theme="dark"] .btn-accent { color: #1A1305; }
   .btn-accent-outline {
     border: 1px solid var(--accent);
     background: transparent;
@@ -94,14 +117,14 @@
     box-shadow: var(--shadow);
   }
   .hidden { display: none !important; }
-  #login-screen {
+  #access-screen, #login-screen {
     min-height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
   }
-  #login-box { max-width: 340px; width: 100%; }
+  #access-box, #login-box { max-width: 340px; width: 100%; }
   .header-row {
     display: flex;
     justify-content: space-between;
@@ -171,6 +194,24 @@
     transition: transform 0.1s ease;
   }
   .room-card:hover { transform: translateY(-2px); }
+  #stats-panel { margin-bottom: 22px; }
+  #stats-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  #stats-title { font-size: 14px; font-weight: 600; }
+  #granularity-tabs { display: flex; gap: 6px; }
+  .gran-btn {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panelAlt);
+    color: var(--textSoft);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .gran-btn.active { border-color: var(--accent); background: var(--accentSoft); color: var(--accentDeep); }
+  .chart-wrap { position: relative; height: 200px; margin-bottom: 18px; }
+  .chart-wrap:last-child { margin-bottom: 0; }
+  .chart-caption { font-size: 11px; color: var(--textMuted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
   #form-panel { margin-bottom: 22px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   #filter-row {
@@ -206,12 +247,34 @@
   .ticket img { width: 100%; border-radius: 12px; margin-bottom: 10px; display: block; border: 1px solid var(--border); }
   #admin-modal { margin-bottom: 18px; }
   #empty-state { color: var(--textMuted); font-size: 14px; text-align: center; padding: 40px 0; }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--textSoft);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: var(--shadow-sm);
+  }
 </style>
 </head>
 <body>
 <div id="app">
-
-  <div id="login-screen">
+ 
+  <div id="access-screen">
+    <div id="access-box" class="panel">
+      <div class="eyebrow">Diario de trading</div>
+      <div style="font-size:20px; font-weight:600; margin-bottom:18px;">PIN de acesso da equipa</div>
+      <input id="access-pin-input" type="password" class="input" placeholder="PIN de acesso" />
+      <div id="access-error" style="font-size:12px; color:var(--loss); margin-top:6px;"></div>
+      <button id="access-submit" class="btn btn-accent" style="width:100%; margin-top:14px;">Entrar</button>
+      <div id="access-hint" style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;"></div>
+    </div>
+  </div>
+ 
+  <div id="login-screen" class="hidden">
     <div id="login-box" class="panel">
       <div class="eyebrow">Diario de trading</div>
       <div style="font-size:20px; font-weight:600; margin-bottom:18px;">Como te chamas?</div>
@@ -222,7 +285,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div id="main-screen" class="hidden">
     <div class="header-row">
       <div>
@@ -231,13 +294,14 @@
         <div class="subtitle">a operar como <span id="who" style="color:var(--accent);"></span> · <span id="sync-status" class="mono">a ligar...</span></div>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:6px; padding:6px 10px;">modo admin</span>
+        <button id="theme-toggle" class="icon-btn" title="Alternar modo claro/escuro">🌙</button>
+        <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:999px; padding:6px 12px;">modo admin</span>
         <button id="admin-exit-btn" class="btn hidden">sair</button>
         <button id="admin-open-btn" class="btn">administrador</button>
         <button id="new-ticket-btn" class="btn btn-accent">+ Novo ticket</button>
       </div>
     </div>
-
+ 
     <div id="admin-modal" class="panel hidden">
       <div id="admin-modal-title" style="font-size:14px; font-weight:600; margin-bottom:4px;"></div>
       <div id="admin-modal-desc" style="font-size:12px; color:var(--textSoft); margin-bottom:10px;"></div>
@@ -248,13 +312,73 @@
         <button id="admin-cancel-btn" class="btn">Cancelar</button>
       </div>
     </div>
-
+ 
+    <div id="news-panel" class="panel" style="margin-bottom:22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:2px;">Sentimento do dia</div>
+          <div id="news-date" style="font-size:14px; font-weight:600;"></div>
+        </div>
+        <button id="news-add-btn" class="btn btn-accent-outline btn">+ Noticia</button>
+      </div>
+ 
+      <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+        <button id="vote-yes-btn" class="btn" style="flex:1; min-width:150px; border-color: var(--win); color: var(--win);">
+          🟢 Hoje e dia de operar <span id="vote-yes-count" class="mono"></span>
+        </button>
+        <button id="vote-no-btn" class="btn" style="flex:1; min-width:150px; border-color: var(--loss); color: var(--loss);">
+          🔴 Hoje nao e dia de operar <span id="vote-no-count" class="mono"></span>
+        </button>
+      </div>
+      <div style="height:8px; border-radius:999px; background:var(--border); overflow:hidden; margin-bottom:16px;">
+        <div id="vote-bar" style="height:100%; background:var(--win); width:50%;"></div>
+      </div>
+ 
+      <div id="news-form" class="hidden" style="background:var(--panelAlt); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;">
+        <label class="label">Titulo</label>
+        <input id="news-title" class="input" placeholder="ex: CPI dos EUA as 14h30" />
+        <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:140px;">
+            <label class="label">Impacto</label>
+            <select id="news-impact" class="input">
+              <option value="baixo">Baixo</option>
+              <option value="medio" selected>Medio</option>
+              <option value="alto">Alto</option>
+            </select>
+          </div>
+        </div>
+        <label class="label" style="margin-top:10px;">Comentario</label>
+        <textarea id="news-comment" class="input" style="min-height:60px; resize:vertical;" placeholder="Contexto, motivo, o que esperar..."></textarea>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button id="news-submit" class="btn btn-accent">Publicar</button>
+          <button id="news-cancel" class="btn">Cancelar</button>
+        </div>
+      </div>
+ 
+      <div id="news-list"></div>
+    </div>
+ 
     <div id="tabs"></div>
-
+ 
     <div id="board"></div>
-
+ 
     <div id="room-summaries"></div>
-
+ 
+    <div id="stats-panel" class="panel">
+      <div id="stats-header">
+        <div id="stats-title" class="mono">Evolucao e estatisticas</div>
+        <div id="granularity-tabs">
+          <button class="gran-btn" data-gran="day">Dia</button>
+          <button class="gran-btn" data-gran="month">Mes</button>
+          <button class="gran-btn" data-gran="year">Ano</button>
+        </div>
+      </div>
+      <div class="chart-caption">Win rate por periodo</div>
+      <div class="chart-wrap"><canvas id="bar-chart"></canvas></div>
+      <div class="chart-caption">Evolucao acumulada (win +1, loss -1)</div>
+      <div class="chart-wrap"><canvas id="line-chart"></canvas></div>
+    </div>
+ 
     <div id="form-panel" class="panel hidden">
       <div id="form-title" style="font-size:13px; font-weight:600; margin-bottom:12px;">Novo ticket</div>
       <div class="form-grid">
@@ -295,7 +419,7 @@
       </div>
       <button id="form-submit" class="btn btn-accent" style="margin-top:16px;">Guardar ticket</button>
     </div>
-
+ 
     <div id="filter-row">
       <div id="filter-title" style="font-size:13px; color:var(--textSoft);">Todos os tickets da equipa</div>
       <select id="f-filter-result" class="input" style="width:auto;">
@@ -305,15 +429,16 @@
         <option value="be">Breakeven</option>
       </select>
     </div>
-
+ 
     <div id="empty-state" class="hidden">Ainda sem tickets. Regista a primeira trade do dia.</div>
     <div id="entries-grid"></div>
   </div>
-
+ 
 </div>
-
+ 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAblNBb2EXC4snhIho4HFqHtVfsCBB_FNo",
@@ -325,26 +450,31 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
+ 
 const RESULT_META = {
   win: { label: "WIN", color: "#1B8F55" },
   loss: { label: "LOSS", color: "#C4433C" },
   be: { label: "B/E", color: "#9C927A" }
 };
-
+ 
 let traderName = localStorage.getItem("tj-trader-name") || null;
 let entries = [];
 let activeRoom = "all";
 let filterResult = "all";
 let isAdmin = false;
 let adminPin = null;
+let accessPin = null;
 let editingId = null;
 let pendingImage = null;
-
+let statsGranularity = "day";
+let barChartInstance = null;
+let lineChartInstance = null;
+let newsItems = [];
+let todayVotes = {};
+ 
 function todayISO() { return new Date().toISOString().slice(0, 10); }
-
 function el(id) { return document.getElementById(id); }
-
+ 
 function compressImage(file, maxWidth = 760, quality = 0.62) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -367,7 +497,7 @@ function compressImage(file, maxWidth = 760, quality = 0.62) {
     reader.readAsDataURL(file);
   });
 }
-
+ 
 function computeStats(list) {
   const total = list.length;
   const wins = list.filter(e => e.result === "win").length;
@@ -380,7 +510,7 @@ function computeStats(list) {
     totalTrades
   };
 }
-
+ 
 function getTraders() {
   const s = new Set(entries.map(e => e.trader));
   if (traderName) s.add(traderName);
@@ -390,40 +520,148 @@ function getTraders() {
     return a.localeCompare(b);
   });
 }
-
+ 
+// ---- Theme ----
+function initTheme() {
+  const saved = localStorage.getItem("tj-theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  el("theme-toggle").textContent = saved === "dark" ? "☀" : "🌙";
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme") || "light";
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("tj-theme", next);
+  el("theme-toggle").textContent = next === "dark" ? "☀" : "🌙";
+  renderCharts();
+}
+ 
 // ---- Firestore listeners ----
 function startEntriesListener() {
   db.collection("entries").orderBy("createdAt", "desc").onSnapshot((snap) => {
     entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     render();
-  }, (err) => {
-    console.error("Erro a ouvir entradas", err);
-  });
+  }, (err) => console.error("Erro a ouvir entradas", err));
 }
-
+ 
+function slugify(str) {
+  return (str || "anon").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "anon";
+}
+ 
+function startNewsListener() {
+  db.collection("news").orderBy("createdAt", "desc").limit(30).onSnapshot((snap) => {
+    newsItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderNews();
+  }, (err) => console.error("Erro a ouvir noticias", err));
+}
+ 
+function startVotesListener() {
+  const dateDoc = db.collection("votes").doc(todayISO()).collection("entries");
+  dateDoc.onSnapshot((snap) => {
+    todayVotes = {};
+    snap.docs.forEach(d => { todayVotes[d.id] = d.data(); });
+    renderVotes();
+  }, (err) => console.error("Erro a ouvir votos", err));
+}
+ 
+async function castVote(choice) {
+  if (!traderName) return;
+  const id = slugify(traderName);
+  try {
+    await db.collection("votes").doc(todayISO()).collection("entries").doc(id).set({
+      trader: traderName, choice, updatedAt: Date.now()
+    });
+  } catch (e) { console.error("Erro ao votar", e); }
+}
+ 
+async function submitNews() {
+  if (!traderName) return;
+  const title = el("news-title").value.trim();
+  if (!title) return;
+  const btn = el("news-submit");
+  btn.disabled = true;
+  try {
+    await db.collection("news").add({
+      title,
+      impact: el("news-impact").value,
+      comment: el("news-comment").value.trim(),
+      trader: traderName,
+      date: todayISO(),
+      createdAt: Date.now()
+    });
+    el("news-title").value = "";
+    el("news-comment").value = "";
+    el("news-impact").value = "medio";
+    el("news-form").classList.add("hidden");
+  } catch (e) {
+    console.error("Erro ao publicar noticia", e);
+    alert("Nao foi possivel publicar. Verifica a ligacao a internet.");
+  }
+  btn.disabled = false;
+}
+ 
+async function deleteNews(id, author) {
+  if (!(isAdmin || author === traderName)) {
+    alert("So podes apagar as tuas proprias noticias.");
+    return;
+  }
+  if (!confirm("Apagar esta noticia?")) return;
+  try { await db.collection("news").doc(id).delete(); }
+  catch (e) { console.error(e); }
+}
+ 
 function startConnectivityWatch() {
   function update() {
     const s = el("sync-status");
-    if (navigator.onLine) {
-      s.textContent = "sincronizado";
-      s.className = "mono online";
-    } else {
-      s.textContent = "sem ligacao";
-      s.className = "mono offline";
-    }
+    if (navigator.onLine) { s.textContent = "sincronizado"; s.className = "mono online"; }
+    else { s.textContent = "sem ligacao"; s.className = "mono offline"; }
   }
   window.addEventListener("online", update);
   window.addEventListener("offline", update);
   update();
 }
-
+ 
 async function loadAdminPin() {
   try {
     const doc = await db.collection("meta").doc("admin").get();
     if (doc.exists) adminPin = doc.data().pin;
   } catch (e) { console.error(e); }
 }
-
+ 
+async function loadAccessPin() {
+  try {
+    const doc = await db.collection("meta").doc("access").get();
+    if (doc.exists) accessPin = doc.data().pin;
+  } catch (e) { console.error(e); }
+  renderAccessScreen();
+}
+ 
+function renderAccessScreen() {
+  el("access-hint").textContent = accessPin === null
+    ? "Ninguem definiu ainda um PIN de acesso para a equipa. Cria um agora - vai ser pedido a todos a partir daqui."
+    : "Pede o PIN de acesso a quem gere o diario da equipa.";
+  el("access-submit").textContent = accessPin === null ? "Definir PIN e entrar" : "Entrar";
+}
+ 
+async function submitAccessPin() {
+  const pin = el("access-pin-input").value.trim();
+  if (pin.length < 4) {
+    el("access-error").textContent = "O PIN deve ter pelo menos 4 caracteres.";
+    return;
+  }
+  if (accessPin === null) {
+    try {
+      await db.collection("meta").doc("access").set({ pin });
+      accessPin = pin;
+    } catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
+  } else if (pin !== accessPin) {
+    el("access-error").textContent = "PIN incorreto.";
+    return;
+  }
+  el("access-screen").classList.add("hidden");
+  if (traderName) { showMain(); } else { el("login-screen").classList.remove("hidden"); }
+}
+ 
 // ---- Actions ----
 function login() {
   const n = el("name-input").value.trim();
@@ -432,7 +670,7 @@ function login() {
   localStorage.setItem("tj-trader-name", n);
   showMain();
 }
-
+ 
 function resetForm() {
   el("form-panel").classList.add("hidden");
   editingId = null;
@@ -448,7 +686,7 @@ function resetForm() {
   el("form-title").textContent = "Novo ticket";
   el("form-submit").textContent = "Guardar ticket";
 }
-
+ 
 function startEdit(entry) {
   el("form-panel").classList.remove("hidden");
   editingId = entry.id;
@@ -459,23 +697,28 @@ function startEdit(entry) {
   el("f-setup").checked = !!entry.setupFollowed;
   el("f-comment").value = entry.comment || "";
   pendingImage = entry.image || null;
-  if (entry.image) {
-    el("f-preview").src = entry.image;
-    el("f-preview").classList.remove("hidden");
-  } else {
-    el("f-preview").classList.add("hidden");
-  }
+  if (entry.image) { el("f-preview").src = entry.image; el("f-preview").classList.remove("hidden"); }
+  else { el("f-preview").classList.add("hidden"); }
   el("form-title").textContent = "Editar ticket";
   el("form-submit").textContent = "Guardar alteracoes";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
+ 
+function canModify(entry) {
+  return isAdmin || entry.trader === traderName;
+}
+ 
 async function submitEntry() {
   if (!traderName) return;
   const btn = el("form-submit");
   btn.disabled = true;
   btn.textContent = "A guardar...";
   const original = editingId ? entries.find(e => e.id === editingId) : null;
+  if (original && !canModify(original)) {
+    alert("So podes editar os teus proprios tickets.");
+    btn.disabled = false;
+    return;
+  }
   const data = {
     date: el("f-date").value || todayISO(),
     trader: original ? original.trader : traderName,
@@ -500,53 +743,40 @@ async function submitEntry() {
   }
   btn.disabled = false;
 }
-
+ 
 async function deleteEntry(id) {
-  if (!confirm("Apagar este ticket?")) return;
-  try {
-    await db.collection("entries").doc(id).delete();
-  } catch (e) {
-    console.error("Erro ao apagar", e);
+  const entry = entries.find(e => e.id === id);
+  if (entry && !canModify(entry)) {
+    alert("So podes apagar os teus proprios tickets.");
+    return;
   }
+  if (!confirm("Apagar este ticket?")) return;
+  try { await db.collection("entries").doc(id).delete(); }
+  catch (e) { console.error("Erro ao apagar", e); }
 }
-
+ 
 function openAdminModal() {
   el("admin-modal").classList.remove("hidden");
   el("pin-input").value = "";
   el("pin-error").textContent = "";
-  el("admin-modal-title").textContent = adminPin === null
-    ? "Define o PIN de administrador"
-    : "Introduz o PIN de administrador";
+  el("admin-modal-title").textContent = adminPin === null ? "Define o PIN de administrador" : "Introduz o PIN de administrador";
   el("admin-modal-desc").textContent = adminPin === null
     ? "Este PIN fica guardado para toda a equipa. So quem o souber tem acesso de administrador."
-    : "So o administrador pode editar ou apagar tickets de qualquer pessoa.";
+    : "O administrador pode editar ou apagar tickets de qualquer pessoa.";
 }
-
+ 
 async function submitPin() {
   const pin = el("pin-input").value.trim();
-  if (pin.length < 4) {
-    el("pin-error").textContent = "O PIN deve ter pelo menos 4 caracteres.";
-    return;
-  }
+  if (pin.length < 4) { el("pin-error").textContent = "O PIN deve ter pelo menos 4 caracteres."; return; }
   if (adminPin === null) {
-    try {
-      await db.collection("meta").doc("admin").set({ pin });
-      adminPin = pin;
-      isAdmin = true;
-      el("admin-modal").classList.add("hidden");
-      render();
-    } catch (e) { console.error(e); }
+    try { await db.collection("meta").doc("admin").set({ pin }); adminPin = pin; isAdmin = true; el("admin-modal").classList.add("hidden"); render(); }
+    catch (e) { console.error(e); }
     return;
   }
-  if (pin === adminPin) {
-    isAdmin = true;
-    el("admin-modal").classList.add("hidden");
-    render();
-  } else {
-    el("pin-error").textContent = "PIN incorreto.";
-  }
+  if (pin === adminPin) { isAdmin = true; el("admin-modal").classList.add("hidden"); render(); }
+  else { el("pin-error").textContent = "PIN incorreto."; }
 }
-
+ 
 // ---- Rendering ----
 function showMain() {
   el("login-screen").classList.add("hidden");
@@ -554,17 +784,18 @@ function showMain() {
   el("who").textContent = traderName;
   render();
 }
-
+ 
 function render() {
   renderTabs();
   renderBoard();
   renderRoomSummaries();
   renderList();
+  renderCharts();
   el("admin-badge").classList.toggle("hidden", !isAdmin);
   el("admin-exit-btn").classList.toggle("hidden", !isAdmin);
   el("admin-open-btn").classList.toggle("hidden", isAdmin);
 }
-
+ 
 function renderTabs() {
   const traders = getTraders();
   const wrap = el("tabs");
@@ -582,12 +813,12 @@ function renderTabs() {
     wrap.appendChild(b);
   });
 }
-
+ 
 function getRoomEntries() {
   if (activeRoom === "all") return entries;
   return entries.filter(e => e.trader === activeRoom);
 }
-
+ 
 function renderBoard() {
   const stats = computeStats(getRoomEntries());
   const wrap = el("board");
@@ -605,7 +836,7 @@ function renderBoard() {
     wrap.appendChild(d);
   });
 }
-
+ 
 function renderRoomSummaries() {
   const wrap = el("room-summaries");
   wrap.innerHTML = "";
@@ -621,7 +852,163 @@ function renderRoomSummaries() {
     wrap.appendChild(card);
   });
 }
-
+ 
+function periodKey(dateStr, gran) {
+  if (!dateStr) return "sem-data";
+  if (gran === "day") return dateStr;
+  if (gran === "month") return dateStr.slice(0, 7);
+  return dateStr.slice(0, 4);
+}
+ 
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+ 
+function renderCharts() {
+  const list = getRoomEntries();
+ 
+  // Bar chart: win rate per period
+  const buckets = {};
+  list.forEach(e => {
+    const key = periodKey(e.date, statsGranularity);
+    if (!buckets[key]) buckets[key] = [];
+    buckets[key].push(e);
+  });
+  const keys = Object.keys(buckets).sort();
+  const barLabels = keys;
+  const barData = keys.map(k => computeStats(buckets[k]).winRate);
+  const barCounts = keys.map(k => buckets[k].length);
+ 
+  const accent = cssVar("--accent") || "#B8912B";
+  const win = cssVar("--win") || "#1B8F55";
+  const textMuted = cssVar("--textMuted") || "#A0947A";
+  const border = cssVar("--border") || "#E8E0CB";
+ 
+  const barCtx = el("bar-chart").getContext("2d");
+  if (barChartInstance) barChartInstance.destroy();
+  barChartInstance = new Chart(barCtx, {
+    type: "bar",
+    data: {
+      labels: barLabels,
+      datasets: [{
+        label: "Win rate %",
+        data: barData,
+        backgroundColor: accent,
+        borderRadius: 6,
+        maxBarThickness: 36
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            afterLabel: (ctx) => barCounts[ctx.dataIndex] + " ticket(s)"
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, max: 100, ticks: { color: textMuted, callback: v => v + "%" }, grid: { color: border } },
+        x: { ticks: { color: textMuted }, grid: { display: false } }
+      }
+    }
+  });
+ 
+  // Line chart: cumulative evolution
+  const sorted = [...list].sort((a, b) => {
+    const da = a.date || "";
+    const db_ = b.date || "";
+    if (da !== db_) return da < db_ ? -1 : 1;
+    return (a.createdAt || 0) - (b.createdAt || 0);
+  });
+  let running = 0;
+  const lineLabels = [];
+  const lineData = [];
+  sorted.forEach((e, i) => {
+    running += e.result === "win" ? 1 : e.result === "loss" ? -1 : 0;
+    lineLabels.push(e.date || ("#" + (i + 1)));
+    lineData.push(running);
+  });
+ 
+  const lineCtx = el("line-chart").getContext("2d");
+  if (lineChartInstance) lineChartInstance.destroy();
+  lineChartInstance = new Chart(lineCtx, {
+    type: "line",
+    data: {
+      labels: lineLabels,
+      datasets: [{
+        label: "Evolucao",
+        data: lineData,
+        borderColor: win,
+        backgroundColor: win + "22",
+        fill: true,
+        tension: 0.25,
+        pointRadius: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: textMuted }, grid: { color: border } },
+        x: { ticks: { color: textMuted, maxTicksLimit: 8 }, grid: { display: false } }
+      }
+    }
+  });
+}
+ 
+function renderVotes() {
+  const entries2 = Object.values(todayVotes);
+  const yes = entries2.filter(v => v.choice === "yes").length;
+  const no = entries2.filter(v => v.choice === "no").length;
+  const total = yes + no;
+  el("vote-yes-count").textContent = "(" + yes + ")";
+  el("vote-no-count").textContent = "(" + no + ")";
+  const pct = total ? Math.round((yes / total) * 100) : 50;
+  el("vote-bar").style.width = pct + "%";
+  const mine = todayVotes[slugify(traderName || "")];
+  el("vote-yes-btn").style.background = mine && mine.choice === "yes" ? "var(--win)" : "var(--panel)";
+  el("vote-yes-btn").style.color = mine && mine.choice === "yes" ? "#FFFFFF" : "var(--win)";
+  el("vote-no-btn").style.background = mine && mine.choice === "no" ? "var(--loss)" : "var(--panel)";
+  el("vote-no-btn").style.color = mine && mine.choice === "no" ? "#FFFFFF" : "var(--loss)";
+}
+ 
+const IMPACT_META = {
+  baixo: { label: "Baixo impacto", color: "var(--be)" },
+  medio: { label: "Medio impacto", color: "var(--accent)" },
+  alto: { label: "Alto impacto", color: "var(--loss)" }
+};
+ 
+function renderNews() {
+  const wrap = el("news-list");
+  wrap.innerHTML = "";
+  if (newsItems.length === 0) {
+    wrap.innerHTML = '<div style="font-size:13px; color:var(--textMuted); padding:6px 0;">Ainda sem noticias publicadas. Sê o primeiro a avisar a equipa.</div>';
+    return;
+  }
+  newsItems.forEach(n => {
+    const meta = IMPACT_META[n.impact] || IMPACT_META.medio;
+    const row = document.createElement("div");
+    row.style.cssText = "border-top:1px solid var(--border); padding:10px 0;";
+    const canDel = isAdmin || n.trader === traderName;
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+        <div style="font-size:13px; font-weight:600;">${escapeHtml(n.title)}</div>
+        <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55; white-space:nowrap;">${meta.label}</span>
+      </div>
+      <div style="font-size:11px; color:var(--textMuted); margin-top:2px;">${n.date} · ${escapeHtml(n.trader)}</div>
+      ${n.comment ? `<div style="font-size:13px; margin-top:6px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(n.comment)}</div>` : ""}
+      ${canDel ? `<button class="news-del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0; margin-top:6px;">apagar</button>` : ""}
+    `;
+    if (canDel) row.querySelector(".news-del-btn").onclick = () => deleteNews(n.id, n.trader);
+    wrap.appendChild(row);
+  });
+}
+ 
+ 
 function renderList() {
   const list = getRoomEntries().filter(e => filterResult === "all" || e.result === filterResult);
   el("filter-title").textContent = activeRoom === "all" ? "Todos os tickets da equipa" : "Tickets de " + activeRoom;
@@ -633,6 +1020,7 @@ function renderList() {
     const card = document.createElement("div");
     card.className = "ticket";
     card.style.borderLeft = `3px solid ${meta.color}`;
+    const allowed = canModify(entry);
     card.innerHTML = `
       <div class="ticket-top">
         <div>
@@ -646,7 +1034,7 @@ function renderList() {
       </div>
       ${entry.image ? `<img src="${entry.image}" alt="foto da trade" />` : ""}
       ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
-      <div class="ticket-actions" style="display:${isAdmin ? "flex" : "none"}; gap:14px; margin-top:10px;">
+      <div class="ticket-actions" style="display:${allowed ? "flex" : "none"}; gap:14px; margin-top:10px;">
         <button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar ticket</button>
         <button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar ticket</button>
       </div>
@@ -656,29 +1044,30 @@ function renderList() {
     grid.appendChild(card);
   });
 }
-
+ 
 function escapeHtml(str) {
   const d = document.createElement("div");
   d.textContent = str;
   return d.innerHTML;
 }
-
+ 
 // ---- Wire up events ----
+el("access-submit").onclick = submitAccessPin;
+el("access-pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAccessPin(); });
+ 
 el("name-submit").onclick = login;
 el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
-
+ 
+el("theme-toggle").onclick = toggleTheme;
+ 
 el("new-ticket-btn").onclick = () => {
   const panel = el("form-panel");
-  if (panel.classList.contains("hidden")) {
-    resetForm();
-    panel.classList.remove("hidden");
-  } else {
-    resetForm();
-  }
+  if (panel.classList.contains("hidden")) { resetForm(); panel.classList.remove("hidden"); }
+  else { resetForm(); }
 };
-
+ 
 el("form-submit").onclick = submitEntry;
-
+ 
 el("f-image").addEventListener("change", async (e) => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
@@ -689,24 +1078,42 @@ el("f-image").addEventListener("change", async (e) => {
     el("f-preview").classList.remove("hidden");
   } catch (err) { console.error(err); }
 });
-
-el("f-filter-result").addEventListener("change", (e) => {
-  filterResult = e.target.value;
-  renderList();
+ 
+el("f-filter-result").addEventListener("change", (e) => { filterResult = e.target.value; renderList(); });
+ 
+document.querySelectorAll(".gran-btn").forEach(btn => {
+  if (btn.dataset.gran === statsGranularity) btn.classList.add("active");
+  btn.onclick = () => {
+    statsGranularity = btn.dataset.gran;
+    document.querySelectorAll(".gran-btn").forEach(b => b.classList.toggle("active", b === btn));
+    renderCharts();
+  };
 });
-
+ 
 el("admin-open-btn").onclick = openAdminModal;
 el("admin-cancel-btn").onclick = () => el("admin-modal").classList.add("hidden");
 el("pin-submit").onclick = submitPin;
 el("pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitPin(); });
 el("admin-exit-btn").onclick = () => { isAdmin = false; render(); };
-
+ 
+el("vote-yes-btn").onclick = () => castVote("yes");
+el("vote-no-btn").onclick = () => castVote("no");
+el("news-add-btn").onclick = () => el("news-form").classList.toggle("hidden");
+el("news-cancel").onclick = () => el("news-form").classList.add("hidden");
+el("news-submit").onclick = submitNews;
+ 
 // ---- Init ----
 el("f-date").value = todayISO();
+el("news-date").textContent = new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" });
+initTheme();
 startConnectivityWatch();
 loadAdminPin();
+loadAccessPin();
 startEntriesListener();
-if (traderName) showMain();
+startNewsListener();
+startVotesListener();
 </script>
 </body>
 </html>
+ 
+
