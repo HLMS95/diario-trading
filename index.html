@@ -263,8 +263,22 @@
   <div id="access-screen">
     <div id="access-box" class="panel">
       <div class="eyebrow">Diario de trading</div>
-      <div style="font-size:20px; font-weight:600; margin-bottom:18px;">PIN de acesso da equipa</div>
-      <input id="access-pin-input" type="password" class="input" placeholder="PIN de acesso" />
+      <div style="font-size:20px; font-weight:600; margin-bottom:14px;">Como queres entrar?</div>
+      <div style="display:flex; gap:6px; margin-bottom:14px;">
+        <button id="access-mode-team-btn" class="tab-btn active" style="flex:1;">Equipa</button>
+        <button id="access-mode-aluno-btn" class="tab-btn" style="flex:1;">Alunos</button>
+        <button id="access-mode-admin-btn" class="tab-btn" style="flex:1;">Administracao</button>
+      </div>
+
+      <div id="access-pin-group">
+        <input id="access-pin-input" type="password" class="input" placeholder="PIN de acesso" />
+      </div>
+
+      <div id="access-aluno-group" class="hidden">
+        <input id="access-aluno-name" class="input" placeholder="O teu nome ou alcunha" style="margin-bottom:10px;" />
+        <input id="access-aluno-code" type="password" class="input" placeholder="O teu codigo pessoal" />
+      </div>
+
       <div id="access-error" style="font-size:12px; color:var(--loss); margin-top:6px;"></div>
       <button id="access-submit" class="btn btn-accent" style="width:100%; margin-top:14px;">Entrar</button>
       <div id="access-hint" style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;"></div>
@@ -275,13 +289,9 @@
     <div id="login-box" class="panel">
       <div class="eyebrow">Diario de trading</div>
       <div style="font-size:20px; font-weight:600; margin-bottom:14px;">Como te chamas?</div>
-      <div style="display:flex; gap:8px; margin-bottom:14px;">
-        <button id="role-trader-btn" class="tab-btn active" style="flex:1;">Sou trader da equipa</button>
-        <button id="role-student-btn" class="tab-btn" style="flex:1;">Sou aluno</button>
-      </div>
       <input id="name-input" class="input" placeholder="O teu nome ou alcunha" />
       <button id="name-submit" class="btn btn-accent" style="width:100%; margin-top:14px;">Entrar no diario</button>
-      <div id="login-hint" style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;">
+      <div style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;">
         As tuas trades ficam visiveis para toda a equipa em tempo real. Este nome fica guardado neste dispositivo.
       </div>
     </div>
@@ -839,19 +849,100 @@ async function loadAccessPin() {
   renderAccessScreen();
 }
 
+let accessMode = "team";
+
+function chooseAccessMode(mode) {
+  accessMode = mode;
+  el("access-mode-team-btn").classList.toggle("active", mode === "team");
+  el("access-mode-aluno-btn").classList.toggle("active", mode === "aluno");
+  el("access-mode-admin-btn").classList.toggle("active", mode === "admin");
+  el("access-pin-group").classList.toggle("hidden", mode === "aluno");
+  el("access-aluno-group").classList.toggle("hidden", mode !== "aluno");
+  el("access-error").textContent = "";
+  el("access-pin-input").value = "";
+  el("access-aluno-name").value = "";
+  el("access-aluno-code").value = "";
+  renderAccessScreen();
+}
+
 function renderAccessScreen() {
-  el("access-hint").textContent = accessPin === null
-    ? "Ninguem definiu ainda um PIN de acesso para a equipa. Cria um agora - vai ser pedido a todos a partir daqui."
-    : "Pede o PIN de acesso a quem gere o diario da equipa.";
-  el("access-submit").textContent = accessPin === null ? "Definir PIN e entrar" : "Entrar";
+  if (accessMode === "admin") {
+    el("access-hint").textContent = adminPin === null
+      ? "Ainda nao existe PIN de administrador. Cria um agora - fica guardado para sempre."
+      : "Introduz o PIN de administrador. Isto da-te acesso direto, sem passares pelo acesso da equipa.";
+    el("access-submit").textContent = adminPin === null ? "Definir PIN e entrar" : "Entrar como admin";
+  } else if (accessMode === "aluno") {
+    el("access-hint").textContent = "Primeira vez: escolhe um nome e cria um codigo pessoal (guarda-o bem). Da proxima vez, usa o mesmo nome e codigo para entrar.";
+    el("access-submit").textContent = "Continuar";
+  } else {
+    el("access-hint").textContent = accessPin === null
+      ? "Ninguem definiu ainda um PIN de acesso para a equipa. Cria um agora - vai ser pedido a todos a partir daqui."
+      : "Pede o PIN de acesso a quem gere o diario da equipa.";
+    el("access-submit").textContent = accessPin === null ? "Definir PIN e entrar" : "Entrar";
+  }
+}
+
+function proceedAsTrader() {
+  const savedRole = localStorage.getItem("tj-role");
+  if (traderName && savedRole === "trader") {
+    userRole = "trader";
+    checkNameAdmin();
+    showMain();
+  } else {
+    el("login-screen").classList.remove("hidden");
+  }
 }
 
 async function submitAccessPin() {
+  el("access-error").textContent = "";
+
+  if (accessMode === "aluno") {
+    const name = el("access-aluno-name").value.trim();
+    const code = el("access-aluno-code").value.trim();
+    if (!name) { el("access-error").textContent = "Escreve o teu nome."; return; }
+    if (code.length < 4) { el("access-error").textContent = "O codigo deve ter pelo menos 4 caracteres."; return; }
+    const slug = slugify(name);
+    const ref = db.collection("students").doc(slug);
+    try {
+      const snap = await ref.get();
+      if (!snap.exists) {
+        await ref.set({ name, pin: code, mentor: null, status: "pending", requestedAt: Date.now() });
+        studentMentor = null;
+      } else {
+        const data = snap.data();
+        if (data.pin !== code) { el("access-error").textContent = "Codigo incorreto."; return; }
+        studentMentor = data.mentor || null;
+      }
+    } catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
+    traderName = name;
+    userRole = "student";
+    localStorage.setItem("tj-trader-name", name);
+    localStorage.setItem("tj-role", "student");
+    el("access-screen").classList.add("hidden");
+    startStudentDocListener();
+    return;
+  }
+
   const pin = el("access-pin-input").value.trim();
   if (pin.length < 4) {
     el("access-error").textContent = "O PIN deve ter pelo menos 4 caracteres.";
     return;
   }
+
+  if (accessMode === "admin") {
+    if (adminPin === null) {
+      try { await db.collection("meta").doc("admin").set({ pin }); adminPin = pin; }
+      catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
+    } else if (pin !== adminPin) {
+      el("access-error").textContent = "PIN incorreto.";
+      return;
+    }
+    isAdmin = true;
+    el("access-screen").classList.add("hidden");
+    proceedAsTrader();
+    return;
+  }
+
   if (accessPin === null) {
     try {
       await db.collection("meta").doc("access").set({ pin });
@@ -862,42 +953,12 @@ async function submitAccessPin() {
     return;
   }
   el("access-screen").classList.add("hidden");
-  routeAfterAccess();
-}
-
-function routeAfterAccess() {
-  const savedRole = localStorage.getItem("tj-role") || "trader";
-  userRole = savedRole;
-  if (traderName && savedRole === "student") {
-    startStudentDocListener();
-  } else if (traderName) {
-    checkNameAdmin();
-    showMain();
-  } else {
-    el("login-screen").classList.remove("hidden");
-  }
-}
-
-// ---- Actions ----
-let pendingRoleChoice = "trader";
-
-function chooseRole(role) {
-  pendingRoleChoice = role;
-  el("role-trader-btn").classList.toggle("active", role === "trader");
-  el("role-student-btn").classList.toggle("active", role === "student");
-  el("name-submit").textContent = role === "student" ? "Pedir acesso como aluno" : "Entrar no diario";
-  el("login-hint").textContent = role === "student"
-    ? "O teu pedido vai ser enviado a um administrador, que te atribui a um mentor antes de teres acesso."
-    : "As tuas trades ficam visiveis para toda a equipa em tempo real. Este nome fica guardado neste dispositivo.";
+  proceedAsTrader();
 }
 
 function login() {
   const n = el("name-input").value.trim();
   if (!n) return;
-  if (pendingRoleChoice === "student") {
-    requestStudentAccess(n);
-    return;
-  }
   traderName = n;
   userRole = "trader";
   localStorage.setItem("tj-trader-name", n);
@@ -906,30 +967,16 @@ function login() {
   showMain();
 }
 
-async function requestStudentAccess(name) {
-  traderName = name;
-  userRole = "student";
-  localStorage.setItem("tj-trader-name", name);
-  localStorage.setItem("tj-role", "student");
-  const ref = db.collection("students").doc(slugify(name));
-  try {
-    const snap = await ref.get();
-    if (!snap.exists) {
-      await ref.set({ name, mentor: null, status: "pending", requestedAt: Date.now() });
-    }
-  } catch (e) { console.error("Erro ao pedir acesso", e); }
-  el("login-screen").classList.add("hidden");
-  startStudentDocListener();
-}
-
 function startStudentDocListener() {
   const ref = db.collection("students").doc(slugify(traderName));
   ref.onSnapshot((doc) => {
     if (!doc.exists) {
       el("waiting-screen").classList.add("hidden");
       el("main-screen").classList.add("hidden");
-      el("login-screen").classList.remove("hidden");
       localStorage.removeItem("tj-role");
+      el("access-screen").classList.remove("hidden");
+      chooseAccessMode("aluno");
+      el("access-error").textContent = "O teu pedido foi rejeitado ou removido. Podes pedir acesso novamente.";
       return;
     }
     const data = doc.data();
@@ -1621,26 +1668,59 @@ function renderList() {
 function renderAlunosView() {
   const wrap = el("alunos-view");
   const approved = allStudents.filter(s => s.status === "approved");
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "panel";
+  tableWrap.style.marginBottom = "16px";
+  tableWrap.style.overflowX = "auto";
+  const heading = document.createElement("div");
+  heading.className = "eyebrow";
+  heading.style.marginBottom = "10px";
+  heading.textContent = "Alunos da equipa";
+  tableWrap.appendChild(heading);
+
+  let rows = "";
   if (approved.length === 0) {
-    wrap.innerHTML = '<div class="panel" style="color:var(--textMuted); font-size:13px;">Ainda sem alunos aprovados.</div>';
-    return;
+    rows = '<tr><td colspan="4" style="padding:10px 8px; color:var(--textMuted); font-size:13px;">Ainda sem alunos aprovados. Em breve aparecem aqui.</td></tr>';
+  } else {
+    approved.forEach(s => {
+      const studentTickets = entries.filter(e => e.isStudent && e.studentId === s.id);
+      const stats = computeStats(studentTickets);
+      rows += `<tr>
+        <td style="padding:8px; border-bottom:1px solid var(--border); font-weight:600;">${escapeHtml(s.name)}</td>
+        <td style="padding:8px; border-bottom:1px solid var(--border); color:var(--textSoft);">${escapeHtml(s.mentor || "sem mentor")}</td>
+        <td class="mono" style="padding:8px; border-bottom:1px solid var(--border);">${stats.total}</td>
+        <td class="mono" style="padding:8px; border-bottom:1px solid var(--border); color:var(--win);">${stats.winRate}%</td>
+      </tr>`;
+    });
   }
+  tableWrap.innerHTML += `<table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead><tr style="text-align:left; color:var(--textMuted); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
+      <th style="padding:6px 8px;">Nome</th><th style="padding:6px 8px;">Mentor</th><th style="padding:6px 8px;">Tickets</th><th style="padding:6px 8px;">Win rate</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+
+  wrap.innerHTML = "";
+  wrap.appendChild(tableWrap);
+
+  if (approved.length === 0) return;
+
   const byMentor = {};
   approved.forEach(s => {
     const m = s.mentor || "sem mentor atribuido";
     if (!byMentor[m]) byMentor[m] = [];
     byMentor[m].push(s);
   });
-  wrap.innerHTML = "";
   Object.keys(byMentor).sort().forEach(mentor => {
     const block = document.createElement("div");
     block.className = "panel";
     block.style.marginBottom = "16px";
-    const heading = document.createElement("div");
-    heading.className = "eyebrow";
-    heading.style.marginBottom = "10px";
-    heading.textContent = "Alunos de " + mentor;
-    block.appendChild(heading);
+    const mentorHeading = document.createElement("div");
+    mentorHeading.className = "eyebrow";
+    mentorHeading.style.marginBottom = "10px";
+    mentorHeading.textContent = "Alunos de " + mentor;
+    block.appendChild(mentorHeading);
     byMentor[mentor].forEach(s => {
       const studentTickets = entries.filter(e => e.isStudent && e.studentId === s.id);
       const stats = computeStats(studentTickets);
@@ -1675,12 +1755,13 @@ function escapeHtml(str) {
 
 // ---- Wire up events ----
 el("access-submit").onclick = submitAccessPin;
+el("access-mode-team-btn").onclick = () => chooseAccessMode("team");
+el("access-mode-aluno-btn").onclick = () => chooseAccessMode("aluno");
+el("access-mode-admin-btn").onclick = () => chooseAccessMode("admin");
 el("access-pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAccessPin(); });
 
 el("name-submit").onclick = login;
 el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
-el("role-trader-btn").onclick = () => chooseRole("trader");
-el("role-student-btn").onclick = () => chooseRole("student");
 
 el("theme-toggle").onclick = toggleTheme;
 
@@ -1758,7 +1839,7 @@ startProfilesListener();
 startAllVotesListener();
 startAdminNamesListener();
 startStudentsListener();
-chooseRole("trader");
+chooseAccessMode("team");
 </script>
 </body>
 </html>
