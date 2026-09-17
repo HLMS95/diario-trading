@@ -274,6 +274,26 @@
         <input id="access-pin-input" type="password" class="input" placeholder="PIN de acesso" />
       </div>
 
+      <div id="access-admin-group" class="hidden">
+        <input id="admin-pin-input" type="password" class="input" placeholder="PIN de administrador" />
+
+        <div id="admin-setup-recovery" class="hidden" style="margin-top:12px;">
+          <label class="label">Pergunta de seguranca (para recuperares o PIN sozinho no futuro)</label>
+          <input id="admin-recovery-question-input" class="input" placeholder="ex: nome do meu primeiro animal" style="margin-bottom:8px;" />
+          <label class="label">Resposta</label>
+          <input id="admin-recovery-answer-input" class="input" placeholder="A tua resposta" />
+        </div>
+
+        <div id="admin-forgot-link" class="hidden" style="cursor:pointer; text-decoration:underline; font-size:11px; color:var(--textMuted); margin-top:10px;">Esqueci-me do PIN</div>
+
+        <div id="admin-recovery-box" class="hidden" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+          <div id="admin-recovery-question-display" style="font-size:12px; color:var(--textSoft); margin-bottom:8px;"></div>
+          <input id="admin-recovery-answer-check" class="input" placeholder="Resposta" style="margin-bottom:8px;" />
+          <input id="admin-recovery-newpin" type="password" class="input" placeholder="Novo PIN (min. 4 caracteres)" style="margin-bottom:8px;" />
+          <button id="admin-recovery-submit" class="btn" style="width:100%;">Repor PIN e entrar</button>
+        </div>
+      </div>
+
       <div id="access-aluno-group" class="hidden">
         <input id="access-aluno-name" class="input" placeholder="O teu nome ou alcunha" style="margin-bottom:10px;" />
         <input id="access-aluno-code" type="password" class="input" placeholder="O teu codigo pessoal" />
@@ -327,6 +347,12 @@
 
     <div id="manage-panel" class="panel hidden">
       <div style="font-size:14px; font-weight:600; margin-bottom:14px;">Gestao de administradores e alunos</div>
+
+      <div style="margin-bottom:20px;">
+        <div class="eyebrow" style="margin-bottom:6px;">Salas da equipa</div>
+        <div style="font-size:12px; color:var(--textSoft); margin-bottom:8px;">Apaga a sala de quem ja nao faz parte da equipa (remove todos os tickets e o perfil dessa pessoa).</div>
+        <div id="team-rooms-list"></div>
+      </div>
 
       <div style="margin-bottom:20px;">
         <div class="eyebrow" style="margin-bottom:6px;">Administradores por nome</div>
@@ -435,6 +461,52 @@
       <div id="news-list"></div>
     </div>
 
+    <div id="tabs"></div>
+
+    <div id="profile-panel" class="panel hidden" style="margin-bottom:22px;">
+      <div class="eyebrow" style="margin-bottom:4px;">Perfil do trader</div>
+      <div id="profile-view">
+        <div id="profile-text" style="font-size:14px; line-height:1.5; white-space:pre-wrap; color:var(--textSoft);"></div>
+        <button id="profile-edit-btn" class="btn hidden" style="margin-top:10px;">editar perfil</button>
+      </div>
+      <div id="profile-edit-box" class="hidden">
+        <textarea id="profile-input" class="input" style="min-height:60px; resize:vertical;" placeholder="ex: Day trading em EURUSD, estilo breakout, timeframe M15..."></textarea>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button id="profile-save-btn" class="btn btn-accent">Guardar</button>
+          <button id="profile-cancel-btn" class="btn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="board"></div>
+
+    <div id="room-summaries"></div>
+
+    <div id="alunos-view" class="hidden" style="margin-bottom:22px;"></div>
+
+    <div id="profiles-table-wrap" style="overflow-x:auto; margin-bottom:22px;"></div>
+
+    <div id="stats-panel" class="panel">
+      <div id="stats-header">
+        <div id="stats-title" class="mono">Evolucao e estatisticas</div>
+        <div id="granularity-tabs">
+          <button class="gran-btn" data-gran="day">Dia</button>
+          <button class="gran-btn" data-gran="month">Mes</button>
+          <button class="gran-btn" data-gran="year">Ano</button>
+        </div>
+      </div>
+      <div class="chart-caption">Win rate por periodo</div>
+      <div class="chart-wrap"><canvas id="bar-chart"></canvas></div>
+      <div class="chart-caption">Evolucao acumulada (win +1, loss -1)</div>
+      <div class="chart-wrap"><canvas id="line-chart"></canvas></div>
+      <div id="multi-chart-block" class="hidden">
+        <div class="chart-caption" style="margin-top:18px;">Evolucao por trader</div>
+        <div class="chart-wrap"><canvas id="line-chart-multi"></canvas></div>
+      </div>
+      <div class="chart-caption" style="margin-top:18px;">Sentimento da equipa vs. resultado real</div>
+      <div id="sentiment-table" style="font-size:12px;"></div>
+    </div>
+
     <div id="tickets-section" style="margin-bottom:22px;">
       <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
         <button id="new-ticket-btn" class="btn btn-accent">+ Novo ticket</button>
@@ -494,51 +566,21 @@
       <div id="empty-state" class="hidden">Ainda sem tickets. Regista a primeira trade do dia.</div>
       <div id="entries-grid"></div>
     </div>
+  </div>
 
-    <div id="tabs"></div>
-
-    <div id="profile-panel" class="panel hidden" style="margin-bottom:22px;">
-      <div class="eyebrow" style="margin-bottom:4px;">Perfil do trader</div>
-      <div id="profile-view">
-        <div id="profile-text" style="font-size:14px; line-height:1.5; white-space:pre-wrap; color:var(--textSoft);"></div>
-        <button id="profile-edit-btn" class="btn hidden" style="margin-top:10px;">editar perfil</button>
+  <div id="ticket-modal" class="hidden" style="position:fixed; inset:0; background:rgba(15,10,3,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--panel); border-radius:18px; max-width:920px; width:100%; max-height:90vh; overflow:auto; display:flex; flex-wrap:wrap; box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+      <div style="flex:1 1 320px; min-width:280px; position:relative; background:var(--panelAlt);">
+        <img id="ticket-modal-img" style="width:100%; max-height:80vh; object-fit:contain; display:block;" />
+        <span id="ticket-modal-badge" class="badge" style="position:absolute; top:14px; left:14px;"></span>
       </div>
-      <div id="profile-edit-box" class="hidden">
-        <textarea id="profile-input" class="input" style="min-height:60px; resize:vertical;" placeholder="ex: Day trading em EURUSD, estilo breakout, timeframe M15..."></textarea>
-        <div style="display:flex; gap:8px; margin-top:10px;">
-          <button id="profile-save-btn" class="btn btn-accent">Guardar</button>
-          <button id="profile-cancel-btn" class="btn">Cancelar</button>
-        </div>
+      <div style="flex:1 1 280px; min-width:260px; padding:22px; position:relative;">
+        <button id="ticket-modal-close" class="icon-btn" style="position:absolute; top:14px; right:14px;">×</button>
+        <div id="ticket-modal-date" class="mono" style="font-size:12px; color:var(--textMuted); margin-bottom:4px;"></div>
+        <div id="ticket-modal-asset" style="font-size:20px; font-weight:600; margin-bottom:8px;"></div>
+        <div id="ticket-modal-meta" style="font-size:13px; color:var(--textSoft); margin-bottom:14px;"></div>
+        <div id="ticket-modal-comment" style="font-size:14px; line-height:1.6; white-space:pre-wrap;"></div>
       </div>
-    </div>
-
-    <div id="board"></div>
-
-    <div id="room-summaries"></div>
-
-    <div id="alunos-view" class="hidden" style="margin-bottom:22px;"></div>
-
-    <div id="profiles-table-wrap" style="overflow-x:auto; margin-bottom:22px;"></div>
-
-    <div id="stats-panel" class="panel">
-      <div id="stats-header">
-        <div id="stats-title" class="mono">Evolucao e estatisticas</div>
-        <div id="granularity-tabs">
-          <button class="gran-btn" data-gran="day">Dia</button>
-          <button class="gran-btn" data-gran="month">Mes</button>
-          <button class="gran-btn" data-gran="year">Ano</button>
-        </div>
-      </div>
-      <div class="chart-caption">Win rate por periodo</div>
-      <div class="chart-wrap"><canvas id="bar-chart"></canvas></div>
-      <div class="chart-caption">Evolucao acumulada (win +1, loss -1)</div>
-      <div class="chart-wrap"><canvas id="line-chart"></canvas></div>
-      <div id="multi-chart-block" class="hidden">
-        <div class="chart-caption" style="margin-top:18px;">Evolucao por trader</div>
-        <div class="chart-wrap"><canvas id="line-chart-multi"></canvas></div>
-      </div>
-      <div class="chart-caption" style="margin-top:18px;">Sentimento da equipa vs. resultado real</div>
-      <div id="sentiment-table" style="font-size:12px;"></div>
     </div>
   </div>
 
@@ -575,6 +617,8 @@ let activeRoom = "all";
 let filterResult = "all";
 let isAdmin = false;
 let adminPin = null;
+let adminRecoveryQuestion = "";
+let adminRecoveryAnswer = "";
 let accessPin = null;
 let editingId = null;
 let pendingImage = null;
@@ -629,7 +673,6 @@ function computeStats(list) {
 
 function getTraders() {
   const s = new Set(teamEntries().map(e => e.trader));
-  if (traderName && userRole !== "student") s.add(traderName);
   return Array.from(s).sort((a, b) => {
     if (a === traderName) return -1;
     if (b === traderName) return 1;
@@ -805,8 +848,14 @@ function startConnectivityWatch() {
 async function loadAdminPin() {
   try {
     const doc = await db.collection("meta").doc("admin").get();
-    if (doc.exists) adminPin = doc.data().pin;
+    if (doc.exists) {
+      const data = doc.data();
+      adminPin = data.pin;
+      adminRecoveryQuestion = data.recoveryQuestion || "";
+      adminRecoveryAnswer = data.recoveryAnswer || "";
+    }
   } catch (e) { console.error(e); }
+  renderAccessScreen();
 }
 
 function startAdminNamesListener() {
@@ -856,10 +905,13 @@ function chooseAccessMode(mode) {
   el("access-mode-team-btn").classList.toggle("active", mode === "team");
   el("access-mode-aluno-btn").classList.toggle("active", mode === "aluno");
   el("access-mode-admin-btn").classList.toggle("active", mode === "admin");
-  el("access-pin-group").classList.toggle("hidden", mode === "aluno");
+  el("access-pin-group").classList.toggle("hidden", mode !== "team");
+  el("access-admin-group").classList.toggle("hidden", mode !== "admin");
   el("access-aluno-group").classList.toggle("hidden", mode !== "aluno");
+  el("admin-recovery-box").classList.add("hidden");
   el("access-error").textContent = "";
   el("access-pin-input").value = "";
+  el("admin-pin-input").value = "";
   el("access-aluno-name").value = "";
   el("access-aluno-code").value = "";
   renderAccessScreen();
@@ -867,8 +919,10 @@ function chooseAccessMode(mode) {
 
 function renderAccessScreen() {
   if (accessMode === "admin") {
+    el("admin-setup-recovery").classList.toggle("hidden", adminPin !== null);
+    el("admin-forgot-link").classList.toggle("hidden", adminPin === null);
     el("access-hint").textContent = adminPin === null
-      ? "Ainda nao existe PIN de administrador. Cria um agora - fica guardado para sempre."
+      ? "Ainda nao existe PIN de administrador. Cria um agora, com uma pergunta de seguranca para o caso de o esqueceres."
       : "Introduz o PIN de administrador. Isto da-te acesso direto, sem passares pelo acesso da equipa.";
     el("access-submit").textContent = adminPin === null ? "Definir PIN e entrar" : "Entrar como admin";
   } else if (accessMode === "aluno") {
@@ -880,6 +934,44 @@ function renderAccessScreen() {
       : "Pede o PIN de acesso a quem gere o diario da equipa.";
     el("access-submit").textContent = accessPin === null ? "Definir PIN e entrar" : "Entrar";
   }
+}
+
+function toggleAdminRecovery() {
+  const box = el("admin-recovery-box");
+  const opening = box.classList.contains("hidden");
+  box.classList.toggle("hidden");
+  if (opening) {
+    el("admin-recovery-question-display").textContent = adminRecoveryQuestion
+      ? "Pergunta: " + adminRecoveryQuestion
+      : "Nao ha pergunta de seguranca guardada para este PIN.";
+    el("admin-recovery-answer-check").value = "";
+    el("admin-recovery-newpin").value = "";
+    el("access-error").textContent = "";
+  }
+}
+
+async function submitAdminRecovery() {
+  const answer = el("admin-recovery-answer-check").value.trim().toLowerCase();
+  const newPin = el("admin-recovery-newpin").value.trim();
+  if (!adminRecoveryAnswer) {
+    el("access-error").textContent = "Nao ha recuperacao configurada. Pede a outro administrador ou reinicia pelo Firestore.";
+    return;
+  }
+  if (answer !== adminRecoveryAnswer.toLowerCase()) {
+    el("access-error").textContent = "Resposta incorreta.";
+    return;
+  }
+  if (newPin.length < 4) {
+    el("access-error").textContent = "O novo PIN deve ter pelo menos 4 caracteres.";
+    return;
+  }
+  try {
+    await db.collection("meta").doc("admin").set({ pin: newPin }, { merge: true });
+    adminPin = newPin;
+  } catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
+  isAdmin = true;
+  el("access-screen").classList.add("hidden");
+  proceedAsTrader();
 }
 
 function proceedAsTrader() {
@@ -923,16 +1015,22 @@ async function submitAccessPin() {
     return;
   }
 
-  const pin = el("access-pin-input").value.trim();
-  if (pin.length < 4) {
-    el("access-error").textContent = "O PIN deve ter pelo menos 4 caracteres.";
-    return;
-  }
-
   if (accessMode === "admin") {
+    const pin = el("admin-pin-input").value.trim();
+    if (pin.length < 4) {
+      el("access-error").textContent = "O PIN deve ter pelo menos 4 caracteres.";
+      return;
+    }
     if (adminPin === null) {
-      try { await db.collection("meta").doc("admin").set({ pin }); adminPin = pin; }
-      catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
+      const q = el("admin-recovery-question-input").value.trim();
+      const a = el("admin-recovery-answer-input").value.trim();
+      if (!q || !a) { el("access-error").textContent = "Preenche a pergunta e a resposta de seguranca."; return; }
+      try {
+        await db.collection("meta").doc("admin").set({ pin, recoveryQuestion: q, recoveryAnswer: a.toLowerCase() });
+        adminPin = pin;
+        adminRecoveryQuestion = q;
+        adminRecoveryAnswer = a.toLowerCase();
+      } catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
     } else if (pin !== adminPin) {
       el("access-error").textContent = "PIN incorreto.";
       return;
@@ -945,12 +1043,18 @@ async function submitAccessPin() {
 
   if (accessPin === null) {
     try {
+      const pin = el("access-pin-input").value.trim();
+      if (pin.length < 4) { el("access-error").textContent = "O PIN deve ter pelo menos 4 caracteres."; return; }
       await db.collection("meta").doc("access").set({ pin });
       accessPin = pin;
     } catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
-  } else if (pin !== accessPin) {
-    el("access-error").textContent = "PIN incorreto.";
-    return;
+  } else {
+    const pin = el("access-pin-input").value.trim();
+    if (pin.length < 4) { el("access-error").textContent = "O PIN deve ter pelo menos 4 caracteres."; return; }
+    if (pin !== accessPin) {
+      el("access-error").textContent = "PIN incorreto.";
+      return;
+    }
   }
   el("access-screen").classList.add("hidden");
   proceedAsTrader();
@@ -1405,6 +1509,23 @@ function renderVotes() {
 }
 
 function renderManagePanel() {
+  const roomsWrap = el("team-rooms-list");
+  if (roomsWrap) {
+    const traders = getTraders();
+    if (traders.length === 0) {
+      roomsWrap.innerHTML = '<div style="font-size:12px; color:var(--textMuted);">Ainda sem salas.</div>';
+    } else {
+      roomsWrap.innerHTML = traders.map(t => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px solid var(--border); font-size:13px;">
+          <span>${escapeHtml(t)}${t === traderName ? " (tu)" : ""}</span>
+          <button class="team-room-delete-btn" data-name="${escapeHtml(t)}" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer;">apagar sala</button>
+        </div>`).join("");
+      roomsWrap.querySelectorAll(".team-room-delete-btn").forEach(btn => {
+        btn.onclick = () => window.__deleteProfile(btn.dataset.name);
+      });
+    }
+  }
+
   const namesWrap = el("admin-names-list");
   if (namesWrap) {
     if (adminNames.length === 0) {
@@ -1462,11 +1583,15 @@ function renderManagePanel() {
       approvedWrap.innerHTML = approved.map(s => `
         <div style="border-top:1px solid var(--border); padding:10px 0;">
           <div style="font-size:13px; font-weight:600; margin-bottom:6px;">${escapeHtml(s.name)}</div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
             <select class="input reassign-select" data-id="${s.id}" style="width:auto;">
               ${traderOptions.map(t => `<option value="${escapeHtml(t)}" ${t === s.mentor ? "selected" : ""}>${escapeHtml(t)}</option>`).join("")}
             </select>
             <button class="delete-student-btn" data-id="${s.id}" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer;">apagar aluno</button>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <input type="text" class="input new-code-input" data-id="${s.id}" placeholder="Codigo novo (min. 4 caracteres)" style="width:auto; flex:1; min-width:160px;" />
+            <button class="reset-code-btn" data-id="${s.id}" style="padding:6px 12px; font-size:11px;">Definir codigo novo</button>
           </div>
         </div>`).join("");
       approvedWrap.querySelectorAll(".reassign-select").forEach(sel => {
@@ -1474,6 +1599,12 @@ function renderManagePanel() {
       });
       approvedWrap.querySelectorAll(".delete-student-btn").forEach(btn => {
         btn.onclick = () => deleteStudent(btn.dataset.id);
+      });
+      approvedWrap.querySelectorAll(".reset-code-btn").forEach(btn => {
+        btn.onclick = () => {
+          const input = approvedWrap.querySelector('.new-code-input[data-id="' + btn.dataset.id + '"]');
+          resetStudentCode(btn.dataset.id, input ? input.value.trim() : "");
+        };
       });
     }
   }
@@ -1494,6 +1625,14 @@ async function rejectStudent(id) {
 async function reassignMentor(id, mentor) {
   try { await db.collection("students").doc(id).set({ mentor }, { merge: true }); }
   catch (e) { console.error(e); }
+}
+
+async function resetStudentCode(id, newCode) {
+  if (newCode.length < 4) { alert("O codigo deve ter pelo menos 4 caracteres."); return; }
+  try {
+    await db.collection("students").doc(id).set({ pin: newCode }, { merge: true });
+    alert("Codigo atualizado. Diz ao aluno o novo codigo para ele voltar a entrar.");
+  } catch (e) { console.error(e); }
 }
 
 async function deleteStudent(id) {
@@ -1534,8 +1673,9 @@ function renderProfilesTable() {
     const prof = profiles[slugify(t)];
     const list = entries.filter(e => e.trader === t);
     const s = computeStats(list);
-    cols += `<td style="padding:14px 16px; border:1px solid var(--border); background:var(--panel); border-radius:14px; min-width:170px; vertical-align:top;">
-      <div style="font-size:13px; font-weight:600; margin-bottom:6px;">${t}${t === traderName ? " (tu)" : ""}</div>
+    cols += `<td style="padding:14px 16px; border:1px solid var(--border); background:var(--panel); border-radius:14px; min-width:170px; vertical-align:top; position:relative;">
+      ${isAdmin ? `<button title="apagar perfil" onclick="window.__deleteProfile('${t.replace(/'/g, "\\'")}')" style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:999px; border:1px solid var(--border); background:var(--panelAlt); color:var(--loss); font-size:13px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>` : ""}
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px; padding-right:${isAdmin ? "24px" : "0"};">${t}${t === traderName ? " (tu)" : ""}</div>
       <div style="font-size:12px; color:var(--textSoft); line-height:1.5; margin-bottom:8px; min-height:36px;">${prof && prof.style ? escapeHtml(prof.style) : "sem perfil definido"}</div>
       <div class="mono" style="font-size:11px; color:var(--textMuted);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>
       <button class="btn" style="margin-top:8px; padding:6px 12px; font-size:11px;" onclick="window.__goRoom('${t.replace(/'/g, "\\'")}')">ver sala</button>
@@ -1545,6 +1685,24 @@ function renderProfilesTable() {
     <table style="border-collapse:separate; border-spacing:10px 0;"><tr>${cols}</tr></table>`;
 }
 window.__goRoom = function (t) { activeRoom = t; render(); };
+
+window.__deleteProfile = async function (t) {
+  if (!isAdmin) return;
+  const confirmed = confirm('Tens a certeza que queres apagar o perfil de "' + t + '"? Isto apaga TODOS os tickets e o perfil dele. Esta acao nao pode ser desfeita.');
+  if (!confirmed) return;
+  try {
+    const snap = await db.collection("entries").where("trader", "==", t).get();
+    const batch = db.batch();
+    snap.docs.forEach(d => batch.delete(d.ref));
+    await batch.commit();
+    await db.collection("profiles").doc(slugify(t)).delete().catch(() => {});
+    if (activeRoom === t) activeRoom = "all";
+    alert("Perfil apagado.");
+  } catch (e) {
+    console.error("Erro ao apagar perfil", e);
+    alert("Nao foi possivel apagar. Verifica a ligacao a internet.");
+  }
+};
 
 function renderSentimentTable() {
   const wrap = el("sentiment-table");
@@ -1618,6 +1776,24 @@ function renderNews() {
 }
 
 
+function openTicketModal(entry) {
+  const meta = RESULT_META[entry.result] || RESULT_META.be;
+  el("ticket-modal-img").src = entry.image;
+  el("ticket-modal-badge").textContent = meta.label;
+  el("ticket-modal-badge").style.color = meta.color;
+  el("ticket-modal-badge").style.background = meta.color + "1A";
+  el("ticket-modal-badge").style.border = `1px solid ${meta.color}55`;
+  el("ticket-modal-date").textContent = entry.date;
+  el("ticket-modal-asset").textContent = entry.asset || "sem ativo";
+  el("ticket-modal-meta").textContent = entry.trader + " · " + entry.numTrades + " trade" + (entry.numTrades === 1 ? "" : "s") + " · " + (entry.setupFollowed ? "seguiu o setup" : "fora do setup");
+  el("ticket-modal-comment").textContent = entry.comment || "";
+  el("ticket-modal").classList.remove("hidden");
+}
+
+function closeTicketModal() {
+  el("ticket-modal").classList.add("hidden");
+}
+
 function buildTicketCard(entry) {
   const meta = RESULT_META[entry.result] || RESULT_META.be;
   const card = document.createElement("div");
@@ -1636,8 +1812,11 @@ function buildTicketCard(entry) {
     <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
       ${entry.trader} · ${entry.numTrades} trade${entry.numTrades === 1 ? "" : "s"} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
     </div>
-    ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap; margin-bottom:${entry.image ? "10px" : "0"};">${escapeHtml(entry.comment)}</div>` : ""}
-    ${entry.image ? `<img src="${entry.image}" alt="foto da trade" />` : ""}
+    ${entry.comment && !entry.image ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
+    ${entry.image ? `<div class="ticket-img-wrap" style="position:relative; margin-bottom:10px; cursor:pointer;">
+      <img src="${entry.image}" alt="foto da trade" style="width:100%; max-height:170px; object-fit:cover; border-radius:12px; display:block; border:1px solid var(--border);" />
+      <span class="badge" style="position:absolute; top:8px; left:8px; color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55; backdrop-filter:blur(3px);">${meta.label}</span>
+    </div>` : ""}
     <div class="ticket-actions" style="display:${(canEdit || canDelete) ? "flex" : "none"}; gap:14px; margin-top:10px;">
       ${canEdit ? '<button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar ticket</button>' : ""}
       ${canDelete ? '<button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar ticket</button>' : ""}
@@ -1647,6 +1826,8 @@ function buildTicketCard(entry) {
   if (editBtn) editBtn.onclick = () => startEdit(entry);
   const delBtn = card.querySelector(".del-btn");
   if (delBtn) delBtn.onclick = () => deleteEntry(entry.id);
+  const imgWrap = card.querySelector(".ticket-img-wrap");
+  if (imgWrap) imgWrap.onclick = () => openTicketModal(entry);
   return card;
 }
 
@@ -1758,6 +1939,8 @@ el("access-submit").onclick = submitAccessPin;
 el("access-mode-team-btn").onclick = () => chooseAccessMode("team");
 el("access-mode-aluno-btn").onclick = () => chooseAccessMode("aluno");
 el("access-mode-admin-btn").onclick = () => chooseAccessMode("admin");
+el("admin-forgot-link").onclick = toggleAdminRecovery;
+el("admin-recovery-submit").onclick = submitAdminRecovery;
 el("access-pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAccessPin(); });
 
 el("name-submit").onclick = login;
@@ -1799,6 +1982,10 @@ el("admin-open-btn").onclick = openAdminModal;
 el("alunos-open-btn").onclick = () => { activeRoom = activeRoom === "alunos" ? "all" : "alunos"; render(); };
 el("manage-open-btn").onclick = () => el("manage-panel").classList.remove("hidden");
 el("manage-close-btn").onclick = () => el("manage-panel").classList.add("hidden");
+el("ticket-modal-close").onclick = closeTicketModal;
+el("ticket-modal").onclick = (e) => { if (e.target.id === "ticket-modal") closeTicketModal(); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeTicketModal(); });
+
 el("admin-name-add-btn").onclick = () => {
   const name = el("admin-name-input").value.trim();
   if (!name) return;
