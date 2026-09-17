@@ -1,6 +1,3 @@
-
-
-Diario trading · HTML
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -117,14 +114,14 @@ Diario trading · HTML
     box-shadow: var(--shadow);
   }
   .hidden { display: none !important; }
-  #access-screen, #login-screen {
+  #access-screen, #login-screen, #waiting-screen {
     min-height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
   }
-  #access-box, #login-box { max-width: 340px; width: 100%; }
+  #access-box, #login-box, #waiting-box { max-width: 340px; width: 100%; }
   .header-row {
     display: flex;
     justify-content: space-between;
@@ -262,7 +259,7 @@ Diario trading · HTML
 </head>
 <body>
 <div id="app">
- 
+
   <div id="access-screen">
     <div id="access-box" class="panel">
       <div class="eyebrow">Diario de trading</div>
@@ -273,19 +270,34 @@ Diario trading · HTML
       <div id="access-hint" style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;"></div>
     </div>
   </div>
- 
+
   <div id="login-screen" class="hidden">
     <div id="login-box" class="panel">
       <div class="eyebrow">Diario de trading</div>
-      <div style="font-size:20px; font-weight:600; margin-bottom:18px;">Como te chamas?</div>
+      <div style="font-size:20px; font-weight:600; margin-bottom:14px;">Como te chamas?</div>
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <button id="role-trader-btn" class="tab-btn active" style="flex:1;">Sou trader da equipa</button>
+        <button id="role-student-btn" class="tab-btn" style="flex:1;">Sou aluno</button>
+      </div>
       <input id="name-input" class="input" placeholder="O teu nome ou alcunha" />
       <button id="name-submit" class="btn btn-accent" style="width:100%; margin-top:14px;">Entrar no diario</button>
-      <div style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;">
+      <div id="login-hint" style="font-size:11px; color:var(--textMuted); margin-top:12px; line-height:1.5;">
         As tuas trades ficam visiveis para toda a equipa em tempo real. Este nome fica guardado neste dispositivo.
       </div>
     </div>
   </div>
- 
+
+  <div id="waiting-screen" class="hidden">
+    <div id="waiting-box" class="panel">
+      <div class="eyebrow">Diario de trading</div>
+      <div style="font-size:20px; font-weight:600; margin-bottom:10px;">Pedido enviado</div>
+      <div style="font-size:13px; color:var(--textSoft); line-height:1.6;">
+        O teu pedido de acesso como aluno foi enviado. Aguarda que um administrador te aceite e te atribua a um mentor.
+        Esta pagina atualiza sozinha assim que fores aceite.
+      </div>
+    </div>
+  </div>
+
   <div id="main-screen" class="hidden">
     <div class="header-row">
       <div>
@@ -297,11 +309,38 @@ Diario trading · HTML
         <button id="theme-toggle" class="icon-btn" title="Alternar modo claro/escuro">🌙</button>
         <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:999px; padding:6px 12px;">modo admin</span>
         <button id="admin-exit-btn" class="btn hidden">sair</button>
+        <button id="manage-open-btn" class="btn hidden">gerir equipa</button>
         <button id="admin-open-btn" class="btn">administrador</button>
         <button id="new-ticket-btn" class="btn btn-accent">+ Novo ticket</button>
       </div>
     </div>
- 
+
+    <div id="manage-panel" class="panel hidden">
+      <div style="font-size:14px; font-weight:600; margin-bottom:14px;">Gestao de administradores e alunos</div>
+
+      <div style="margin-bottom:20px;">
+        <div class="eyebrow" style="margin-bottom:6px;">Administradores por nome</div>
+        <div style="font-size:12px; color:var(--textSoft); margin-bottom:8px;">Estas pessoas ficam automaticamente em modo admin quando entram com o nome deles, sem precisarem do PIN.</div>
+        <div style="display:flex; gap:8px; margin-bottom:10px;">
+          <input id="admin-name-input" class="input" placeholder="Nome exato da pessoa" />
+          <button id="admin-name-add-btn" class="btn btn-accent" style="white-space:nowrap;">Adicionar</button>
+        </div>
+        <div id="admin-names-list"></div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div class="eyebrow" style="margin-bottom:6px;">Pedidos de alunos pendentes</div>
+        <div id="pending-students-list"></div>
+      </div>
+
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px;">Alunos aprovados</div>
+        <div id="approved-students-list"></div>
+      </div>
+
+      <button id="manage-close-btn" class="btn" style="margin-top:16px;">Fechar</button>
+    </div>
+
     <div id="admin-modal" class="panel hidden">
       <div id="admin-modal-title" style="font-size:14px; font-weight:600; margin-bottom:4px;"></div>
       <div id="admin-modal-desc" style="font-size:12px; color:var(--textSoft); margin-bottom:10px;"></div>
@@ -312,7 +351,7 @@ Diario trading · HTML
         <button id="admin-cancel-btn" class="btn">Cancelar</button>
       </div>
     </div>
- 
+
     <div id="pinned-panel" class="panel" style="margin-bottom:22px;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
         <div style="flex:1;">
@@ -329,7 +368,7 @@ Diario trading · HTML
         </div>
       </div>
     </div>
- 
+
     <div id="news-panel" class="panel" style="margin-bottom:22px;">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
         <div>
@@ -338,7 +377,7 @@ Diario trading · HTML
         </div>
         <button id="news-add-btn" class="btn btn-accent-outline btn">+ Noticia</button>
       </div>
- 
+
       <div id="vote-status" style="font-size:11px; color:var(--textMuted); margin-bottom:8px;"></div>
       <div id="vote-open-box">
         <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
@@ -358,7 +397,7 @@ Diario trading · HTML
         <div id="vote-verdict" style="font-size:16px; font-weight:600;"></div>
         <div id="vote-verdict-news" style="margin-top:10px;"></div>
       </div>
- 
+
       <div id="news-form" class="hidden" style="background:var(--panelAlt); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;">
         <label class="label">Titulo</label>
         <input id="news-title" class="input" placeholder="ex: CPI dos EUA as 14h30" />
@@ -382,12 +421,12 @@ Diario trading · HTML
           <button id="news-cancel" class="btn">Cancelar</button>
         </div>
       </div>
- 
+
       <div id="news-list"></div>
     </div>
- 
+
     <div id="tabs"></div>
- 
+
     <div id="profile-panel" class="panel hidden" style="margin-bottom:22px;">
       <div class="eyebrow" style="margin-bottom:4px;">Perfil do trader</div>
       <div id="profile-view">
@@ -402,13 +441,15 @@ Diario trading · HTML
         </div>
       </div>
     </div>
- 
+
     <div id="board"></div>
- 
+
     <div id="room-summaries"></div>
- 
+
+    <div id="alunos-view" class="hidden" style="margin-bottom:22px;"></div>
+
     <div id="profiles-table-wrap" style="overflow-x:auto; margin-bottom:22px;"></div>
- 
+
     <div id="stats-panel" class="panel">
       <div id="stats-header">
         <div id="stats-title" class="mono">Evolucao e estatisticas</div>
@@ -429,7 +470,7 @@ Diario trading · HTML
       <div class="chart-caption" style="margin-top:18px;">Sentimento da equipa vs. resultado real</div>
       <div id="sentiment-table" style="font-size:12px;"></div>
     </div>
- 
+
     <div id="form-panel" class="panel hidden">
       <div id="form-title" style="font-size:13px; font-weight:600; margin-bottom:12px;">Novo ticket</div>
       <div class="form-grid">
@@ -470,7 +511,7 @@ Diario trading · HTML
       </div>
       <button id="form-submit" class="btn btn-accent" style="margin-top:16px;">Guardar ticket</button>
     </div>
- 
+
     <div id="filter-row">
       <div id="filter-title" style="font-size:13px; color:var(--textSoft);">Todos os tickets da equipa</div>
       <select id="f-filter-result" class="input" style="width:auto;">
@@ -480,13 +521,13 @@ Diario trading · HTML
         <option value="be">Breakeven</option>
       </select>
     </div>
- 
+
     <div id="empty-state" class="hidden">Ainda sem tickets. Regista a primeira trade do dia.</div>
     <div id="entries-grid"></div>
   </div>
- 
+
 </div>
- 
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -501,14 +542,18 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
- 
+
 const RESULT_META = {
   win: { label: "WIN", color: "#1B8F55" },
   loss: { label: "LOSS", color: "#C4433C" },
   be: { label: "B/E", color: "#9C927A" }
 };
- 
+
 let traderName = localStorage.getItem("tj-trader-name") || null;
+let userRole = localStorage.getItem("tj-role") || "trader";
+let studentMentor = null;
+let adminNames = [];
+let allStudents = [];
 let entries = [];
 let activeRoom = "all";
 let filterResult = "all";
@@ -526,10 +571,10 @@ let pinnedNote = "";
 let profiles = {};
 let allVotesByDate = {};
 const VOTE_CUTOFF_HOUR = 9;
- 
+
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 function el(id) { return document.getElementById(id); }
- 
+
 function compressImage(file, maxWidth = 760, quality = 0.62) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -552,7 +597,7 @@ function compressImage(file, maxWidth = 760, quality = 0.62) {
     reader.readAsDataURL(file);
   });
 }
- 
+
 function computeStats(list) {
   const total = list.length;
   const wins = list.filter(e => e.result === "win").length;
@@ -565,17 +610,21 @@ function computeStats(list) {
     totalTrades
   };
 }
- 
+
 function getTraders() {
-  const s = new Set(entries.map(e => e.trader));
-  if (traderName) s.add(traderName);
+  const s = new Set(teamEntries().map(e => e.trader));
+  if (traderName && userRole !== "student") s.add(traderName);
   return Array.from(s).sort((a, b) => {
     if (a === traderName) return -1;
     if (b === traderName) return 1;
     return a.localeCompare(b);
   });
 }
- 
+
+function teamEntries() {
+  return entries.filter(e => !e.isStudent);
+}
+
 // ---- Theme ----
 function initTheme() {
   const saved = localStorage.getItem("tj-theme") || "light";
@@ -590,7 +639,7 @@ function toggleTheme() {
   el("theme-toggle").textContent = next === "dark" ? "☀" : "🌙";
   renderCharts();
 }
- 
+
 // ---- Firestore listeners ----
 function startEntriesListener() {
   db.collection("entries").orderBy("createdAt", "desc").onSnapshot((snap) => {
@@ -598,18 +647,18 @@ function startEntriesListener() {
     render();
   }, (err) => console.error("Erro a ouvir entradas", err));
 }
- 
+
 function slugify(str) {
   return (str || "anon").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "anon";
 }
- 
+
 function startNewsListener() {
   db.collection("news").orderBy("createdAt", "desc").limit(30).onSnapshot((snap) => {
     newsItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderNews();
   }, (err) => console.error("Erro a ouvir noticias", err));
 }
- 
+
 function startVotesListener() {
   const dateDoc = db.collection("votes").doc(todayISO()).collection("voters");
   dateDoc.onSnapshot((snap) => {
@@ -618,7 +667,7 @@ function startVotesListener() {
     renderVotes();
   }, (err) => console.error("Erro a ouvir votos", err));
 }
- 
+
 async function castVote(choice) {
   if (!traderName) return;
   if (!isVotingOpen()) return;
@@ -629,18 +678,26 @@ async function castVote(choice) {
     });
   } catch (e) { console.error("Erro ao votar", e); }
 }
- 
+
 function isVotingOpen() {
   return new Date().getHours() < VOTE_CUTOFF_HOUR;
 }
- 
+
+function startStudentsListener() {
+  db.collection("students").onSnapshot((snap) => {
+    allStudents = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderManagePanel();
+    if (activeRoom === "alunos") renderAlunosView();
+  }, (err) => console.error("Erro a ouvir alunos", err));
+}
+
 function startPinnedNoteListener() {
   db.collection("meta").doc("pinned-note").onSnapshot((doc) => {
     pinnedNote = doc.exists ? (doc.data().text || "") : "";
     renderPinnedNote();
   }, (err) => console.error("Erro a ouvir nota fixada", err));
 }
- 
+
 async function savePinnedNote() {
   const text = el("pinned-input").value.trim();
   try {
@@ -648,7 +705,7 @@ async function savePinnedNote() {
     el("pinned-edit-box").classList.add("hidden");
   } catch (e) { console.error(e); }
 }
- 
+
 function startProfilesListener() {
   db.collection("profiles").onSnapshot((snap) => {
     profiles = {};
@@ -656,7 +713,7 @@ function startProfilesListener() {
     renderProfilePanel();
   }, (err) => console.error("Erro a ouvir perfis", err));
 }
- 
+
 async function saveProfile() {
   const text = el("profile-input").value.trim();
   try {
@@ -664,7 +721,7 @@ async function saveProfile() {
     el("profile-edit-box").classList.add("hidden");
   } catch (e) { console.error(e); }
 }
- 
+
 function startAllVotesListener() {
   db.collectionGroup("voters").onSnapshot((snap) => {
     allVotesByDate = {};
@@ -679,7 +736,7 @@ function startAllVotesListener() {
     renderCharts();
   }, (err) => console.error("Erro a ouvir historico de votos", err));
 }
- 
+
 async function submitNews() {
   if (!traderName) return;
   const title = el("news-title").value.trim();
@@ -707,7 +764,7 @@ async function submitNews() {
   }
   btn.disabled = false;
 }
- 
+
 async function deleteNews(id, author) {
   if (!(isAdmin || author === traderName)) {
     alert("So podes apagar as tuas proprias noticias.");
@@ -717,7 +774,7 @@ async function deleteNews(id, author) {
   try { await db.collection("news").doc(id).delete(); }
   catch (e) { console.error(e); }
 }
- 
+
 function startConnectivityWatch() {
   function update() {
     const s = el("sync-status");
@@ -728,14 +785,46 @@ function startConnectivityWatch() {
   window.addEventListener("offline", update);
   update();
 }
- 
+
 async function loadAdminPin() {
   try {
     const doc = await db.collection("meta").doc("admin").get();
     if (doc.exists) adminPin = doc.data().pin;
   } catch (e) { console.error(e); }
 }
- 
+
+function startAdminNamesListener() {
+  db.collection("meta").doc("admins").onSnapshot((doc) => {
+    adminNames = doc.exists ? (doc.data().names || []) : [];
+    checkNameAdmin();
+    renderManagePanel();
+    if (el("main-screen") && !el("main-screen").classList.contains("hidden")) render();
+  }, (err) => console.error("Erro a ouvir administradores", err));
+}
+
+function checkNameAdmin() {
+  if (!traderName || userRole === "student") return;
+  if (adminNames.some(n => slugify(n) === slugify(traderName))) {
+    isAdmin = true;
+  }
+}
+
+async function addAdminName(name) {
+  try {
+    await db.collection("meta").doc("admins").set({
+      names: firebase.firestore.FieldValue.arrayUnion(name)
+    }, { merge: true });
+  } catch (e) { console.error(e); }
+}
+
+async function removeAdminName(name) {
+  try {
+    await db.collection("meta").doc("admins").set({
+      names: firebase.firestore.FieldValue.arrayRemove(name)
+    }, { merge: true });
+  } catch (e) { console.error(e); }
+}
+
 async function loadAccessPin() {
   try {
     const doc = await db.collection("meta").doc("access").get();
@@ -743,14 +832,14 @@ async function loadAccessPin() {
   } catch (e) { console.error(e); }
   renderAccessScreen();
 }
- 
+
 function renderAccessScreen() {
   el("access-hint").textContent = accessPin === null
     ? "Ninguem definiu ainda um PIN de acesso para a equipa. Cria um agora - vai ser pedido a todos a partir daqui."
     : "Pede o PIN de acesso a quem gere o diario da equipa.";
   el("access-submit").textContent = accessPin === null ? "Definir PIN e entrar" : "Entrar";
 }
- 
+
 async function submitAccessPin() {
   const pin = el("access-pin-input").value.trim();
   if (pin.length < 4) {
@@ -767,18 +856,89 @@ async function submitAccessPin() {
     return;
   }
   el("access-screen").classList.add("hidden");
-  if (traderName) { showMain(); } else { el("login-screen").classList.remove("hidden"); }
+  routeAfterAccess();
 }
- 
+
+function routeAfterAccess() {
+  const savedRole = localStorage.getItem("tj-role") || "trader";
+  userRole = savedRole;
+  if (traderName && savedRole === "student") {
+    startStudentDocListener();
+  } else if (traderName) {
+    checkNameAdmin();
+    showMain();
+  } else {
+    el("login-screen").classList.remove("hidden");
+  }
+}
+
 // ---- Actions ----
+let pendingRoleChoice = "trader";
+
+function chooseRole(role) {
+  pendingRoleChoice = role;
+  el("role-trader-btn").classList.toggle("active", role === "trader");
+  el("role-student-btn").classList.toggle("active", role === "student");
+  el("name-submit").textContent = role === "student" ? "Pedir acesso como aluno" : "Entrar no diario";
+  el("login-hint").textContent = role === "student"
+    ? "O teu pedido vai ser enviado a um administrador, que te atribui a um mentor antes de teres acesso."
+    : "As tuas trades ficam visiveis para toda a equipa em tempo real. Este nome fica guardado neste dispositivo.";
+}
+
 function login() {
   const n = el("name-input").value.trim();
   if (!n) return;
+  if (pendingRoleChoice === "student") {
+    requestStudentAccess(n);
+    return;
+  }
   traderName = n;
+  userRole = "trader";
   localStorage.setItem("tj-trader-name", n);
+  localStorage.setItem("tj-role", "trader");
+  checkNameAdmin();
   showMain();
 }
- 
+
+async function requestStudentAccess(name) {
+  traderName = name;
+  userRole = "student";
+  localStorage.setItem("tj-trader-name", name);
+  localStorage.setItem("tj-role", "student");
+  const ref = db.collection("students").doc(slugify(name));
+  try {
+    const snap = await ref.get();
+    if (!snap.exists) {
+      await ref.set({ name, mentor: null, status: "pending", requestedAt: Date.now() });
+    }
+  } catch (e) { console.error("Erro ao pedir acesso", e); }
+  el("login-screen").classList.add("hidden");
+  startStudentDocListener();
+}
+
+function startStudentDocListener() {
+  const ref = db.collection("students").doc(slugify(traderName));
+  ref.onSnapshot((doc) => {
+    if (!doc.exists) {
+      el("waiting-screen").classList.add("hidden");
+      el("main-screen").classList.add("hidden");
+      el("login-screen").classList.remove("hidden");
+      localStorage.removeItem("tj-role");
+      return;
+    }
+    const data = doc.data();
+    studentMentor = data.mentor || null;
+    if (data.status === "approved") {
+      el("waiting-screen").classList.add("hidden");
+      showMain();
+    } else {
+      el("login-screen").classList.add("hidden");
+      el("main-screen").classList.add("hidden");
+      el("waiting-screen").classList.remove("hidden");
+    }
+  }, (err) => console.error("Erro a ouvir estado do aluno", err));
+}
+
 function resetForm() {
   el("form-panel").classList.add("hidden");
   editingId = null;
@@ -794,7 +954,7 @@ function resetForm() {
   el("form-title").textContent = "Novo ticket";
   el("form-submit").textContent = "Guardar ticket";
 }
- 
+
 function startEdit(entry) {
   el("form-panel").classList.remove("hidden");
   editingId = entry.id;
@@ -811,11 +971,11 @@ function startEdit(entry) {
   el("form-submit").textContent = "Guardar alteracoes";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
- 
+
 function canModify(entry) {
   return isAdmin || entry.trader === traderName;
 }
- 
+
 async function submitEntry() {
   if (!traderName) return;
   const btn = el("form-submit");
@@ -836,7 +996,10 @@ async function submitEntry() {
     setupFollowed: el("f-setup").checked,
     comment: el("f-comment").value.trim(),
     image: pendingImage,
-    createdAt: original ? original.createdAt : Date.now()
+    createdAt: original ? original.createdAt : Date.now(),
+    isStudent: original ? !!original.isStudent : (userRole === "student"),
+    studentId: original ? (original.studentId || null) : (userRole === "student" ? slugify(traderName) : null),
+    mentor: original ? (original.mentor || null) : (userRole === "student" ? studentMentor : null)
   };
   try {
     if (editingId) {
@@ -851,7 +1014,7 @@ async function submitEntry() {
   }
   btn.disabled = false;
 }
- 
+
 async function deleteEntry(id) {
   const entry = entries.find(e => e.id === id);
   if (entry && !canModify(entry)) {
@@ -862,7 +1025,7 @@ async function deleteEntry(id) {
   try { await db.collection("entries").doc(id).delete(); }
   catch (e) { console.error("Erro ao apagar", e); }
 }
- 
+
 function openAdminModal() {
   el("admin-modal").classList.remove("hidden");
   el("pin-input").value = "";
@@ -872,7 +1035,7 @@ function openAdminModal() {
     ? "Este PIN fica guardado para toda a equipa. So quem o souber tem acesso de administrador."
     : "O administrador pode editar ou apagar tickets de qualquer pessoa.";
 }
- 
+
 async function submitPin() {
   const pin = el("pin-input").value.trim();
   if (pin.length < 4) { el("pin-error").textContent = "O PIN deve ter pelo menos 4 caracteres."; return; }
@@ -884,16 +1047,34 @@ async function submitPin() {
   if (pin === adminPin) { isAdmin = true; el("admin-modal").classList.add("hidden"); render(); }
   else { el("pin-error").textContent = "PIN incorreto."; }
 }
- 
+
 // ---- Rendering ----
+const STUDENT_HIDDEN_IDS = ["pinned-panel", "news-panel", "tabs", "board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row"];
+
+function applyStudentUI() {
+  STUDENT_HIDDEN_IDS.forEach(id => { const e = el(id); if (e) e.classList.add("hidden"); });
+  el("manage-open-btn").classList.add("hidden");
+  el("admin-open-btn").classList.add("hidden");
+}
+
+function applyTraderUI() {
+  STUDENT_HIDDEN_IDS.forEach(id => { const e = el(id); if (e) e.classList.remove("hidden"); });
+}
+
 function showMain() {
   el("login-screen").classList.add("hidden");
+  el("waiting-screen").classList.add("hidden");
   el("main-screen").classList.remove("hidden");
-  el("who").textContent = traderName;
+  el("who").textContent = traderName + (userRole === "student" ? " (aluno)" : "");
+  if (userRole === "student") { applyStudentUI(); } else { applyTraderUI(); }
   render();
 }
- 
+
 function render() {
+  if (userRole === "student") {
+    renderList();
+    return;
+  }
   renderTabs();
   renderBoard();
   renderRoomSummaries();
@@ -902,12 +1083,15 @@ function render() {
   renderList();
   renderCharts();
   renderPinnedNote();
+  renderManagePanel();
   el("admin-badge").classList.toggle("hidden", !isAdmin);
   el("admin-exit-btn").classList.toggle("hidden", !isAdmin);
   el("admin-open-btn").classList.toggle("hidden", isAdmin);
+  el("manage-open-btn").classList.toggle("hidden", !isAdmin);
 }
- 
+
 function renderTabs() {
+  if (userRole === "student") return;
   const traders = getTraders();
   const wrap = el("tabs");
   wrap.innerHTML = "";
@@ -923,13 +1107,26 @@ function renderTabs() {
     b.onclick = () => { activeRoom = t; render(); };
     wrap.appendChild(b);
   });
+  const alunosBtn = document.createElement("button");
+  alunosBtn.className = "tab-btn" + (activeRoom === "alunos" ? " active" : "");
+  alunosBtn.textContent = "Alunos";
+  alunosBtn.onclick = () => { activeRoom = "alunos"; render(); };
+  wrap.appendChild(alunosBtn);
+
+  const isAlunos = activeRoom === "alunos";
+  ["board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "entries-grid", "empty-state"].forEach(id => {
+    const node = el(id);
+    if (node) node.classList.toggle("hidden", isAlunos);
+  });
+  el("alunos-view").classList.toggle("hidden", !isAlunos);
+  if (isAlunos) renderAlunosView();
 }
- 
+
 function getRoomEntries() {
-  if (activeRoom === "all") return entries;
-  return entries.filter(e => e.trader === activeRoom);
+  if (activeRoom === "all" || activeRoom === "alunos") return teamEntries();
+  return teamEntries().filter(e => e.trader === activeRoom);
 }
- 
+
 function renderBoard() {
   const stats = computeStats(getRoomEntries());
   const wrap = el("board");
@@ -947,7 +1144,7 @@ function renderBoard() {
     wrap.appendChild(d);
   });
 }
- 
+
 function renderRoomSummaries() {
   const wrap = el("room-summaries");
   wrap.innerHTML = "";
@@ -963,22 +1160,22 @@ function renderRoomSummaries() {
     wrap.appendChild(card);
   });
 }
- 
+
 function periodKey(dateStr, gran) {
   if (!dateStr) return "sem-data";
   if (gran === "day") return dateStr;
   if (gran === "month") return dateStr.slice(0, 7);
   return dateStr.slice(0, 4);
 }
- 
+
 function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
- 
+
 function renderCharts() {
   renderSentimentTable();
   const list = getRoomEntries();
- 
+
   // Bar chart: win rate per period
   const buckets = {};
   list.forEach(e => {
@@ -990,12 +1187,12 @@ function renderCharts() {
   const barLabels = keys;
   const barData = keys.map(k => computeStats(buckets[k]).winRate);
   const barCounts = keys.map(k => buckets[k].length);
- 
+
   const accent = cssVar("--accent") || "#B8912B";
   const win = cssVar("--win") || "#1B8F55";
   const textMuted = cssVar("--textMuted") || "#A0947A";
   const border = cssVar("--border") || "#E8E0CB";
- 
+
   const barCtx = el("bar-chart").getContext("2d");
   if (barChartInstance) barChartInstance.destroy();
   barChartInstance = new Chart(barCtx, {
@@ -1027,7 +1224,7 @@ function renderCharts() {
       }
     }
   });
- 
+
   // Line chart: cumulative evolution
   const sorted = [...list].sort((a, b) => {
     const da = a.date || "";
@@ -1043,7 +1240,7 @@ function renderCharts() {
     lineLabels.push(e.date || ("#" + (i + 1)));
     lineData.push(running);
   });
- 
+
   const lineCtx = el("line-chart").getContext("2d");
   if (lineChartInstance) lineChartInstance.destroy();
   lineChartInstance = new Chart(lineCtx, {
@@ -1070,7 +1267,7 @@ function renderCharts() {
       }
     }
   });
- 
+
   // Multi-line chart: evolution per trader (only in "all" view)
   const multiBlock = el("multi-chart-block");
   if (activeRoom === "all") {
@@ -1113,7 +1310,7 @@ function renderCharts() {
     multiBlock.classList.add("hidden");
   }
 }
- 
+
 function renderVotes() {
   const entries2 = Object.values(todayVotes);
   const yes = entries2.filter(v => v.choice === "yes").length;
@@ -1128,7 +1325,7 @@ function renderVotes() {
   el("vote-yes-btn").style.color = mine && mine.choice === "yes" ? "#FFFFFF" : "var(--win)";
   el("vote-no-btn").style.background = mine && mine.choice === "no" ? "var(--loss)" : "var(--panel)";
   el("vote-no-btn").style.color = mine && mine.choice === "no" ? "#FFFFFF" : "var(--loss)";
- 
+
   const open = isVotingOpen();
   el("vote-open-box").classList.toggle("hidden", !open);
   el("vote-closed-box").classList.toggle("hidden", open);
@@ -1156,13 +1353,116 @@ function renderVotes() {
     }
   }
 }
- 
+
+function renderManagePanel() {
+  const namesWrap = el("admin-names-list");
+  if (namesWrap) {
+    if (adminNames.length === 0) {
+      namesWrap.innerHTML = '<div style="font-size:12px; color:var(--textMuted);">Nenhum administrador por nome ainda.</div>';
+    } else {
+      namesWrap.innerHTML = adminNames.map(n => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px solid var(--border); font-size:13px;">
+          <span>${escapeHtml(n)}</span>
+          <button class="admin-remove-btn" data-name="${escapeHtml(n)}" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer;">remover</button>
+        </div>`).join("");
+      namesWrap.querySelectorAll(".admin-remove-btn").forEach(btn => {
+        btn.onclick = () => removeAdminName(btn.dataset.name);
+      });
+    }
+  }
+
+  const pendingWrap = el("pending-students-list");
+  if (pendingWrap) {
+    const pending = allStudents.filter(s => s.status === "pending");
+    if (pending.length === 0) {
+      pendingWrap.innerHTML = '<div style="font-size:12px; color:var(--textMuted);">Sem pedidos pendentes.</div>';
+    } else {
+      const traderOptions = getTraders().map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+      pendingWrap.innerHTML = pending.map(s => `
+        <div style="border-top:1px solid var(--border); padding:10px 0;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:6px;">${escapeHtml(s.name)}</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <select class="input mentor-select" data-id="${s.id}" style="width:auto;">
+              <option value="">Escolher mentor</option>
+              ${traderOptions}
+            </select>
+            <button class="approve-btn btn btn-accent" data-id="${s.id}" style="padding:6px 12px; font-size:11px;">Aprovar</button>
+            <button class="reject-btn" data-id="${s.id}" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer;">rejeitar</button>
+          </div>
+        </div>`).join("");
+      pendingWrap.querySelectorAll(".approve-btn").forEach(btn => {
+        btn.onclick = () => {
+          const select = pendingWrap.querySelector('.mentor-select[data-id="' + btn.dataset.id + '"]');
+          approveStudent(btn.dataset.id, select ? select.value : "");
+        };
+      });
+      pendingWrap.querySelectorAll(".reject-btn").forEach(btn => {
+        btn.onclick = () => rejectStudent(btn.dataset.id);
+      });
+    }
+  }
+
+  const approvedWrap = el("approved-students-list");
+  if (approvedWrap) {
+    const approved = allStudents.filter(s => s.status === "approved");
+    if (approved.length === 0) {
+      approvedWrap.innerHTML = '<div style="font-size:12px; color:var(--textMuted);">Sem alunos aprovados ainda.</div>';
+    } else {
+      const traderOptions = getTraders();
+      approvedWrap.innerHTML = approved.map(s => `
+        <div style="border-top:1px solid var(--border); padding:10px 0;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:6px;">${escapeHtml(s.name)}</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <select class="input reassign-select" data-id="${s.id}" style="width:auto;">
+              ${traderOptions.map(t => `<option value="${escapeHtml(t)}" ${t === s.mentor ? "selected" : ""}>${escapeHtml(t)}</option>`).join("")}
+            </select>
+            <button class="delete-student-btn" data-id="${s.id}" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer;">apagar aluno</button>
+          </div>
+        </div>`).join("");
+      approvedWrap.querySelectorAll(".reassign-select").forEach(sel => {
+        sel.onchange = () => reassignMentor(sel.dataset.id, sel.value);
+      });
+      approvedWrap.querySelectorAll(".delete-student-btn").forEach(btn => {
+        btn.onclick = () => deleteStudent(btn.dataset.id);
+      });
+    }
+  }
+}
+
+async function approveStudent(id, mentor) {
+  if (!mentor) { alert("Escolhe um mentor antes de aprovar."); return; }
+  try { await db.collection("students").doc(id).set({ status: "approved", mentor, approvedAt: Date.now() }, { merge: true }); }
+  catch (e) { console.error(e); }
+}
+
+async function rejectStudent(id) {
+  if (!confirm("Rejeitar este pedido?")) return;
+  try { await db.collection("students").doc(id).delete(); }
+  catch (e) { console.error(e); }
+}
+
+async function reassignMentor(id, mentor) {
+  try { await db.collection("students").doc(id).set({ mentor }, { merge: true }); }
+  catch (e) { console.error(e); }
+}
+
+async function deleteStudent(id) {
+  if (!confirm("Apagar este aluno? Isto remove tambem os tickets dele.")) return;
+  try {
+    await db.collection("students").doc(id).delete();
+    const snap = await db.collection("entries").where("studentId", "==", id).get();
+    const batch = db.batch();
+    snap.docs.forEach(d => batch.delete(d.ref));
+    await batch.commit();
+  } catch (e) { console.error(e); }
+}
+
 function renderPinnedNote() {
   el("pinned-text").textContent = pinnedNote || "Sem notas fixadas de momento.";
   el("pinned-edit-btn").classList.toggle("hidden", !isAdmin);
   el("pinned-input").value = pinnedNote;
 }
- 
+
 function renderProfilePanel() {
   const panel = el("profile-panel");
   if (activeRoom === "all" || !activeRoom) { panel.classList.add("hidden"); return; }
@@ -1173,7 +1473,7 @@ function renderProfilePanel() {
   el("profile-edit-btn").classList.toggle("hidden", !isSelf);
   el("profile-input").value = (prof && prof.style) || "";
 }
- 
+
 function renderProfilesTable() {
   const wrap = el("profiles-table-wrap");
   if (!wrap) return;
@@ -1195,7 +1495,7 @@ function renderProfilesTable() {
     <table style="border-collapse:separate; border-spacing:10px 0;"><tr>${cols}</tr></table>`;
 }
 window.__goRoom = function (t) { activeRoom = t; render(); };
- 
+
 function renderSentimentTable() {
   const wrap = el("sentiment-table");
   if (!wrap) return;
@@ -1234,13 +1534,13 @@ function renderSentimentTable() {
     <tbody>${rows}</tbody>
   </table>`;
 }
- 
+
 const IMPACT_META = {
   baixo: { label: "Baixo impacto", color: "var(--be)" },
   medio: { label: "Medio impacto", color: "var(--accent)" },
   alto: { label: "Alto impacto", color: "var(--loss)" }
 };
- 
+
 function renderNews() {
   const wrap = el("news-list");
   wrap.innerHTML = "";
@@ -1266,67 +1566,129 @@ function renderNews() {
     wrap.appendChild(row);
   });
 }
- 
- 
+
+
+function buildTicketCard(entry) {
+  const meta = RESULT_META[entry.result] || RESULT_META.be;
+  const card = document.createElement("div");
+  card.className = "ticket";
+  card.style.borderLeft = `3px solid ${meta.color}`;
+  const canEdit = canModify(entry);
+  const canDelete = canEdit && userRole !== "student";
+  card.innerHTML = `
+    <div class="ticket-top">
+      <div>
+        <div class="mono" style="font-size:12px; color:var(--textMuted);">${entry.date}</div>
+        <div style="font-size:16px; font-weight:600;">${entry.asset || "sem ativo"}</div>
+      </div>
+      <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
+    </div>
+    <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
+      ${entry.trader} · ${entry.numTrades} trade${entry.numTrades === 1 ? "" : "s"} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
+    </div>
+    ${entry.image ? `<img src="${entry.image}" alt="foto da trade" />` : ""}
+    ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
+    <div class="ticket-actions" style="display:${(canEdit || canDelete) ? "flex" : "none"}; gap:14px; margin-top:10px;">
+      ${canEdit ? '<button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar ticket</button>' : ""}
+      ${canDelete ? '<button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar ticket</button>' : ""}
+    </div>
+  `;
+  const editBtn = card.querySelector(".edit-btn");
+  if (editBtn) editBtn.onclick = () => startEdit(entry);
+  const delBtn = card.querySelector(".del-btn");
+  if (delBtn) delBtn.onclick = () => deleteEntry(entry.id);
+  return card;
+}
+
 function renderList() {
-  const list = getRoomEntries().filter(e => filterResult === "all" || e.result === filterResult);
-  el("filter-title").textContent = activeRoom === "all" ? "Todos os tickets da equipa" : "Tickets de " + activeRoom;
+  let list;
+  if (userRole === "student") {
+    list = entries.filter(e => e.isStudent && e.studentId === slugify(traderName));
+    el("filter-title").textContent = "Os teus tickets";
+  } else {
+    list = getRoomEntries().filter(e => filterResult === "all" || e.result === filterResult);
+    el("filter-title").textContent = activeRoom === "all" ? "Todos os tickets da equipa" : "Tickets de " + activeRoom;
+  }
   const grid = el("entries-grid");
   grid.innerHTML = "";
   el("empty-state").classList.toggle("hidden", list.length > 0);
-  list.forEach(entry => {
-    const meta = RESULT_META[entry.result] || RESULT_META.be;
-    const card = document.createElement("div");
-    card.className = "ticket";
-    card.style.borderLeft = `3px solid ${meta.color}`;
-    const allowed = canModify(entry);
-    card.innerHTML = `
-      <div class="ticket-top">
-        <div>
-          <div class="mono" style="font-size:12px; color:var(--textMuted);">${entry.date}</div>
-          <div style="font-size:16px; font-weight:600;">${entry.asset || "sem ativo"}</div>
-        </div>
-        <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
-      </div>
-      <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
-        ${entry.trader} · ${entry.numTrades} trade${entry.numTrades === 1 ? "" : "s"} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
-      </div>
-      ${entry.image ? `<img src="${entry.image}" alt="foto da trade" />` : ""}
-      ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
-      <div class="ticket-actions" style="display:${allowed ? "flex" : "none"}; gap:14px; margin-top:10px;">
-        <button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar ticket</button>
-        <button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar ticket</button>
-      </div>
-    `;
-    card.querySelector(".edit-btn").onclick = () => startEdit(entry);
-    card.querySelector(".del-btn").onclick = () => deleteEntry(entry.id);
-    grid.appendChild(card);
+  list.forEach(entry => grid.appendChild(buildTicketCard(entry)));
+}
+
+function renderAlunosView() {
+  const wrap = el("alunos-view");
+  const approved = allStudents.filter(s => s.status === "approved");
+  if (approved.length === 0) {
+    wrap.innerHTML = '<div class="panel" style="color:var(--textMuted); font-size:13px;">Ainda sem alunos aprovados.</div>';
+    return;
+  }
+  const byMentor = {};
+  approved.forEach(s => {
+    const m = s.mentor || "sem mentor atribuido";
+    if (!byMentor[m]) byMentor[m] = [];
+    byMentor[m].push(s);
+  });
+  wrap.innerHTML = "";
+  Object.keys(byMentor).sort().forEach(mentor => {
+    const block = document.createElement("div");
+    block.className = "panel";
+    block.style.marginBottom = "16px";
+    const heading = document.createElement("div");
+    heading.className = "eyebrow";
+    heading.style.marginBottom = "10px";
+    heading.textContent = "Alunos de " + mentor;
+    block.appendChild(heading);
+    byMentor[mentor].forEach(s => {
+      const studentTickets = entries.filter(e => e.isStudent && e.studentId === s.id);
+      const stats = computeStats(studentTickets);
+      const row = document.createElement("div");
+      row.style.cssText = "border-top:1px solid var(--border); padding:12px 0;";
+      row.innerHTML = `
+        <div style="font-size:13px; font-weight:600; margin-bottom:4px;">${escapeHtml(s.name)}</div>
+        <div class="mono" style="font-size:11px; color:var(--textMuted); margin-bottom:8px;">${stats.total} ticket(s) · ${stats.winRate}% win</div>
+      `;
+      if (studentTickets.length === 0) {
+        const empty = document.createElement("div");
+        empty.style.cssText = "font-size:12px; color:var(--textMuted);";
+        empty.textContent = "Sem tickets ainda.";
+        row.appendChild(empty);
+      } else {
+        const cardsWrap = document.createElement("div");
+        cardsWrap.style.cssText = "display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));";
+        studentTickets.forEach(entry => cardsWrap.appendChild(buildTicketCard(entry)));
+        row.appendChild(cardsWrap);
+      }
+      block.appendChild(row);
+    });
+    wrap.appendChild(block);
   });
 }
- 
+
 function escapeHtml(str) {
   const d = document.createElement("div");
   d.textContent = str;
   return d.innerHTML;
 }
- 
+
 // ---- Wire up events ----
 el("access-submit").onclick = submitAccessPin;
 el("access-pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAccessPin(); });
- 
+
 el("name-submit").onclick = login;
 el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
- 
+el("role-trader-btn").onclick = () => chooseRole("trader");
+el("role-student-btn").onclick = () => chooseRole("student");
+
 el("theme-toggle").onclick = toggleTheme;
- 
+
 el("new-ticket-btn").onclick = () => {
   const panel = el("form-panel");
   if (panel.classList.contains("hidden")) { resetForm(); panel.classList.remove("hidden"); }
   else { resetForm(); }
 };
- 
+
 el("form-submit").onclick = submitEntry;
- 
+
 el("f-image").addEventListener("change", async (e) => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
@@ -1337,9 +1699,9 @@ el("f-image").addEventListener("change", async (e) => {
     el("f-preview").classList.remove("hidden");
   } catch (err) { console.error(err); }
 });
- 
+
 el("f-filter-result").addEventListener("change", (e) => { filterResult = e.target.value; renderList(); });
- 
+
 document.querySelectorAll(".gran-btn").forEach(btn => {
   if (btn.dataset.gran === statsGranularity) btn.classList.add("active");
   btn.onclick = () => {
@@ -1348,19 +1710,27 @@ document.querySelectorAll(".gran-btn").forEach(btn => {
     renderCharts();
   };
 });
- 
+
 el("admin-open-btn").onclick = openAdminModal;
+el("manage-open-btn").onclick = () => el("manage-panel").classList.remove("hidden");
+el("manage-close-btn").onclick = () => el("manage-panel").classList.add("hidden");
+el("admin-name-add-btn").onclick = () => {
+  const name = el("admin-name-input").value.trim();
+  if (!name) return;
+  addAdminName(name);
+  el("admin-name-input").value = "";
+};
 el("admin-cancel-btn").onclick = () => el("admin-modal").classList.add("hidden");
 el("pin-submit").onclick = submitPin;
 el("pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitPin(); });
 el("admin-exit-btn").onclick = () => { isAdmin = false; render(); };
- 
+
 el("vote-yes-btn").onclick = () => castVote("yes");
 el("vote-no-btn").onclick = () => castVote("no");
 el("news-add-btn").onclick = () => el("news-form").classList.toggle("hidden");
 el("news-cancel").onclick = () => el("news-form").classList.add("hidden");
 el("news-submit").onclick = submitNews;
- 
+
 // ---- Init ----
 el("f-date").value = todayISO();
 el("news-date").textContent = new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" });
@@ -1373,17 +1743,18 @@ startNewsListener();
 el("pinned-edit-btn").onclick = () => el("pinned-edit-box").classList.remove("hidden");
 el("pinned-cancel-btn").onclick = () => el("pinned-edit-box").classList.add("hidden");
 el("pinned-save-btn").onclick = savePinnedNote;
- 
+
 el("profile-edit-btn").onclick = () => { el("profile-view").classList.add("hidden"); el("profile-edit-box").classList.remove("hidden"); };
 el("profile-cancel-btn").onclick = () => { el("profile-edit-box").classList.add("hidden"); el("profile-view").classList.remove("hidden"); };
 el("profile-save-btn").onclick = async () => { await saveProfile(); el("profile-view").classList.remove("hidden"); };
- 
+
 startVotesListener();
 startPinnedNoteListener();
 startProfilesListener();
 startAllVotesListener();
+startAdminNamesListener();
+startStudentsListener();
+chooseRole("trader");
 </script>
 </body>
 </html>
- 
-
