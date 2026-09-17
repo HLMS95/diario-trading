@@ -309,9 +309,9 @@
         <button id="theme-toggle" class="icon-btn" title="Alternar modo claro/escuro">🌙</button>
         <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:999px; padding:6px 12px;">modo admin</span>
         <button id="admin-exit-btn" class="btn hidden">sair</button>
+        <button id="alunos-open-btn" class="btn">Alunos</button>
         <button id="manage-open-btn" class="btn hidden">gerir equipa</button>
         <button id="admin-open-btn" class="btn">administrador</button>
-        <button id="new-ticket-btn" class="btn btn-accent">+ Novo ticket</button>
       </div>
     </div>
 
@@ -425,6 +425,66 @@
       <div id="news-list"></div>
     </div>
 
+    <div id="tickets-section" style="margin-bottom:22px;">
+      <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+        <button id="new-ticket-btn" class="btn btn-accent">+ Novo ticket</button>
+      </div>
+
+      <div id="form-panel" class="panel hidden">
+        <div id="form-title" style="font-size:13px; font-weight:600; margin-bottom:12px;">Novo ticket</div>
+        <div class="form-grid">
+          <div>
+            <label class="label">Data</label>
+            <input id="f-date" type="date" class="input" />
+          </div>
+          <div>
+            <label class="label">Ativo / par</label>
+            <input id="f-asset" class="input" placeholder="ex: EURUSD, BTC, AAPL" />
+          </div>
+          <div>
+            <label class="label">Numero de trades</label>
+            <input id="f-numtrades" type="number" min="1" class="input" value="1" />
+          </div>
+          <div>
+            <label class="label">Resultado</label>
+            <select id="f-result" class="input">
+              <option value="win">Win</option>
+              <option value="loss">Loss</option>
+              <option value="be">Breakeven</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <label class="label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input id="f-setup" type="checkbox" checked /> Segui o setup planeado
+          </label>
+        </div>
+        <div style="margin-top:12px;">
+          <label class="label">Comentario</label>
+          <textarea id="f-comment" class="input" style="min-height:70px; resize:vertical;" placeholder="O que correu bem, o que falhou, licoes..."></textarea>
+        </div>
+        <div style="margin-top:12px;">
+          <label class="label">Foto da trade</label>
+          <input id="f-image" type="file" accept="image/*" />
+          <img id="f-preview" class="hidden" style="margin-top:10px; max-width:100%; max-height:220px; border-radius:6px; border:1px solid var(--border); display:block;" />
+        </div>
+        <button id="form-submit" class="btn btn-accent" style="margin-top:16px;">Guardar ticket</button>
+      </div>
+
+      <div id="filter-row">
+        <div id="filter-title" style="font-size:13px; color:var(--textSoft);">Todos os tickets da equipa</div>
+        <select id="f-filter-result" class="input" style="width:auto;">
+          <option value="all">Todos os resultados</option>
+          <option value="win">Win</option>
+          <option value="loss">Loss</option>
+          <option value="be">Breakeven</option>
+        </select>
+      </div>
+
+      <div id="empty-state" class="hidden">Ainda sem tickets. Regista a primeira trade do dia.</div>
+      <div id="entries-grid"></div>
+    </div>
+
     <div id="tabs"></div>
 
     <div id="profile-panel" class="panel hidden" style="margin-bottom:22px;">
@@ -470,60 +530,6 @@
       <div class="chart-caption" style="margin-top:18px;">Sentimento da equipa vs. resultado real</div>
       <div id="sentiment-table" style="font-size:12px;"></div>
     </div>
-
-    <div id="form-panel" class="panel hidden">
-      <div id="form-title" style="font-size:13px; font-weight:600; margin-bottom:12px;">Novo ticket</div>
-      <div class="form-grid">
-        <div>
-          <label class="label">Data</label>
-          <input id="f-date" type="date" class="input" />
-        </div>
-        <div>
-          <label class="label">Ativo / par</label>
-          <input id="f-asset" class="input" placeholder="ex: EURUSD, BTC, AAPL" />
-        </div>
-        <div>
-          <label class="label">Numero de trades</label>
-          <input id="f-numtrades" type="number" min="1" class="input" value="1" />
-        </div>
-        <div>
-          <label class="label">Resultado</label>
-          <select id="f-result" class="input">
-            <option value="win">Win</option>
-            <option value="loss">Loss</option>
-            <option value="be">Breakeven</option>
-          </select>
-        </div>
-      </div>
-      <div style="margin-top:12px;">
-        <label class="label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-          <input id="f-setup" type="checkbox" checked /> Segui o setup planeado
-        </label>
-      </div>
-      <div style="margin-top:12px;">
-        <label class="label">Comentario</label>
-        <textarea id="f-comment" class="input" style="min-height:70px; resize:vertical;" placeholder="O que correu bem, o que falhou, licoes..."></textarea>
-      </div>
-      <div style="margin-top:12px;">
-        <label class="label">Foto da trade</label>
-        <input id="f-image" type="file" accept="image/*" />
-        <img id="f-preview" class="hidden" style="margin-top:10px; max-width:100%; max-height:220px; border-radius:6px; border:1px solid var(--border); display:block;" />
-      </div>
-      <button id="form-submit" class="btn btn-accent" style="margin-top:16px;">Guardar ticket</button>
-    </div>
-
-    <div id="filter-row">
-      <div id="filter-title" style="font-size:13px; color:var(--textSoft);">Todos os tickets da equipa</div>
-      <select id="f-filter-result" class="input" style="width:auto;">
-        <option value="all">Todos os resultados</option>
-        <option value="win">Win</option>
-        <option value="loss">Loss</option>
-        <option value="be">Breakeven</option>
-      </select>
-    </div>
-
-    <div id="empty-state" class="hidden">Ainda sem tickets. Regista a primeira trade do dia.</div>
-    <div id="entries-grid"></div>
   </div>
 
 </div>
@@ -1049,7 +1055,7 @@ async function submitPin() {
 }
 
 // ---- Rendering ----
-const STUDENT_HIDDEN_IDS = ["pinned-panel", "news-panel", "tabs", "board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row"];
+const STUDENT_HIDDEN_IDS = ["pinned-panel", "news-panel", "tabs", "board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "alunos-open-btn"];
 
 function applyStudentUI() {
   STUDENT_HIDDEN_IDS.forEach(id => { const e = el(id); if (e) e.classList.add("hidden"); });
@@ -1096,7 +1102,7 @@ function renderTabs() {
   const wrap = el("tabs");
   wrap.innerHTML = "";
   const allBtn = document.createElement("button");
-  allBtn.className = "tab-btn" + (activeRoom === "all" ? " active" : "");
+  allBtn.className = "tab-btn" + (activeRoom === "all" || activeRoom === "alunos" ? " active" : "");
   allBtn.textContent = "Visao geral";
   allBtn.onclick = () => { activeRoom = "all"; render(); };
   wrap.appendChild(allBtn);
@@ -1107,11 +1113,8 @@ function renderTabs() {
     b.onclick = () => { activeRoom = t; render(); };
     wrap.appendChild(b);
   });
-  const alunosBtn = document.createElement("button");
-  alunosBtn.className = "tab-btn" + (activeRoom === "alunos" ? " active" : "");
-  alunosBtn.textContent = "Alunos";
-  alunosBtn.onclick = () => { activeRoom = "alunos"; render(); };
-  wrap.appendChild(alunosBtn);
+
+  el("alunos-open-btn").classList.toggle("btn-accent-outline", activeRoom === "alunos");
 
   const isAlunos = activeRoom === "alunos";
   ["board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "entries-grid", "empty-state"].forEach(id => {
@@ -1712,6 +1715,7 @@ document.querySelectorAll(".gran-btn").forEach(btn => {
 });
 
 el("admin-open-btn").onclick = openAdminModal;
+el("alunos-open-btn").onclick = () => { activeRoom = activeRoom === "alunos" ? "all" : "alunos"; render(); };
 el("manage-open-btn").onclick = () => el("manage-panel").classList.remove("hidden");
 el("manage-close-btn").onclick = () => el("manage-panel").classList.add("hidden");
 el("admin-name-add-btn").onclick = () => {
