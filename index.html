@@ -1589,8 +1589,8 @@ function buildTicketCard(entry) {
     <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
       ${entry.trader} · ${entry.numTrades} trade${entry.numTrades === 1 ? "" : "s"} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
     </div>
+    ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap; margin-bottom:${entry.image ? "10px" : "0"};">${escapeHtml(entry.comment)}</div>` : ""}
     ${entry.image ? `<img src="${entry.image}" alt="foto da trade" />` : ""}
-    ${entry.comment ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
     <div class="ticket-actions" style="display:${(canEdit || canDelete) ? "flex" : "none"}; gap:14px; margin-top:10px;">
       ${canEdit ? '<button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar ticket</button>' : ""}
       ${canDelete ? '<button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar ticket</button>' : ""}
