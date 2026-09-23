@@ -347,6 +347,7 @@
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
         <button id="theme-toggle" class="icon-btn" title="Alternar modo claro/escuro">🌙</button>
+        <button id="logout-btn" class="btn" title="Sair e entrar com outro nome">trocar de nome</button>
         <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:999px; padding:6px 12px;">modo admin</span>
         <button id="admin-exit-btn" class="btn hidden">sair</button>
         <button id="alunos-open-btn" class="btn">Alunos</button>
@@ -1216,12 +1217,14 @@ async function submitPin() {
 }
 
 // ---- Rendering ----
-const STUDENT_HIDDEN_IDS = ["pinned-panel", "news-panel", "tabs", "board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "alunos-open-btn"];
+const STUDENT_HIDDEN_IDS = ["alunos-open-btn"];
 
 function applyStudentUI() {
   STUDENT_HIDDEN_IDS.forEach(id => { const e = el(id); if (e) e.classList.add("hidden"); });
   el("manage-open-btn").classList.add("hidden");
   el("admin-open-btn").classList.add("hidden");
+  el("admin-badge").classList.add("hidden");
+  el("admin-exit-btn").classList.add("hidden");
 }
 
 function applyTraderUI() {
@@ -1233,15 +1236,11 @@ function showMain() {
   el("waiting-screen").classList.add("hidden");
   el("main-screen").classList.remove("hidden");
   el("who").textContent = traderName + (userRole === "student" ? " (aluno)" : "");
-  if (userRole === "student") { applyStudentUI(); } else { applyTraderUI(); }
+  if (userRole === "student") { applyStudentUI(); activeRoom = "own-student"; } else { applyTraderUI(); }
   render();
 }
 
 function render() {
-  if (userRole === "student") {
-    renderList();
-    return;
-  }
   renderTabs();
   renderBoard();
   renderRoomSummaries();
@@ -1250,18 +1249,26 @@ function render() {
   renderList();
   renderCharts();
   renderPinnedNote();
-  renderManagePanel();
+  if (userRole !== "student") renderManagePanel();
   el("admin-badge").classList.toggle("hidden", !isAdmin);
   el("admin-exit-btn").classList.toggle("hidden", !isAdmin);
-  el("admin-open-btn").classList.toggle("hidden", isAdmin);
+  el("admin-open-btn").classList.toggle("hidden", isAdmin || userRole === "student");
   el("manage-open-btn").classList.toggle("hidden", !isAdmin);
 }
 
 function renderTabs() {
-  if (userRole === "student") return;
   const traders = getTraders();
   const wrap = el("tabs");
   wrap.innerHTML = "";
+
+  if (userRole === "student") {
+    const ownBtn = document.createElement("button");
+    ownBtn.className = "tab-btn" + (activeRoom === "own-student" ? " active" : "");
+    ownBtn.textContent = "Os meus tickets";
+    ownBtn.onclick = () => { activeRoom = "own-student"; render(); };
+    wrap.appendChild(ownBtn);
+  }
+
   const allBtn = document.createElement("button");
   allBtn.className = "tab-btn" + (activeRoom === "all" || activeRoom === "alunos" ? " active" : "");
   allBtn.textContent = "Visao geral";
@@ -1275,7 +1282,9 @@ function renderTabs() {
     wrap.appendChild(b);
   });
 
-  el("alunos-open-btn").classList.toggle("btn-accent-outline", activeRoom === "alunos");
+  if (userRole !== "student") {
+    el("alunos-open-btn").classList.toggle("btn-accent-outline", activeRoom === "alunos");
+  }
 
   const isAlunos = activeRoom === "alunos";
   ["board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "entries-grid", "empty-state"].forEach(id => {
@@ -1287,6 +1296,9 @@ function renderTabs() {
 }
 
 function getRoomEntries() {
+  if (activeRoom === "own-student") {
+    return entries.filter(e => e.isStudent && e.studentId === slugify(traderName));
+  }
   if (activeRoom === "all" || activeRoom === "alunos") return teamEntries();
   return teamEntries().filter(e => e.trader === activeRoom);
 }
@@ -1842,12 +1854,10 @@ function buildTicketCard(entry) {
 }
 
 function renderList() {
-  let list;
-  if (userRole === "student") {
-    list = entries.filter(e => e.isStudent && e.studentId === slugify(traderName));
+  const list = getRoomEntries().filter(e => filterResult === "all" || e.result === filterResult);
+  if (activeRoom === "own-student") {
     el("filter-title").textContent = "Os teus tickets";
   } else {
-    list = getRoomEntries().filter(e => filterResult === "all" || e.result === filterResult);
     el("filter-title").textContent = activeRoom === "all" ? "Todos os tickets da equipa" : "Tickets de " + activeRoom;
   }
   const grid = el("entries-grid");
@@ -1957,6 +1967,12 @@ el("name-submit").onclick = login;
 el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
 
 el("theme-toggle").onclick = toggleTheme;
+el("logout-btn").onclick = () => {
+  if (!confirm("Sair e entrar com outro nome? Vais ter de voltar a inserir o PIN e o nome.")) return;
+  localStorage.removeItem("tj-trader-name");
+  localStorage.removeItem("tj-role");
+  location.reload();
+};
 
 el("new-ticket-btn").onclick = () => {
   const panel = el("form-panel");
