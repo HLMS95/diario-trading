@@ -7,51 +7,44 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
 <style>
   :root {
-    --bg: #F7F4EC;
-    --panel: #FFFFFF;
-    --panelAlt: #FBF8F1;
-    --border: #E8E0CB;
-    --borderStrong: #D9CBA3;
-    --text: #241F16;
-    --textSoft: #6E6450;
-    --textMuted: #A0947A;
-    --accent: #B8912B;
-    --accentSoft: #E9D9A8;
-    --accentDeep: #93701A;
-    --win: #1B8F55;
-    --loss: #C4433C;
-    --be: #9C927A;
-    --shadow: 0 4px 18px rgba(35, 26, 8, 0.08);
-    --shadow-sm: 0 2px 8px rgba(35, 26, 8, 0.06);
-  }
-  html[data-theme="dark"] {
-    --bg: #15110A;
-    --panel: #1E1810;
-    --panelAlt: #241D13;
-    --border: #34291A;
-    --borderStrong: #4A3B22;
-    --text: #F3ECDD;
-    --textSoft: #B8AA8C;
-    --textMuted: #8A7C60;
-    --accent: #D9B44A;
-    --accentSoft: #4A3B1A;
-    --accentDeep: #F0D375;
-    --win: #35C77E;
-    --loss: #E8635C;
-    --be: #B8AA8C;
-    --shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --bg: #060B14;
+    --panel: #0C1826;
+    --panelAlt: #0F1F30;
+    --border: #16324A;
+    --borderStrong: #1F4A66;
+    --text: #E7F3FA;
+    --textSoft: #8FB2C7;
+    --textMuted: #567387;
+    --accent: #2CD9F5;
+    --accentSoft: #0F3A4C;
+    --accentDeep: #7CF0FF;
+    --win: #2FE6A0;
+    --loss: #FF4D6D;
+    --be: #7A93A6;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
   }
   * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
-    transition: background 0.15s ease, color 0.15s ease;
+  }
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: block;
+    pointer-events: none;
   }
   .mono { font-family: 'IBM Plex Mono', 'Courier New', monospace; }
   #app {
+    position: relative;
+    z-index: 1;
     max-width: 1000px;
     margin: 0 auto;
     padding: 22px 18px 60px;
@@ -94,12 +87,11 @@
   .btn:hover { transform: translateY(-1px); }
   .btn-accent {
     border: 1px solid var(--accent);
-    background: linear-gradient(180deg, #CDA53A, #B8912B);
-    color: #FFFDF7;
+    background: linear-gradient(180deg, #5DE8FF, #17B8DE);
+    color: #04141C;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(184, 145, 43, 0.35);
+    box-shadow: 0 4px 18px rgba(44, 217, 245, 0.4);
   }
-  html[data-theme="dark"] .btn-accent { color: #1A1305; }
   .btn-accent-outline {
     border: 1px solid var(--accent);
     background: transparent;
@@ -259,6 +251,7 @@
 </style>
 </head>
 <body>
+<canvas id="bg-canvas"></canvas>
 <div id="app">
 
   <div id="access-screen">
@@ -346,7 +339,6 @@
         <div class="subtitle">a operar como <span id="who" style="color:var(--accent);"></span> · <span id="sync-status" class="mono">a ligar...</span></div>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <button id="theme-toggle" class="icon-btn" title="Alternar modo claro/escuro">🌙</button>
         <button id="logout-btn" class="btn" title="Sair e entrar com outro nome">trocar de nome</button>
         <span id="admin-badge" class="hidden mono" style="font-size:11px; color:var(--accent); border:1px solid var(--accent); border-radius:999px; padding:6px 12px;">modo admin</span>
         <button id="admin-exit-btn" class="btn hidden">sair</button>
@@ -695,19 +687,107 @@ function teamEntries() {
   return entries.filter(e => !e.isStudent);
 }
 
-// ---- Theme ----
-function initTheme() {
-  const saved = localStorage.getItem("tj-theme") || "light";
-  document.documentElement.setAttribute("data-theme", saved);
-  el("theme-toggle").textContent = saved === "dark" ? "☀" : "🌙";
-}
-function toggleTheme() {
-  const current = document.documentElement.getAttribute("data-theme") || "light";
-  const next = current === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("tj-theme", next);
-  el("theme-toggle").textContent = next === "dark" ? "☀" : "🌙";
-  renderCharts();
+// ---- Animated network background ----
+function initNetworkBackground() {
+  const canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let nodes = [];
+  const LINK_DIST = 150;
+  const RED_CHANCE = 0.1;
+
+  function colorForNode() {
+    if (Math.random() < RED_CHANCE) return { r: 255, g: 77, b: 109 };
+    return Math.random() < 0.5 ? { r: 44, g: 217, b: 245 } : { r: 124, g: 240, b: 255 };
+  }
+
+  function buildNodes() {
+    const area = W * H;
+    const count = Math.max(28, Math.min(90, Math.round(area / 16000)));
+    nodes = [];
+    for (let i = 0; i < count; i++) {
+      nodes.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        r: 1.2 + Math.random() * 1.8,
+        c: colorForNode()
+      });
+    }
+  }
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    buildNodes();
+  }
+
+  function drawFrame() {
+    const g = ctx.createRadialGradient(W * 0.5, H * -0.05, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.85);
+    g.addColorStop(0, "#0B2438");
+    g.addColorStop(0.55, "#060B14");
+    g.addColorStop(1, "#020408");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < LINK_DIST) {
+          const alpha = (1 - dist / LINK_DIST) * 0.35;
+          ctx.strokeStyle = `rgba(120, 210, 230, ${alpha})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${n.c.r}, ${n.c.g}, ${n.c.b}, 0.9)`;
+      ctx.shadowColor = `rgba(${n.c.r}, ${n.c.g}, ${n.c.b}, 0.9)`;
+      ctx.shadowBlur = 8;
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function step() {
+    for (const n of nodes) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    }
+    drawFrame();
+    if (!reduceMotion) requestAnimationFrame(step);
+  }
+
+  window.addEventListener("resize", resize);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && !reduceMotion) requestAnimationFrame(step);
+  });
+
+  resize();
+  if (reduceMotion) {
+    drawFrame();
+  } else {
+    requestAnimationFrame(step);
+  }
 }
 
 // ---- Firestore listeners ----
@@ -1364,7 +1444,7 @@ function renderCharts() {
   const barData = keys.map(k => computeStats(buckets[k]).winRate);
   const barCounts = keys.map(k => buckets[k].length);
 
-  const accent = cssVar("--accent") || "#B8912B";
+  const accent = cssVar("--accent") || "#2CD9F5";
   const win = cssVar("--win") || "#1B8F55";
   const textMuted = cssVar("--textMuted") || "#A0947A";
   const border = cssVar("--border") || "#E8E0CB";
@@ -1448,7 +1528,7 @@ function renderCharts() {
   const multiBlock = el("multi-chart-block");
   if (activeRoom === "all") {
     multiBlock.classList.remove("hidden");
-    const PALETTE = ["#B8912B", "#2E86AB", "#6A4C93", "#1B8F55", "#C4433C", "#DA7422", "#4B4E6D", "#0E7C7B"];
+    const PALETTE = ["#2CD9F5", "#7CF0FF", "#2FE6A0", "#FF4D6D", "#8C6BFF", "#3E8FE0", "#00B8A9", "#5C7C90"];
     const traders = getTraders();
     const allDates = Array.from(new Set(list.map(e => e.date).filter(Boolean))).sort();
     const datasets = traders.map((t, i) => {
@@ -1966,7 +2046,6 @@ el("access-pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter
 el("name-submit").onclick = login;
 el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
 
-el("theme-toggle").onclick = toggleTheme;
 el("logout-btn").onclick = () => {
   if (!confirm("Sair e entrar com outro nome? Vais ter de voltar a inserir o PIN e o nome.")) return;
   localStorage.removeItem("tj-trader-name");
@@ -2032,7 +2111,7 @@ el("news-submit").onclick = submitNews;
 // ---- Init ----
 el("f-date").value = todayISO();
 el("news-date").textContent = new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" });
-initTheme();
+initNetworkBackground();
 startConnectivityWatch();
 loadAdminPin();
 loadAccessPin();
