@@ -2,30 +2,32 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Diario de Trading da Equipa</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" />
 <style>
   :root {
-    --bg: #060B14;
-    --panel: #0C1826;
-    --panelAlt: #0F1F30;
-    --border: #16324A;
-    --borderStrong: #1F4A66;
-    --text: #E7F3FA;
-    --textSoft: #8FB2C7;
-    --textMuted: #567387;
-    --accent: #2CD9F5;
-    --accentSoft: #0F3A4C;
-    --accentDeep: #7CF0FF;
+    --bg: #000000;
+    --panel: rgba(0, 0, 0, 0.82);
+    --panelAlt: #0A0A0A;
+    --border: rgba(255, 255, 255, 0.10);
+    --borderStrong: rgba(255, 255, 255, 0.18);
+    --text: #EDEDED;
+    --textSoft: #A8A8A8;
+    --textMuted: #6E6E6E;
+    --accent: #E8C15A;
+    --accentSoft: rgba(232, 193, 90, 0.13);
+    --accentDeep: #FFE08A;
     --win: #2FE6A0;
     --loss: #FF4D6D;
-    --be: #7A93A6;
+    --be: #8A8A8A;
     --shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
+  :root { color-scheme: dark; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html { background: #000; scroll-padding-top: env(safe-area-inset-top, 0px); }
   body {
     margin: 0;
     background: var(--bg);
@@ -87,10 +89,10 @@
   .btn:hover { transform: translateY(-1px); }
   .btn-accent {
     border: 1px solid var(--accent);
-    background: linear-gradient(180deg, #5DE8FF, #17B8DE);
-    color: #04141C;
-    font-weight: 600;
-    box-shadow: 0 4px 18px rgba(44, 217, 245, 0.4);
+    background: linear-gradient(180deg, #FFE7A0 0%, #E8C15A 45%, #B8872A 100%);
+    color: #1A1405;
+    font-weight: 700;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 18px rgba(232, 193, 90, 0.35);
   }
   .btn-accent-outline {
     border: 1px solid var(--accent);
@@ -100,6 +102,8 @@
   }
   .panel {
     background: var(--panel);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 22px;
@@ -199,9 +203,30 @@
     cursor: pointer;
   }
   .gran-btn.active { border-color: var(--accent); background: var(--accentSoft); color: var(--accentDeep); }
-  .chart-wrap { position: relative; height: 200px; margin-bottom: 18px; }
+  .chart-wrap {
+    position: relative;
+    height: 270px;
+    margin-bottom: 18px;
+    padding: 12px 10px 4px;
+    border-radius: 14px;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
+      #000;
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 12px 30px rgba(0,0,0,0.7);
+  }
+  /* linhas de varrimento tipo ecrã digital */
+  .chart-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.028) 0 1px, transparent 1px 3px);
+  }
   .chart-wrap:last-child { margin-bottom: 0; }
-  .chart-caption { font-size: 11px; color: var(--textMuted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .chart-caption { font-size: 11px; color: var(--textMuted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
   #form-panel { margin-bottom: 22px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   #filter-row {
@@ -248,6 +273,79 @@
     font-size: 16px;
     box-shadow: var(--shadow-sm);
   }
+
+  /* ---- Painéis em vidro espelhado ---- */
+  .panel, #board, .room-card, .ticket {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, rgba(255,255,255,0) 40.2%),
+      rgba(0, 0, 0, 0.86) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+      0 14px 34px rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    position: relative;
+  }
+  .panel::before, #board::before, .room-card::before, .ticket::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: 14%; right: 14%;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 210, 63, 0.6), transparent);
+  }
+  .board-value {
+    font-family: 'Orbitron', 'IBM Plex Mono', monospace !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px;
+    text-shadow: 0 0 14px currentColor, 0 0 2px currentColor;
+  }
+
+  /* ---- Toques visuais extra ---- */
+  .ticket, .room-card { transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
+  .ticket:hover, .room-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(232, 193, 90, 0.35);
+  }
+  .tab-btn.active, .gran-btn.active { box-shadow: 0 0 16px rgba(232, 193, 90, 0.18), inset 0 1px 0 rgba(255,255,255,0.12); }
+  .rr-chip {
+    font-family: 'Orbitron', 'IBM Plex Mono', monospace;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+    margin-top: 6px; text-align: right;
+    text-shadow: 0 0 10px currentColor;
+  }
+  .ticket-top-right { display: flex; flex-direction: column; align-items: flex-end; }
+
+  /* ---- Painel RR do mês ---- */
+  .rr-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .rr-nav { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .rr-nav button {
+    width: 30px; height: 30px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--panelAlt); color: var(--textSoft); font-size: 15px; line-height: 1;
+  }
+  .rr-month-label { font-size: 16px; font-weight: 600; min-width: 130px; text-align: center; }
+  .rr-settings { display: flex; gap: 10px; flex-wrap: wrap; }
+  .rr-settings label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--textSoft); text-transform: uppercase; letter-spacing: 0.8px; }
+  .rr-mini { width: 70px !important; padding: 6px 10px !important; text-align: center; font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; }
+  .rr-body { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+  .rr-ring-wrap { position: relative; width: 150px; height: 150px; flex: 0 0 auto; margin: 0 auto; }
+  .rr-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  .rr-ring-prog { transition: stroke-dashoffset 0.9s cubic-bezier(.2,.8,.2,1), stroke 0.3s; filter: drop-shadow(0 0 6px currentColor); }
+  .rr-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .rr-ring-center .v { font-family: 'Orbitron', monospace; font-size: 24px; font-weight: 700; text-shadow: 0 0 12px currentColor; }
+  .rr-ring-center .l { font-size: 10px; color: var(--textMuted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .rr-figures { flex: 1 1 220px; min-width: 0; }
+  .rr-big-row { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
+  .rr-big { font-family: 'Orbitron', monospace; font-size: 34px; font-weight: 700; line-height: 1.05; text-shadow: 0 0 16px currentColor; }
+  .rr-sub { font-size: 10.5px; color: var(--textMuted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  .rr-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .rr-stat { background: var(--panelAlt); border: 1px solid var(--border); border-radius: 12px; padding: 9px 10px; }
+  .rr-stat .k { font-size: 10px; color: var(--textMuted); letter-spacing: 0.8px; text-transform: uppercase; }
+  .rr-stat .v { font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; font-size: 16px; margin-top: 3px; }
+  .rr-note { font-size: 11px; color: var(--textMuted); margin-top: 10px; line-height: 1.5; }
+  @media (prefers-reduced-motion: reduce) { .rr-ring-prog, .ticket, .room-card { transition: none; } }
 </style>
 </head>
 <body>
@@ -483,6 +581,49 @@
 
     <div id="board"></div>
 
+    <div id="rr-panel" class="panel" style="margin-bottom:22px;">
+      <div class="rr-head">
+        <div>
+          <div class="eyebrow">RR do mes</div>
+          <div class="rr-nav">
+            <button id="rr-prev" title="Mes anterior">‹</button>
+            <div id="rr-month-label" class="rr-month-label"></div>
+            <button id="rr-next" title="Mes seguinte">›</button>
+          </div>
+        </div>
+        <div class="rr-settings">
+          <label>Risco/trade <input id="rr-risk" type="number" step="0.1" min="0.1" class="input rr-mini" /> %</label>
+          <label>Objetivo <input id="rr-goal" type="number" step="1" min="1" class="input rr-mini" /> R</label>
+        </div>
+      </div>
+      <div class="rr-body">
+        <div class="rr-ring-wrap">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="rrGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#FFE7A0"/><stop offset="1" stop-color="#C9962E"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="9"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="1 5.8"/>
+            <circle id="rr-ring" class="rr-ring-prog" cx="60" cy="60" r="52" fill="none" stroke="url(#rrGold)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" style="color:#E8C15A"/>
+          </svg>
+          <div class="rr-ring-center">
+            <div id="rr-ring-pct" class="v" style="color:#E8C15A">0%</div>
+            <div class="l">do objetivo</div>
+          </div>
+        </div>
+        <div class="rr-figures">
+          <div class="rr-big-row">
+            <div><div id="rr-total" class="rr-big">0R</div><div class="rr-sub">RR acumulado</div></div>
+            <div><div id="rr-pct" class="rr-big">0%</div><div class="rr-sub">Retorno estimado do mes</div></div>
+          </div>
+          <div id="rr-stats" class="rr-stats"></div>
+        </div>
+      </div>
+      <div id="rr-note" class="rr-note"></div>
+    </div>
+
     <div id="room-summaries"></div>
 
     <div id="alunos-view" class="hidden" style="margin-bottom:22px;"></div>
@@ -500,11 +641,13 @@
       </div>
       <div class="chart-caption">Win rate por periodo</div>
       <div class="chart-wrap"><canvas id="bar-chart"></canvas></div>
-      <div class="chart-caption">Evolucao acumulada (win +1, loss -1)</div>
+      <div class="chart-caption">RR por periodo</div>
+      <div class="chart-wrap"><canvas id="rr-chart"></canvas></div>
+      <div class="chart-caption">Evolucao acumulada em R</div>
       <div class="chart-wrap"><canvas id="line-chart"></canvas></div>
       <div id="multi-chart-block" class="hidden">
         <div class="chart-caption" style="margin-top:18px;">Evolucao por trader</div>
-        <div class="chart-wrap"><canvas id="line-chart-multi"></canvas></div>
+        <div class="chart-wrap" style="height:260px;"><canvas id="line-chart-multi"></canvas></div>
       </div>
       <div class="chart-caption" style="margin-top:18px;">Sentimento da equipa vs. resultado real</div>
       <div id="sentiment-table" style="font-size:12px;"></div>
@@ -537,6 +680,11 @@
               <option value="loss">Loss</option>
               <option value="be">Breakeven</option>
             </select>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label class="label">RR da trade</label>
+            <input id="f-rr" type="number" step="0.1" min="0" class="input" placeholder="ex: 2.5" />
+            <div id="f-rr-hint" style="font-size:11px; color:var(--textMuted); margin-top:5px;">Win: quantos R ganhaste (ex: 2.5). Loss: quantos R perdeste (normalmente 1). O sinal e posto sozinho.</div>
           </div>
         </div>
         <div style="margin-top:12px;">
@@ -571,7 +719,7 @@
     </div>
   </div>
 
-  <div id="ticket-modal" class="hidden" style="position:fixed; inset:0; background:rgba(15,10,3,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;">
+  <div id="ticket-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;">
     <div style="background:var(--panel); border-radius:18px; max-width:920px; width:100%; max-height:90vh; overflow:auto; display:flex; flex-wrap:wrap; box-shadow:0 12px 40px rgba(0,0,0,0.5);">
       <div style="flex:1 1 320px; min-width:280px; position:relative; background:var(--panelAlt);">
         <img id="ticket-modal-img" style="width:100%; max-height:80vh; object-fit:contain; display:block;" />
@@ -593,6 +741,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
+// ---- Armazenamento local seguro ----
+const safeStore = {
+  getItem(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+  setItem(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} },
+  removeItem(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+};
+
+// ---- Firebase ----
 const firebaseConfig = {
   apiKey: "AIzaSyAblNBb2EXC4snhIho4HFqHtVfsCBB_FNo",
   authDomain: "diario-trading-equipa.firebaseapp.com",
@@ -603,6 +759,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const FieldValue = firebase.firestore.FieldValue;
 
 const RESULT_META = {
   win: { label: "WIN", color: "#1B8F55" },
@@ -610,8 +767,8 @@ const RESULT_META = {
   be: { label: "B/E", color: "#9C927A" }
 };
 
-let traderName = localStorage.getItem("tj-trader-name") || null;
-let userRole = localStorage.getItem("tj-role") || "trader";
+let traderName = safeStore.getItem("tj-trader-name") || null;
+let userRole = safeStore.getItem("tj-role") || "trader";
 let studentMentor = null;
 let adminNames = [];
 let allStudents = [];
@@ -661,16 +818,37 @@ function compressImage(file, maxWidth = 760, quality = 0.62) {
   });
 }
 
+// RR guardado na trade (com sinal). null se a trade antiga nao tiver RR.
+function rrOf(e) { return typeof e.rr === "number" && isFinite(e.rr) ? e.rr : null; }
+// Para graficos: usa o RR real, ou +1 / -1 / 0 em trades antigas sem RR
+function rrOrUnit(e) { const r = rrOf(e); return r !== null ? r : (e.result === "win" ? 1 : e.result === "loss" ? -1 : 0); }
+function fmtR(v, d = 1) {
+  const n = Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
+  return (n > 0 ? "+" : "") + String(parseFloat(n.toFixed(d))) + "R";
+}
+function fmtPct(v) {
+  const n = Math.round(v * 10) / 10;
+  return (n > 0 ? "+" : "") + String(parseFloat(n.toFixed(1))) + "%";
+}
+function rrColor(v) { return v > 0 ? "var(--win)" : v < 0 ? "var(--loss)" : "var(--textSoft)"; }
+
 function computeStats(list) {
   const total = list.length;
   const wins = list.filter(e => e.result === "win").length;
   const setups = list.filter(e => e.setupFollowed).length;
   const totalTrades = list.reduce((s, e) => s + (e.numTrades || 0), 0);
+  const rrList = list.map(rrOf).filter(v => v !== null);
+  const rrTotal = rrList.reduce((s, v) => s + v, 0);
   return {
     total,
     winRate: total ? Math.round((wins / total) * 100) : 0,
     setupRate: total ? Math.round((setups / total) * 100) : 0,
-    totalTrades
+    totalTrades,
+    rrCount: rrList.length,
+    rrTotal,
+    rrAvg: rrList.length ? rrTotal / rrList.length : 0,
+    rrBest: rrList.length ? Math.max(...rrList) : 0,
+    rrWorst: rrList.length ? Math.min(...rrList) : 0
   };
 }
 
@@ -687,107 +865,220 @@ function teamEntries() {
   return entries.filter(e => !e.isStudent);
 }
 
-// ---- Animated network background ----
+// ---- Fundo animado: gráfico de velas em tempo real (preto, amarelo e branco) ----
 function initNetworkBackground() {
   const canvas = document.getElementById("bg-canvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
-  let nodes = [];
-  const LINK_DIST = 150;
-  const RED_CHANCE = 0.1;
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const YELLOW = "255, 210, 63";
+  const WHITE = "255, 255, 255";
+  const CANDLE_MS = 1400;          // duração de cada vela
+  let W = 0, H = 0, SPACING = 16, BODY = 9;
+  let candles = [];
+  let price = 100, drift = 0;
+  let lastClose = 0;
+  let viewMin = 90, viewMax = 110;  // escala suavizada
+  let running = false;
 
-  function colorForNode() {
-    if (Math.random() < RED_CHANCE) return { r: 255, g: 77, b: 109 };
-    return Math.random() < 0.5 ? { r: 44, g: 217, b: 245 } : { r: 124, g: 240, b: 255 };
+  function nextMove() {
+    // passeio aleatório com tendências que mudam e reversão à média
+    if (Math.random() < 0.08) drift = (Math.random() - 0.5) * 0.35;
+    const pull = (100 - price) * 0.004;
+    return drift + pull + (Math.random() - 0.5) * 1.1;
   }
 
-  function buildNodes() {
-    const area = W * H;
-    const count = Math.max(28, Math.min(90, Math.round(area / 16000)));
-    nodes = [];
-    for (let i = 0; i < count; i++) {
-      nodes.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        r: 1.2 + Math.random() * 1.8,
-        c: colorForNode()
-      });
+  function makeCandle(open) {
+    return { o: open, c: open, h: open, l: open, v: 0.3 + Math.random() * 0.7 };
+  }
+
+  function seed() {
+    const n = Math.ceil(W / SPACING) + 4;
+    candles = [];
+    price = 100 + (Math.random() - 0.5) * 6;
+    for (let i = 0; i < n; i++) {
+      const c = makeCandle(price);
+      for (let k = 0; k < 6; k++) {
+        price += nextMove() * 0.45;
+        c.c = price; c.h = Math.max(c.h, price); c.l = Math.min(c.l, price);
+      }
+      c.h += Math.random() * 0.6; c.l -= Math.random() * 0.6;
+      candles.push(c);
     }
+    candles.push(makeCandle(price));
+    const r = visibleRange();
+    viewMin = r.min; viewMax = r.max;
   }
 
   function resize() {
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
+    W = window.innerWidth; H = window.innerHeight;
+    SPACING = W < 600 ? 13 : 16;
+    BODY = Math.round(SPACING * 0.58);
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    buildNodes();
+    seed();
   }
 
-  function drawFrame() {
-    const g = ctx.createRadialGradient(W * 0.5, H * -0.05, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.85);
-    g.addColorStop(0, "#0B2438");
-    g.addColorStop(0.55, "#060B14");
-    g.addColorStop(1, "#020408");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+  function visibleRange() {
+    let mn = Infinity, mx = -Infinity;
+    const from = Math.max(0, candles.length - Math.ceil(W / SPACING) - 2);
+    for (let i = from; i < candles.length; i++) { mn = Math.min(mn, candles[i].l); mx = Math.max(mx, candles[i].h); }
+    const pad = (mx - mn) * 0.15 || 1;
+    return { min: mn - pad, max: mx + pad };
+  }
 
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < LINK_DIST) {
-          const alpha = (1 - dist / LINK_DIST) * 0.35;
-          ctx.strokeStyle = `rgba(120, 210, 230, ${alpha})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
+  function sma(i, n) {
+    if (i < n - 1) return null;
+    let s = 0; for (let k = i - n + 1; k <= i; k++) s += candles[k].c;
+    return s / n;
+  }
+
+  function draw(progress) {
+    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+
+    // escala vertical suave
+    const r = visibleRange();
+    viewMin += (r.min - viewMin) * 0.05;
+    viewMax += (r.max - viewMax) * 0.05;
+    const top = H * 0.16, bottom = H * 0.78;
+    const y = p => bottom - ((p - viewMin) / (viewMax - viewMin)) * (bottom - top);
+
+    // grelha
+    ctx.lineWidth = 1;
+    ctx.font = "10px 'Share Tech Mono', 'IBM Plex Mono', monospace";
+    ctx.textAlign = "right";
+    const step = (viewMax - viewMin) / 6;
+    for (let g = 1; g < 6; g++) {
+      const p = viewMin + step * g, yy = Math.round(y(p)) + 0.5;
+      ctx.strokeStyle = "rgba(255,255,255,0.045)";
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy); ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.18)";
+      ctx.fillText(p.toFixed(2), W - 8, yy - 4);
+    }
+    for (let x = W - ((progress * SPACING) % (SPACING * 6)); x > 0; x -= SPACING * 6) {
+      ctx.strokeStyle = "rgba(255,255,255,0.03)";
+      ctx.beginPath(); ctx.moveTo(Math.round(x) + 0.5, 0); ctx.lineTo(Math.round(x) + 0.5, H); ctx.stroke();
+    }
+
+    // posição x de cada vela (a última fica perto da margem direita e desliza)
+    const rightPad = 70;
+    const xOf = i => W - rightPad - (candles.length - 1 - i) * SPACING - progress * SPACING;
+
+    // volume
+    const volTop = H * 0.84, volH = H * 0.1;
+    for (let i = 0; i < candles.length; i++) {
+      const c = candles[i], x = xOf(i);
+      if (x < -SPACING || x > W) continue;
+      const up = c.c >= c.o;
+      ctx.fillStyle = up ? `rgba(${YELLOW},0.10)` : `rgba(${WHITE},0.06)`;
+      const h = c.v * volH;
+      ctx.fillRect(x - BODY / 2, volTop + volH - h, BODY, h);
+    }
+
+    // média móvel (branca) com brilho
+    ctx.save();
+    ctx.strokeStyle = `rgba(${WHITE},0.22)`;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = `rgba(${WHITE},0.35)`; ctx.shadowBlur = 6;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < candles.length; i++) {
+      const m = sma(i, 14); if (m === null) continue;
+      const x = xOf(i);
+      if (!started) { ctx.moveTo(x, y(m)); started = true; } else ctx.lineTo(x, y(m));
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // velas
+    for (let i = 0; i < candles.length; i++) {
+      const c = candles[i], x = xOf(i);
+      if (x < -SPACING || x > W + SPACING) continue;
+      const up = c.c >= c.o;
+      const last = i === candles.length - 1;
+      const col = up ? YELLOW : WHITE;
+      const a = last ? 0.85 : (up ? 0.42 : 0.26);
+      ctx.strokeStyle = `rgba(${col},${a})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(Math.round(x) + 0.5, y(c.h)); ctx.lineTo(Math.round(x) + 0.5, y(c.l)); ctx.stroke();
+      const yo = y(c.o), yc = y(c.c);
+      const bt = Math.min(yo, yc), bh = Math.max(1.5, Math.abs(yc - yo));
+      if (last) { ctx.save(); ctx.shadowColor = `rgba(${col},0.9)`; ctx.shadowBlur = 14; }
+      if (up) {
+        ctx.fillStyle = `rgba(${col},${a})`;
+        ctx.fillRect(x - BODY / 2, bt, BODY, bh);
+      } else {
+        ctx.fillStyle = `rgba(${col},${a * 0.35})`;
+        ctx.fillRect(x - BODY / 2, bt, BODY, bh);
+        ctx.strokeRect(x - BODY / 2 + 0.5, bt + 0.5, BODY - 1, Math.max(0.5, bh - 1));
       }
+      if (last) ctx.restore();
     }
 
-    for (const n of nodes) {
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(${n.c.r}, ${n.c.g}, ${n.c.b}, 0.9)`;
-      ctx.shadowColor = `rgba(${n.c.r}, ${n.c.g}, ${n.c.b}, 0.9)`;
-      ctx.shadowBlur = 8;
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
+    // linha de preço atual + etiqueta
+    const lc = candles[candles.length - 1];
+    const py = Math.round(y(lc.c)) + 0.5;
+    const upNow = lc.c >= lastClose;
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = `rgba(${YELLOW},0.45)`;
+    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W - 62, py); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = upNow ? `rgba(${YELLOW},0.9)` : `rgba(${WHITE},0.85)`;
+    ctx.shadowColor = `rgba(${YELLOW},0.6)`; ctx.shadowBlur = 10;
+    ctx.fillRect(W - 60, py - 9, 56, 18);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+    ctx.font = "bold 11px 'Share Tech Mono', 'IBM Plex Mono', monospace";
+    ctx.fillText(lc.c.toFixed(2), W - 32, py + 4);
+    ctx.restore();
+
+    // vinheta para o conteúdo ficar legível
+    const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.2, W / 2, H / 2, Math.max(W, H) * 0.75);
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(1, "rgba(0,0,0,0.55)");
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
   }
 
-  function step() {
-    for (const n of nodes) {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x < 0 || n.x > W) n.vx *= -1;
-      if (n.y < 0 || n.y > H) n.vy *= -1;
+  let candleStart = 0, lastTick = 0;
+  function frame(now) {
+    if (!running) return;
+    if (!candleStart) candleStart = now;
+    const lc = candles[candles.length - 1];
+    // vela viva: o preço mexe várias vezes por segundo
+    if (now - lastTick > 90) {
+      lastTick = now;
+      lastClose = lc.c;
+      price += nextMove() * 0.35;
+      lc.c = price; lc.h = Math.max(lc.h, price); lc.l = Math.min(lc.l, price);
+      lc.v = Math.min(1, lc.v + Math.random() * 0.04);
     }
-    drawFrame();
-    if (!reduceMotion) requestAnimationFrame(step);
+    let progress = (now - candleStart) / CANDLE_MS;
+    if (progress >= 1) {
+      candles.push(makeCandle(price));
+      const keep = Math.ceil(W / SPACING) + 40;
+      if (candles.length > keep) candles.splice(0, candles.length - keep);
+      candleStart = now; progress = 0;
+    }
+    draw(progress);
+    requestAnimationFrame(frame);
   }
 
-  window.addEventListener("resize", resize);
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && !reduceMotion) requestAnimationFrame(step);
-  });
+  function start() {
+    if (running || reduceMotion) return;
+    running = true; candleStart = 0;
+    requestAnimationFrame(frame);
+  }
+  function stop() { running = false; }
+
+  window.addEventListener("resize", () => { resize(); if (reduceMotion) draw(0); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); else start(); });
 
   resize();
-  if (reduceMotion) {
-    drawFrame();
-  } else {
-    requestAnimationFrame(step);
-  }
+  if (reduceMotion) draw(0); else start();
 }
 
 // ---- Firestore listeners ----
@@ -810,10 +1101,9 @@ function startNewsListener() {
 }
 
 function startVotesListener() {
-  const dateDoc = db.collection("votes").doc(todayISO()).collection("voters");
-  dateDoc.onSnapshot((snap) => {
+  db.collection("votes").where("date", "==", todayISO()).onSnapshot((snap) => {
     todayVotes = {};
-    snap.docs.forEach(d => { todayVotes[d.id] = d.data(); });
+    snap.docs.forEach(d => { const v = d.data(); todayVotes[v.voter || d.id] = v; });
     renderVotes();
   }, (err) => console.error("Erro a ouvir votos", err));
 }
@@ -823,8 +1113,8 @@ async function castVote(choice) {
   if (!isVotingOpen()) return;
   const id = slugify(traderName);
   try {
-    await db.collection("votes").doc(todayISO()).collection("voters").doc(id).set({
-      trader: traderName, choice, updatedAt: Date.now()
+    await db.collection("votes").doc(todayISO() + "_" + id).set({
+      date: todayISO(), voter: id, trader: traderName, choice, updatedAt: Date.now()
     });
   } catch (e) { console.error("Erro ao votar", e); }
 }
@@ -873,12 +1163,12 @@ async function saveProfile() {
 }
 
 function startAllVotesListener() {
-  db.collectionGroup("voters").onSnapshot((snap) => {
+  db.collection("votes").onSnapshot((snap) => {
     allVotesByDate = {};
     snap.docs.forEach(d => {
       const data = d.data();
       if (data.choice !== "yes" && data.choice !== "no") return;
-      const parentDate = d.ref.parent.parent ? d.ref.parent.parent.id : null;
+      const parentDate = data.date || null;
       if (!parentDate) return;
       if (!allVotesByDate[parentDate]) allVotesByDate[parentDate] = [];
       allVotesByDate[parentDate].push(data);
@@ -968,7 +1258,7 @@ function checkNameAdmin() {
 async function addAdminName(name) {
   try {
     await db.collection("meta").doc("admins").set({
-      names: firebase.firestore.FieldValue.arrayUnion(name)
+      names: FieldValue.arrayUnion(name)
     }, { merge: true });
   } catch (e) { console.error(e); }
 }
@@ -976,7 +1266,7 @@ async function addAdminName(name) {
 async function removeAdminName(name) {
   try {
     await db.collection("meta").doc("admins").set({
-      names: firebase.firestore.FieldValue.arrayRemove(name)
+      names: FieldValue.arrayRemove(name)
     }, { merge: true });
   } catch (e) { console.error(e); }
 }
@@ -1066,7 +1356,7 @@ async function submitAdminRecovery() {
 }
 
 function proceedAsTrader() {
-  const savedRole = localStorage.getItem("tj-role");
+  const savedRole = safeStore.getItem("tj-role");
   if (traderName && savedRole === "trader") {
     userRole = "trader";
     checkNameAdmin();
@@ -1099,8 +1389,8 @@ async function submitAccessPin() {
     } catch (e) { console.error(e); el("access-error").textContent = "Erro de ligacao. Tenta outra vez."; return; }
     traderName = name;
     userRole = "student";
-    localStorage.setItem("tj-trader-name", name);
-    localStorage.setItem("tj-role", "student");
+    safeStore.setItem("tj-trader-name", name);
+    safeStore.setItem("tj-role", "student");
     el("access-screen").classList.add("hidden");
     startStudentDocListener();
     return;
@@ -1156,8 +1446,8 @@ function login() {
   if (!n) return;
   traderName = n;
   userRole = "trader";
-  localStorage.setItem("tj-trader-name", n);
-  localStorage.setItem("tj-role", "trader");
+  safeStore.setItem("tj-trader-name", n);
+  safeStore.setItem("tj-role", "trader");
   checkNameAdmin();
   showMain();
 }
@@ -1168,7 +1458,7 @@ function startStudentDocListener() {
     if (!doc.exists) {
       el("waiting-screen").classList.add("hidden");
       el("main-screen").classList.add("hidden");
-      localStorage.removeItem("tj-role");
+      safeStore.removeItem("tj-role");
       el("access-screen").classList.remove("hidden");
       chooseAccessMode("aluno");
       el("access-error").textContent = "O teu pedido foi rejeitado ou removido. Podes pedir acesso novamente.";
@@ -1194,6 +1484,7 @@ function resetForm() {
   el("f-asset").value = "";
   el("f-numtrades").value = 1;
   el("f-result").value = "win";
+  el("f-rr").value = "";
   el("f-setup").checked = true;
   el("f-comment").value = "";
   el("f-image").value = "";
@@ -1209,6 +1500,7 @@ function startEdit(entry) {
   el("f-date").value = entry.date;
   el("f-asset").value = entry.asset || "";
   el("f-numtrades").value = entry.numTrades || 1;
+  el("f-rr").value = rrOf(entry) !== null ? Math.abs(entry.rr) : "";
   el("f-result").value = entry.result;
   el("f-setup").checked = !!entry.setupFollowed;
   el("f-comment").value = entry.comment || "";
@@ -1241,6 +1533,13 @@ async function submitEntry() {
     asset: el("f-asset").value.trim(),
     numTrades: Number(el("f-numtrades").value) || 1,
     result: el("f-result").value,
+    rr: (() => {
+      const res = el("f-result").value;
+      const raw = parseFloat(String(el("f-rr").value).replace(",", "."));
+      if (res === "be") return 0;
+      if (!isFinite(raw)) return res === "loss" ? -1 : (original && rrOf(original) !== null ? original.rr : null);
+      return res === "loss" ? -Math.abs(raw) : Math.abs(raw);
+    })(),
     setupFollowed: el("f-setup").checked,
     comment: el("f-comment").value.trim(),
     image: pendingImage,
@@ -1323,6 +1622,7 @@ function showMain() {
 function render() {
   renderTabs();
   renderBoard();
+  renderRRPanel();
   renderRoomSummaries();
   renderProfilesTable();
   renderProfilePanel();
@@ -1367,7 +1667,7 @@ function renderTabs() {
   }
 
   const isAlunos = activeRoom === "alunos";
-  ["board", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "entries-grid", "empty-state"].forEach(id => {
+  ["board", "rr-panel", "room-summaries", "profiles-table-wrap", "stats-panel", "filter-row", "entries-grid", "empty-state"].forEach(id => {
     const node = el(id);
     if (node) node.classList.toggle("hidden", isAlunos);
   });
@@ -1388,17 +1688,99 @@ function renderBoard() {
   const wrap = el("board");
   wrap.innerHTML = "";
   const items = [
-    { label: "Trades no total", value: stats.totalTrades, color: "var(--text)" },
-    { label: "Entradas", value: stats.total, color: "var(--text)" },
-    { label: "Win rate", value: stats.winRate + "%", color: "var(--win)" },
-    { label: "Seguiu o setup", value: stats.setupRate + "%", color: "var(--accent)" }
+    { label: "Trades no total", num: stats.totalTrades, fmt: v => String(Math.round(v)), color: "var(--text)" },
+    { label: "Win rate", num: stats.winRate, fmt: v => Math.round(v) + "%", color: "var(--win)" },
+    { label: "RR total", num: stats.rrTotal, fmt: v => fmtR(v), color: rrColor(stats.rrTotal) },
+    { label: "RR medio", num: stats.rrAvg, fmt: v => fmtR(v, 2), color: rrColor(stats.rrAvg) },
+    { label: "Seguiu o setup", num: stats.setupRate, fmt: v => Math.round(v) + "%", color: "var(--accent)" }
   ];
   items.forEach(it => {
     const d = document.createElement("div");
     d.className = "board-item";
-    d.innerHTML = `<div class="board-value" style="color:${it.color}">${it.value}</div><div class="board-label">${it.label}</div>`;
+    d.innerHTML = `<div class="board-value" style="color:${it.color}"></div><div class="board-label">${it.label}</div>`;
     wrap.appendChild(d);
+    animateNumber(d.querySelector(".board-value"), "board:" + it.label, it.num, it.fmt);
   });
+}
+
+// Contagem animada dos numeros (so quando o valor muda)
+const __lastNums = {};
+function animateNumber(node, key, to, fmt) {
+  const from = key in __lastNums ? __lastNums[key] : 0;
+  __lastNums[key] = to;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || from === to) { node.textContent = fmt(to); return; }
+  const t0 = performance.now(), dur = 700;
+  const tick = (now) => {
+    const k = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - k, 3);
+    node.textContent = fmt(from + (to - from) * e);
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+// ---- Painel "RR do mes" ----
+let rrMonthOffset = 0;
+function rrSettings() {
+  const risk = parseFloat(safeStore.getItem("tj-rr-risk"));
+  const goal = parseFloat(safeStore.getItem("tj-rr-goal"));
+  return { risk: isFinite(risk) && risk > 0 ? risk : 1, goal: isFinite(goal) && goal > 0 ? goal : 10 };
+}
+function monthKeyOffset(off) {
+  const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + off);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+function renderRRPanel() {
+  const { risk, goal } = rrSettings();
+  if (document.activeElement !== el("rr-risk")) el("rr-risk").value = risk;
+  if (document.activeElement !== el("rr-goal")) el("rr-goal").value = goal;
+  const key = monthKeyOffset(rrMonthOffset);
+  const prevKey = monthKeyOffset(rrMonthOffset - 1);
+  const [y, m] = key.split("-");
+  const ml = new Date(+y, +m - 1, 1).toLocaleDateString("pt-PT", { month: "long", year: "numeric" });
+  el("rr-month-label").textContent = ml.charAt(0).toUpperCase() + ml.slice(1);
+  el("rr-next").disabled = rrMonthOffset >= 0;
+  el("rr-next").style.opacity = rrMonthOffset >= 0 ? "0.35" : "1";
+
+  const room = getRoomEntries();
+  const month = room.filter(e => (e.date || "").slice(0, 7) === key);
+  const prev = room.filter(e => (e.date || "").slice(0, 7) === prevKey);
+  const s = computeStats(month);
+  const sp = computeStats(prev);
+  const pct = s.rrTotal * risk;
+
+  const totalNode = el("rr-total");
+  totalNode.style.color = rrColor(s.rrTotal);
+  animateNumber(totalNode, "rr-total", s.rrTotal, v => fmtR(v));
+  const pctNode = el("rr-pct");
+  pctNode.style.color = rrColor(pct);
+  animateNumber(pctNode, "rr-pct", pct, v => fmtPct(v));
+
+  // anel de progresso para o objetivo
+  const C = 326.73;
+  const ratio = Math.max(0, Math.min(1, Math.abs(s.rrTotal) / goal));
+  const ring = el("rr-ring");
+  ring.style.strokeDashoffset = String(C * (1 - ratio));
+  ring.setAttribute("stroke", s.rrTotal < 0 ? "var(--loss)" : "url(#rrGold)");
+  ring.style.color = s.rrTotal < 0 ? "#FF4D6D" : "#E8C15A";
+  const ringPct = el("rr-ring-pct");
+  ringPct.style.color = s.rrTotal < 0 ? "var(--loss)" : (s.rrTotal >= goal ? "var(--win)" : "#E8C15A");
+  animateNumber(ringPct, "rr-ring", s.rrTotal < 0 ? 0 : (s.rrTotal / goal) * 100, v => Math.round(v) + "%");
+
+  const diff = s.rrTotal - sp.rrTotal;
+  const stat = (k, v, c) => `<div class="rr-stat"><div class="k">${k}</div><div class="v" style="color:${c || "var(--text)"}">${v}</div></div>`;
+  el("rr-stats").innerHTML =
+    stat("Trades c/ RR", s.rrCount) +
+    stat("RR medio", fmtR(s.rrAvg, 2), rrColor(s.rrAvg)) +
+    stat("Melhor", s.rrCount ? fmtR(s.rrBest) : "—", s.rrCount ? rrColor(s.rrBest) : null) +
+    stat("Pior", s.rrCount ? fmtR(s.rrWorst) : "—", s.rrCount ? rrColor(s.rrWorst) : null) +
+    stat("vs mes anterior", sp.rrCount ? fmtR(diff) : "—", sp.rrCount ? rrColor(diff) : null);
+
+  const missing = month.length - s.rrCount;
+  el("rr-note").textContent =
+    "Retorno estimado = RR acumulado × " + String(risk).replace(".", ",") + "% de risco por trade (sem juros compostos)." +
+    (missing > 0 ? " " + missing + " ticket(s) deste mes nao tem RR e ficam de fora." : "");
 }
 
 function renderRoomSummaries() {
@@ -1411,7 +1793,8 @@ function renderRoomSummaries() {
     const card = document.createElement("button");
     card.className = "room-card";
     card.innerHTML = `<div style="font-size:13px; font-weight:600; margin-bottom:6px;">${t}${t === traderName ? " (tu)" : ""}</div>
-      <div class="mono" style="font-size:11px; color:var(--textSoft);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>`;
+      <div class="mono" style="font-size:11px; color:var(--textSoft);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>
+      <div class="rr-chip" style="text-align:left; color:${rrColor(s.rrTotal)}">${fmtR(s.rrTotal)}</div>`;
     card.onclick = () => { activeRoom = t; render(); };
     wrap.appendChild(card);
   });
@@ -1428,11 +1811,194 @@ function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
+// ---- Gráficos: estilo e ajudantes ----
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+function prettyPeriod(key, gran) {
+  if (!key || key === "sem-data") return "sem data";
+  const parts = key.split("-");
+  if (gran === "day" && parts.length === 3) return parseInt(parts[2], 10) + " " + MESES[+parts[1] - 1];
+  if (gran === "month" && parts.length >= 2) return MESES[+parts[1] - 1] + " " + parts[0].slice(2);
+  return key;
+}
+
+function hexA(hex, a) {
+  let h = (hex || "#ffffff").replace("#", "").trim();
+  if (h.length === 3) h = h.split("").map(c => c + c).join("");
+  const n = parseInt(h, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
+function vGradient(chart, top, bottom) {
+  const { ctx, chartArea } = chart;
+  if (!chartArea) return top;
+  const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  g.addColorStop(0, top);
+  g.addColorStop(1, bottom);
+  return g;
+}
+
+function tooltipStyle() {
+  return {
+    backgroundColor: "rgba(6, 8, 12, 0.96)",
+    borderColor: "rgba(255, 255, 255, 0.14)",
+    borderWidth: 1,
+    titleColor: "#FFFFFF",
+    bodyColor: "#C9D4DB",
+    titleFont: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", weight: "600", size: 12 },
+    bodyFont: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 12 },
+    padding: 12,
+    cornerRadius: 10,
+    caretSize: 6,
+    boxPadding: 4
+  };
+}
+
+function axisStyle(extra) {
+  return Object.assign({
+    border: { display: false },
+    grid: { color: "rgba(255, 255, 255, 0.06)", drawTicks: false },
+    ticks: { color: cssVar("--textMuted") || "#6E6E6E", padding: 8, font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } }
+  }, extra || {});
+}
+
+// Linha de referência tracejada (ex: 50% no win rate)
+const refLinePlugin = {
+  id: "refLine",
+  afterDatasetsDraw(chart, args, opts) {
+    if (opts == null || opts.value == null) return;
+    const { ctx, chartArea, scales } = chart;
+    const y = scales.y.getPixelForValue(opts.value);
+    if (y < chartArea.top || y > chartArea.bottom) return;
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = opts.color || "rgba(255,255,255,0.35)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(chartArea.left, y);
+    ctx.lineTo(chartArea.right, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (opts.label) {
+      ctx.fillStyle = opts.color || "rgba(255,255,255,0.5)";
+      ctx.font = "10px 'IBM Plex Mono', monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(opts.label, chartArea.right - 2, y - 5);
+    }
+    ctx.restore();
+  }
+};
+
+// Brilho suave por baixo das linhas
+const glowPlugin = {
+  id: "lineGlow",
+  beforeDatasetDraw(chart, args) {
+    if (chart.config.type !== "line") return;
+    const ds = chart.data.datasets[args.index];
+    const c = ds.glowColor || "rgba(255,255,255,0.25)";
+    chart.ctx.save();
+    chart.ctx.shadowColor = c;
+    chart.ctx.shadowBlur = 12;
+    chart.ctx.shadowOffsetY = 4;
+  },
+  afterDatasetDraw(chart) {
+    if (chart.config.type !== "line") return;
+    chart.ctx.restore();
+  }
+};
+
+// Linha vertical ao passar o dedo / rato
+const crosshairPlugin = {
+  id: "crosshair",
+  afterDraw(chart) {
+    const active = chart.tooltip && chart.tooltip.getActiveElements();
+    if (!active || !active.length) return;
+    const { ctx, chartArea } = chart;
+    const x = active[0].element.x;
+    ctx.save();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, chartArea.top);
+    ctx.lineTo(x, chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+// Barras em LED: corta cada barra em segmentos
+const ledPlugin = {
+  id: "ledSegments",
+  afterDatasetsDraw(chart) {
+    if (chart.config.type !== "bar") return;
+    const { ctx } = chart;
+    const meta = chart.getDatasetMeta(0);
+    ctx.save();
+    ctx.fillStyle = "#000";
+    meta.data.forEach(bar => {
+      const p = bar.getProps(["x", "y", "base", "width"], true);
+      const top = Math.min(p.y, p.base), bottom = Math.max(p.y, p.base);
+      for (let y = bottom - 5; y > top + 2; y -= 6) ctx.fillRect(p.x - p.width / 2 - 1, y, p.width + 2, 2);
+    });
+    ctx.restore();
+  }
+};
+
+// Reflexo espelhado por baixo da área do gráfico
+const mirrorPlugin = {
+  id: "mirror",
+  afterDraw(chart, args, opts) {
+    const { ctx, chartArea: a, canvas } = chart;
+    if (!a) return;
+    const dpr = chart.currentDevicePixelRatio || 1;
+    const h = (opts && opts.height) || 44;
+    const B = Math.round((a.bottom + 3) * dpr);
+    const sx = Math.round(a.left * dpr), sw = Math.round((a.right - a.left) * dpr), sh = Math.round(h * dpr);
+    const sy = Math.round(a.bottom * dpr) - sh;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.translate(0, B + Math.round(a.bottom * dpr));
+    ctx.scale(1, -1);
+    ctx.globalAlpha = 0.9;
+    ctx.drawImage(canvas, sx, sy, sw, sh, sx, sy, sw, sh);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "destination-out";
+    const g = ctx.createLinearGradient(0, B, 0, B + sh);
+    g.addColorStop(0, "rgba(0,0,0,0.62)");
+    g.addColorStop(1, "rgba(0,0,0,1)");
+    ctx.fillStyle = g;
+    ctx.fillRect(sx - 2, B - 1, sw + 4, sh + 2);
+    ctx.globalCompositeOperation = "source-over";
+    // linha de "espelho"
+    const lg = ctx.createLinearGradient(sx, 0, sx + sw, 0);
+    lg.addColorStop(0, "rgba(255,255,255,0)");
+    lg.addColorStop(0.5, "rgba(255,255,255,0.35)");
+    lg.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = lg;
+    ctx.fillRect(sx, B - 2 * dpr, sw, Math.max(1, dpr));
+    ctx.restore();
+  }
+};
+
+function setupChartDefaults() {
+  if (!window.Chart) return;
+  Chart.defaults.font.family = "'IBM Plex Sans', 'Helvetica Neue', sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = cssVar("--textMuted") || "#6E6E6E";
+  Chart.defaults.animation.duration = 650;
+  Chart.defaults.animation.easing = "easeOutQuart";
+}
+
 function renderCharts() {
   renderSentimentTable();
   const list = getRoomEntries();
 
-  // Bar chart: win rate per period
+  const win = cssVar("--win") || "#2FE6A0";
+  const loss = cssVar("--loss") || "#FF4D6D";
+  const textMuted = cssVar("--textMuted") || "#6E6E6E";
+
+  // ---- Barras: win rate por período (verde >= 50%, vermelho abaixo) ----
   const buckets = {};
   list.forEach(e => {
     const key = periodKey(e.date, statsGranularity);
@@ -1440,48 +2006,112 @@ function renderCharts() {
     buckets[key].push(e);
   });
   const keys = Object.keys(buckets).sort();
-  const barLabels = keys;
+  const barLabels = keys.map(k => prettyPeriod(k, statsGranularity));
   const barData = keys.map(k => computeStats(buckets[k]).winRate);
   const barCounts = keys.map(k => buckets[k].length);
-
-  const accent = cssVar("--accent") || "#2CD9F5";
-  const win = cssVar("--win") || "#1B8F55";
-  const textMuted = cssVar("--textMuted") || "#A0947A";
-  const border = cssVar("--border") || "#E8E0CB";
+  const barColor = v => (v >= 50 ? win : loss);
 
   const barCtx = el("bar-chart").getContext("2d");
   if (barChartInstance) barChartInstance.destroy();
   barChartInstance = new Chart(barCtx, {
     type: "bar",
+    plugins: [ledPlugin, refLinePlugin, mirrorPlugin],
     data: {
       labels: barLabels,
       datasets: [{
-        label: "Win rate %",
+        label: "Win rate",
         data: barData,
-        backgroundColor: accent,
-        borderRadius: 6,
-        maxBarThickness: 36
+        backgroundColor: (c) => {
+          const col = barColor(c.raw || 0);
+          return vGradient(c.chart, hexA(col, 0.95), hexA(col, 0.12));
+        },
+        hoverBackgroundColor: (c) => barColor(c.raw || 0),
+        borderColor: (c) => barColor(c.raw || 0),
+        borderWidth: { top: 3, left: 0, right: 0, bottom: 0 },
+        borderSkipped: "bottom",
+        borderRadius: { topLeft: 8, topRight: 8 },
+        maxBarThickness: 34,
+        minBarLength: 4,
+        categoryPercentage: 0.7
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 6, bottom: 50 } },
       plugins: {
         legend: { display: false },
-        tooltip: {
+        refLine: { value: 50, label: "50%", color: "rgba(255, 210, 63, 0.55)" },
+        tooltip: Object.assign(tooltipStyle(), {
+          displayColors: false,
           callbacks: {
+            title: (items) => keys[items[0].dataIndex],
+            label: (ctx) => "Win rate: " + ctx.raw + "%",
             afterLabel: (ctx) => barCounts[ctx.dataIndex] + " ticket(s)"
           }
-        }
+        })
       },
       scales: {
-        y: { beginAtZero: true, max: 100, ticks: { color: textMuted, callback: v => v + "%" }, grid: { color: border } },
-        x: { ticks: { color: textMuted }, grid: { display: false } }
+        y: axisStyle({ beginAtZero: true, max: 100, ticks: { color: textMuted, padding: 8, stepSize: 25, callback: v => v + "%", font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } } }),
+        x: axisStyle({ position: "top", grid: { display: false }, ticks: { color: textMuted, maxRotation: 0, autoSkipPadding: 10, padding: 8, font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } } })
       }
     }
   });
 
-  // Line chart: cumulative evolution
+  // ---- Barras: RR por período ----
+  const rrBars = keys.map(k => Math.round(buckets[k].reduce((s, e) => s + rrOrUnit(e), 0) * 100) / 100);
+  const rrCol = v => (v >= 0 ? win : loss);
+  const rrCtx = el("rr-chart").getContext("2d");
+  if (window.__rrChartInstance) window.__rrChartInstance.destroy();
+  window.__rrChartInstance = new Chart(rrCtx, {
+    type: "bar",
+    plugins: [ledPlugin, mirrorPlugin],
+    data: {
+      labels: barLabels,
+      datasets: [{
+        label: "RR",
+        data: rrBars,
+        backgroundColor: (c) => {
+          const v = c.raw || 0, col = rrCol(v);
+          return v >= 0 ? vGradient(c.chart, hexA(col, 0.95), hexA(col, 0.15)) : vGradient(c.chart, hexA(col, 0.15), hexA(col, 0.95));
+        },
+        hoverBackgroundColor: (c) => rrCol(c.raw || 0),
+        borderColor: (c) => rrCol(c.raw || 0),
+        borderWidth: 0,
+        borderRadius: 6,
+        borderSkipped: false,
+        minBarLength: 4,
+        maxBarThickness: 34,
+        categoryPercentage: 0.7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: { top: 6, bottom: 50 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: Object.assign(tooltipStyle(), {
+          displayColors: false,
+          callbacks: {
+            title: (items) => keys[items[0].dataIndex],
+            label: (ctx) => "RR: " + fmtR(ctx.raw, 2),
+            afterLabel: (ctx) => barCounts[ctx.dataIndex] + " ticket(s)"
+          }
+        })
+      },
+      scales: {
+        y: axisStyle({
+          grace: "10%",
+          grid: { drawTicks: false, color: (c) => (c.tick && c.tick.value === 0 ? "rgba(255, 255, 255, 0.28)" : "rgba(255, 255, 255, 0.06)") },
+          ticks: { color: textMuted, padding: 8, callback: v => (v > 0 ? "+" : "") + v + "R", font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } }
+        }),
+        x: axisStyle({ position: "top", grid: { display: false }, ticks: { color: textMuted, maxRotation: 0, autoSkipPadding: 10, padding: 8, font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } } })
+      }
+    }
+  });
+
+  // ---- Linha: evolução acumulada (verde acima de 0, vermelho abaixo) ----
   const sorted = [...list].sort((a, b) => {
     const da = a.date || "";
     const db_ = b.date || "";
@@ -1490,75 +2120,150 @@ function renderCharts() {
   });
   let running = 0;
   const lineLabels = [];
+  const lineRaw = [];
   const lineData = [];
   sorted.forEach((e, i) => {
-    running += e.result === "win" ? 1 : e.result === "loss" ? -1 : 0;
-    lineLabels.push(e.date || ("#" + (i + 1)));
+    running = Math.round((running + rrOrUnit(e)) * 100) / 100;
+    lineRaw.push(e);
+    lineLabels.push(e.date ? prettyPeriod(e.date, "day") : ("#" + (i + 1)));
     lineData.push(running);
   });
+  const lastVal = lineData.length ? lineData[lineData.length - 1] : 0;
+  const lineMain = lastVal >= 0 ? win : loss;
 
   const lineCtx = el("line-chart").getContext("2d");
   if (lineChartInstance) lineChartInstance.destroy();
   lineChartInstance = new Chart(lineCtx, {
     type: "line",
+    plugins: [glowPlugin, crosshairPlugin, mirrorPlugin],
     data: {
       labels: lineLabels,
       datasets: [{
-        label: "Evolucao",
+        label: "Saldo",
         data: lineData,
-        borderColor: win,
-        backgroundColor: win + "22",
-        fill: true,
-        tension: 0.25,
-        pointRadius: 2
+        borderColor: lineMain,
+        glowColor: hexA(lineMain, 0.45),
+        segment: {
+          borderColor: (c) => (c.p1.parsed.y < 0 || (c.p0.parsed.y < 0 && c.p1.parsed.y <= 0)) ? loss : win
+        },
+        borderWidth: 2.5,
+        fill: { target: "origin", above: hexA(win, 0.16), below: hexA(loss, 0.16) },
+        tension: 0.35,
+        cubicInterpolationMode: "monotone",
+        pointRadius: (c) => (c.dataIndex === lineData.length - 1 ? 4 : 0),
+        pointBackgroundColor: lineMain,
+        pointBorderColor: "#000",
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: "#FFFFFF",
+        pointHoverBorderColor: lineMain,
+        pointHoverBorderWidth: 2
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      interaction: { mode: "index", intersect: false },
+      layout: { padding: { top: 8, right: 6, bottom: 50 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: Object.assign(tooltipStyle(), {
+          displayColors: false,
+          callbacks: {
+            title: (items) => {
+              const e = lineRaw[items[0].dataIndex];
+              return (e.date || "") + (e.asset ? " · " + e.asset : "");
+            },
+            label: (ctx) => {
+              const e = lineRaw[ctx.dataIndex];
+              const r = (e.result === "win" ? "WIN " : e.result === "loss" ? "LOSS " : "B/E ") + fmtR(rrOrUnit(e), 2);
+              return [r, "Saldo: " + fmtR(ctx.raw, 2), e.trader];
+            }
+          }
+        })
+      },
       scales: {
-        y: { ticks: { color: textMuted }, grid: { color: border } },
-        x: { ticks: { color: textMuted, maxTicksLimit: 8 }, grid: { display: false } }
+        y: axisStyle({
+          grace: "10%",
+          grid: {
+            drawTicks: false,
+            color: (c) => (c.tick && c.tick.value === 0 ? "rgba(255, 255, 255, 0.28)" : "rgba(255, 255, 255, 0.06)"),
+            lineWidth: (c) => (c.tick && c.tick.value === 0 ? 1.5 : 1)
+          },
+          ticks: { color: textMuted, padding: 8, precision: 0, callback: v => (v > 0 ? "+" : "") + v + "R", font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } }
+        }),
+        x: axisStyle({ position: "top", grid: { display: false }, ticks: { color: textMuted, maxTicksLimit: 7, maxRotation: 0, padding: 8, font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } } })
       }
     }
   });
 
-  // Multi-line chart: evolution per trader (only in "all" view)
+  // ---- Multi-linha: evolução por trader (só na visão geral) ----
   const multiBlock = el("multi-chart-block");
   if (activeRoom === "all") {
     multiBlock.classList.remove("hidden");
-    const PALETTE = ["#2CD9F5", "#7CF0FF", "#2FE6A0", "#FF4D6D", "#8C6BFF", "#3E8FE0", "#00B8A9", "#5C7C90"];
+    const PALETTE = ["#FFD23F", "#FFFFFF", "#2FE6A0", "#FF4D6D", "#8C6BFF", "#2CD9F5", "#FF9F43", "#9AA5B1"];
     const traders = getTraders();
     const allDates = Array.from(new Set(list.map(e => e.date).filter(Boolean))).sort();
     const datasets = traders.map((t, i) => {
+      const col = PALETTE[i % PALETTE.length];
       let run = 0;
       const data = allDates.map(d => {
         const dayEntries = list.filter(e => e.trader === t && e.date === d);
-        dayEntries.forEach(e => { run += e.result === "win" ? 1 : e.result === "loss" ? -1 : 0; });
+        dayEntries.forEach(e => { run = Math.round((run + rrOrUnit(e)) * 100) / 100; });
         return run;
       });
       return {
         label: t,
         data,
-        borderColor: PALETTE[i % PALETTE.length],
-        backgroundColor: "transparent",
-        tension: 0.25,
-        pointRadius: 2
+        borderColor: col,
+        glowColor: hexA(col, 0.35),
+        backgroundColor: col,
+        borderWidth: 2.2,
+        tension: 0.35,
+        cubicInterpolationMode: "monotone",
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: col,
+        pointHoverBorderColor: "#000",
+        pointHoverBorderWidth: 2
       };
     });
     const multiCtx = el("line-chart-multi").getContext("2d");
     if (window.__multiChartInstance) window.__multiChartInstance.destroy();
     window.__multiChartInstance = new Chart(multiCtx, {
       type: "line",
-      data: { labels: allDates, datasets },
+      plugins: [glowPlugin, crosshairPlugin, mirrorPlugin],
+      data: { labels: allDates.map(d => prettyPeriod(d, "day")), datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: true, position: "bottom", labels: { color: textMuted, boxWidth: 12, font: { size: 11 } } } },
+        interaction: { mode: "index", intersect: false },
+        layout: { padding: { top: 8, right: 6, bottom: 50 } },
+        plugins: {
+          legend: {
+            display: true,
+            position: "top",
+            labels: { color: "#C9D4DB", usePointStyle: true, pointStyle: "circle", boxWidth: 8, boxHeight: 8, padding: 16, font: { size: 11 } }
+          },
+          tooltip: Object.assign(tooltipStyle(), {
+            usePointStyle: true,
+            itemSort: (a, b) => b.raw - a.raw,
+            callbacks: {
+              title: (items) => allDates[items[0].dataIndex],
+              label: (ctx) => " " + ctx.dataset.label + ": " + fmtR(ctx.raw, 2)
+            }
+          })
+        },
         scales: {
-          y: { ticks: { color: textMuted }, grid: { color: border } },
-          x: { ticks: { color: textMuted, maxTicksLimit: 8 }, grid: { display: false } }
+          y: axisStyle({
+            grace: "10%",
+            grid: {
+              drawTicks: false,
+              color: (c) => (c.tick && c.tick.value === 0 ? "rgba(255, 255, 255, 0.28)" : "rgba(255, 255, 255, 0.06)")
+            },
+            ticks: { color: textMuted, padding: 8, precision: 0, callback: v => (v > 0 ? "+" : "") + v + "R", font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } }
+          }),
+          x: axisStyle({ position: "top", grid: { display: false }, ticks: { color: textMuted, maxTicksLimit: 7, maxRotation: 0, padding: 8, font: { family: "'Share Tech Mono', 'IBM Plex Mono', monospace", size: 10 } } })
         }
       }
     });
@@ -1779,7 +2484,7 @@ function renderProfilesTable() {
       ${isAdmin ? `<button title="apagar perfil" onclick="window.__deleteProfile('${t.replace(/'/g, "\\'")}')" style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:999px; border:1px solid var(--border); background:var(--panelAlt); color:var(--loss); font-size:13px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>` : ""}
       <div style="font-size:13px; font-weight:600; margin-bottom:6px; padding-right:${isAdmin ? "24px" : "0"};">${t}${t === traderName ? " (tu)" : ""}</div>
       <div style="font-size:12px; color:var(--textSoft); line-height:1.5; margin-bottom:8px; min-height:36px;">${prof && prof.style ? escapeHtml(prof.style) : "sem perfil definido"}</div>
-      <div class="mono" style="font-size:11px; color:var(--textMuted);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>
+      <div class="mono" style="font-size:11px; color:var(--textMuted);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span> · <span style="color:${rrColor(s.rrTotal)}">${fmtR(s.rrTotal)}</span></div>
       <button class="btn" style="margin-top:8px; padding:6px 12px; font-size:11px;" onclick="window.__goRoom('${t.replace(/'/g, "\\'")}')">ver sala</button>
     </td>`;
   });
@@ -1887,7 +2592,7 @@ function openTicketModal(entry) {
   el("ticket-modal-badge").style.border = `1px solid ${meta.color}55`;
   el("ticket-modal-date").textContent = entry.date;
   el("ticket-modal-asset").textContent = entry.asset || "sem ativo";
-  el("ticket-modal-meta").textContent = entry.trader + " · " + entry.numTrades + " trade" + (entry.numTrades === 1 ? "" : "s") + " · " + (entry.setupFollowed ? "seguiu o setup" : "fora do setup");
+  el("ticket-modal-meta").textContent = entry.trader + " · " + entry.numTrades + " trade" + (entry.numTrades === 1 ? "" : "s") + " · " + (entry.setupFollowed ? "seguiu o setup" : "fora do setup") + (rrOf(entry) !== null ? " · " + fmtR(entry.rr, 2) : "");
   el("ticket-modal-comment").textContent = entry.comment || "";
   el("ticket-modal").classList.remove("hidden");
 }
@@ -1909,7 +2614,10 @@ function buildTicketCard(entry) {
         <div class="mono" style="font-size:12px; color:var(--textMuted);">${entry.date}</div>
         <div style="font-size:16px; font-weight:600;">${entry.asset || "sem ativo"}</div>
       </div>
-      <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
+      <div class="ticket-top-right">
+        <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
+        ${rrOf(entry) !== null ? `<div class="rr-chip" style="color:${rrColor(entry.rr)}">${fmtR(entry.rr, 2)}</div>` : ""}
+      </div>
     </div>
     <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
       ${entry.trader} · ${entry.numTrades} trade${entry.numTrades === 1 ? "" : "s"} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
@@ -2048,8 +2756,8 @@ el("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") log
 
 el("logout-btn").onclick = () => {
   if (!confirm("Sair e entrar com outro nome? Vais ter de voltar a inserir o PIN e o nome.")) return;
-  localStorage.removeItem("tj-trader-name");
-  localStorage.removeItem("tj-role");
+  safeStore.removeItem("tj-trader-name");
+  safeStore.removeItem("tj-role");
   location.reload();
 };
 
@@ -2110,7 +2818,17 @@ el("news-submit").onclick = submitNews;
 
 // ---- Init ----
 el("f-date").value = todayISO();
+el("rr-prev").onclick = () => { rrMonthOffset -= 1; renderRRPanel(); };
+el("rr-next").onclick = () => { if (rrMonthOffset < 0) { rrMonthOffset += 1; renderRRPanel(); } };
+el("rr-risk").addEventListener("change", () => { const v = parseFloat(String(el("rr-risk").value).replace(",", ".")); if (v > 0) safeStore.setItem("tj-rr-risk", String(v)); renderRRPanel(); });
+el("rr-goal").addEventListener("change", () => { const v = parseFloat(String(el("rr-goal").value).replace(",", ".")); if (v > 0) safeStore.setItem("tj-rr-goal", String(v)); renderRRPanel(); });
+el("f-result").addEventListener("change", () => {
+  const r = el("f-result").value;
+  el("f-rr").disabled = r === "be";
+  el("f-rr").placeholder = r === "loss" ? "ex: 1" : r === "be" ? "0 (breakeven)" : "ex: 2.5";
+});
 el("news-date").textContent = new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" });
+setupChartDefaults();
 initNetworkBackground();
 startConnectivityWatch();
 loadAdminPin();
