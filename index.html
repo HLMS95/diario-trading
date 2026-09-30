@@ -346,6 +346,66 @@
   .rr-stat .v { font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; font-size: 16px; margin-top: 3px; }
   .rr-note { font-size: 11px; color: var(--textMuted); margin-top: 10px; line-height: 1.5; }
   @media (prefers-reduced-motion: reduce) { .rr-ring-prog, .ticket, .room-card { transition: none; } }
+
+  /* ---- Sala Swing · Crypto ---- */
+  body.room-swing { --accent: #F7931A; --accentSoft: rgba(247, 147, 26, 0.13); --accentDeep: #FFB866; }
+  body.room-swing .btn-accent {
+    background: linear-gradient(180deg, #FFC98A 0%, #F7931A 45%, #B85F00 100%);
+    color: #1A0E02;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 4px 18px rgba(247, 147, 26, 0.35);
+  }
+  body.room-swing .panel::before, body.room-swing #board::before,
+  body.room-swing .room-card::before, body.room-swing .ticket::before {
+    background: linear-gradient(90deg, transparent, rgba(247, 147, 26, 0.7), transparent);
+  }
+  body.room-swing .tab-btn.active, body.room-swing .gran-btn.active { box-shadow: 0 0 16px rgba(247, 147, 26, 0.22), inset 0 1px 0 rgba(255,255,255,0.12); }
+  body.room-swing .ticket:hover { border-color: rgba(247, 147, 26, 0.4); }
+  #form-panel.mode-swing .day-only { display: none; }
+  #form-panel:not(.mode-swing) .swing-only { display: none; }
+  .field-hint { font-size: 11px; color: var(--textMuted); margin-top: 5px; }
+  .swing-preview {
+    font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.5;
+    padding: 10px 12px; border-radius: 12px; background: var(--panelAlt); border: 1px dashed var(--borderStrong);
+  }
+  .dir-chip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 2px 8px; border-radius: 999px; }
+  .dir-chip.long { color: var(--win); background: rgba(47, 230, 160, 0.1); border: 1px solid rgba(47, 230, 160, 0.35); }
+  .dir-chip.short { color: var(--loss); background: rgba(255, 77, 109, 0.1); border: 1px solid rgba(255, 77, 109, 0.35); }
+  .tf-chip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--textMuted); border: 1px solid var(--border); padding: 2px 7px; border-radius: 999px; }
+  .sw-prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0 8px; }
+  .sw-prices > div { background: var(--panelAlt); border: 1px solid var(--border); border-radius: 10px; padding: 7px 9px; min-width: 0; }
+  .sw-prices .k { display: block; font-size: 9.5px; color: var(--textMuted); text-transform: uppercase; letter-spacing: 0.8px; }
+  .sw-prices .v { display: block; font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; font-size: 14px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sw-foot { font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; font-size: 13px; margin-bottom: 6px; }
+  .swing-tag {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: #F7931A;
+    border: 1px solid rgba(247, 147, 26, 0.45); background: rgba(247, 147, 26, 0.1);
+    padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle;
+  }
+  .sw-title { font-size: 16px; font-weight: 600; margin: 2px 0 10px; }
+  .pos-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--border); }
+  .pos-row .pair { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pos-row .sub { font-size: 11px; color: var(--textMuted); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
+  .pos-row .days { font-family: 'Orbitron', monospace; font-size: 15px; color: var(--accent); text-align: right; text-shadow: 0 0 10px currentColor; white-space: nowrap; }
+  .pos-close { padding: 6px 12px; font-size: 11px; }
+
+  /* ---- Ticket de analise ---- */
+  .kind-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+  .kind-toggle .tab-btn { flex: 1; }
+  #form-panel.mode-analysis .day-only,
+  #form-panel.mode-analysis .swing-only,
+  #form-panel.mode-analysis .trade-only { display: none; }
+  #form-panel:not(.mode-analysis) .analysis-only { display: none; }
+  .bias-chip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 2px 8px; border-radius: 999px; }
+  .bias-chip.bullish { color: var(--win); background: rgba(47, 230, 160, 0.1); border: 1px solid rgba(47, 230, 160, 0.35); }
+  .bias-chip.bearish { color: var(--loss); background: rgba(255, 77, 109, 0.1); border: 1px solid rgba(255, 77, 109, 0.35); }
+  .bias-chip.neutro { color: var(--textSoft); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); }
+  .an-levels {
+    font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.5;
+    padding: 8px 10px; margin: 10px 0; border-radius: 10px; background: var(--panelAlt); border: 1px solid var(--border);
+    white-space: pre-wrap;
+  }
+  .an-levels .k { display: block; font-family: 'IBM Plex Sans', sans-serif; font-size: 9.5px; color: var(--textMuted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+  .ticket.is-analysis { border-style: dashed; }
 </style>
 </head>
 <body>
@@ -567,10 +627,17 @@
     <div id="profile-panel" class="panel hidden" style="margin-bottom:22px;">
       <div class="eyebrow" style="margin-bottom:4px;">Perfil do trader</div>
       <div id="profile-view">
+        <div id="profile-type" style="margin-bottom:6px;"></div>
         <div id="profile-text" style="font-size:14px; line-height:1.5; white-space:pre-wrap; color:var(--textSoft);"></div>
         <button id="profile-edit-btn" class="btn hidden" style="margin-top:10px;">editar perfil</button>
       </div>
       <div id="profile-edit-box" class="hidden">
+        <label class="label">Tipo de sala</label>
+        <select id="profile-roomtype" class="input" style="margin-bottom:12px;">
+          <option value="day">Day trading / intraday</option>
+          <option value="swing">Swing · Crypto</option>
+        </select>
+        <label class="label">Estilo</label>
         <textarea id="profile-input" class="input" style="min-height:60px; resize:vertical;" placeholder="ex: Day trading em EURUSD, estilo breakout, timeframe M15..."></textarea>
         <div style="display:flex; gap:8px; margin-top:10px;">
           <button id="profile-save-btn" class="btn btn-accent">Guardar</button>
@@ -580,6 +647,14 @@
     </div>
 
     <div id="board"></div>
+
+    <div id="swing-panel" class="panel hidden" style="margin-bottom:22px;">
+      <div class="eyebrow">₿ Swing · Crypto</div>
+      <div id="sw-open-title" class="sw-title">Posicoes abertas</div>
+      <div id="sw-open-list"></div>
+      <div class="chart-caption" style="margin-top:18px;">Long vs short e duracao</div>
+      <div id="sw-stats" class="rr-stats"></div>
+    </div>
 
     <div id="rr-panel" class="panel" style="margin-bottom:22px;">
       <div class="rr-head">
@@ -660,20 +735,24 @@
 
       <div id="form-panel" class="panel hidden">
         <div id="form-title" style="font-size:13px; font-weight:600; margin-bottom:12px;">Novo ticket</div>
+        <div class="kind-toggle">
+          <button type="button" id="kind-trade-btn" class="tab-btn active">Trade com resultado</button>
+          <button type="button" id="kind-analysis-btn" class="tab-btn">Analise</button>
+        </div>
         <div class="form-grid">
           <div>
+            <label id="f-asset-label" class="label">Ativo / par</label>
+            <input id="f-asset" class="input" placeholder="ex: EURUSD, BTC, AAPL" />
+          </div>
+          <div class="day-only">
             <label class="label">Data</label>
             <input id="f-date" type="date" class="input" />
           </div>
-          <div>
-            <label class="label">Ativo / par</label>
-            <input id="f-asset" class="input" placeholder="ex: EURUSD, BTC, AAPL" />
-          </div>
-          <div>
+          <div class="day-only">
             <label class="label">Numero de trades</label>
             <input id="f-numtrades" type="number" min="1" class="input" value="1" />
           </div>
-          <div>
+          <div class="day-only">
             <label class="label">Resultado</label>
             <select id="f-result" class="input">
               <option value="win">Win</option>
@@ -681,23 +760,90 @@
               <option value="be">Breakeven</option>
             </select>
           </div>
-          <div style="grid-column: 1 / -1;">
+          <div class="day-only" style="grid-column: 1 / -1;">
             <label class="label">RR da trade</label>
             <input id="f-rr" type="number" step="0.1" min="0" class="input" placeholder="ex: 2.5" />
-            <div id="f-rr-hint" style="font-size:11px; color:var(--textMuted); margin-top:5px;">Win: quantos R ganhaste (ex: 2.5). Loss: quantos R perdeste (normalmente 1). O sinal e posto sozinho.</div>
+            <div id="f-rr-hint" class="field-hint">Win: quantos R ganhaste (ex: 2.5). Loss: quantos R perdeste (normalmente 1). O sinal e posto sozinho.</div>
+          </div>
+          <div class="swing-only">
+            <label class="label">Direcao</label>
+            <select id="f-dir" class="input">
+              <option value="long">Long</option>
+              <option value="short">Short</option>
+            </select>
+          </div>
+          <div class="swing-only">
+            <label class="label">Data de entrada</label>
+            <input id="f-entry-date" type="date" class="input" />
+          </div>
+          <div class="swing-only">
+            <label class="label">Data de saida</label>
+            <input id="f-exit-date" type="date" class="input" />
+            <div class="field-hint">Vazio enquanto estiver aberta.</div>
+          </div>
+          <div class="swing-only">
+            <label class="label">Preco de entrada</label>
+            <input id="f-entry" type="number" step="any" min="0" inputmode="decimal" class="input" placeholder="ex: 64200" />
+          </div>
+          <div class="swing-only">
+            <label class="label">Stop loss</label>
+            <input id="f-stop" type="number" step="any" min="0" inputmode="decimal" class="input" placeholder="ex: 61900" />
+          </div>
+          <div class="swing-only">
+            <label class="label">Preco de saida</label>
+            <input id="f-exit" type="number" step="any" min="0" inputmode="decimal" class="input" placeholder="vazio = aberta" />
+          </div>
+          <div class="swing-only">
+            <label class="label">Timeframe</label>
+            <select id="f-tf" class="input">
+              <option value="1H">1H</option>
+              <option value="4H">4H</option>
+              <option value="12H">12H</option>
+              <option value="1D" selected>1D</option>
+              <option value="1W">1W</option>
+            </select>
+          </div>
+          <div class="swing-only" style="grid-column: 1 / -1;">
+            <div id="f-swing-preview" class="swing-preview"></div>
+          </div>
+          <div class="analysis-only">
+            <label class="label">Data</label>
+            <input id="f-an-date" type="date" class="input" />
+          </div>
+          <div class="analysis-only">
+            <label class="label">Vies</label>
+            <select id="f-bias" class="input">
+              <option value="bullish">Bullish (alta)</option>
+              <option value="bearish">Bearish (baixa)</option>
+              <option value="neutro">Neutro / lateral</option>
+            </select>
+          </div>
+          <div class="analysis-only">
+            <label class="label">Timeframe</label>
+            <select id="f-an-tf" class="input">
+              <option value="15M">15M</option>
+              <option value="1H">1H</option>
+              <option value="4H">4H</option>
+              <option value="1D" selected>1D</option>
+              <option value="1W">1W</option>
+            </select>
+          </div>
+          <div class="analysis-only" style="grid-column: 1 / -1;">
+            <label class="label">Niveis-chave</label>
+            <input id="f-levels" class="input" placeholder="ex: suporte 61 000 · resistencia 68 500 · invalida abaixo de 58 900" />
           </div>
         </div>
-        <div style="margin-top:12px;">
+        <div class="trade-only" style="margin-top:12px;">
           <label class="label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
             <input id="f-setup" type="checkbox" checked /> Segui o setup planeado
           </label>
         </div>
         <div style="margin-top:12px;">
-          <label class="label">Comentario</label>
+          <label id="f-comment-label" class="label">Comentario</label>
           <textarea id="f-comment" class="input" style="min-height:70px; resize:vertical;" placeholder="O que correu bem, o que falhou, licoes..."></textarea>
         </div>
         <div style="margin-top:12px;">
-          <label class="label">Foto da trade</label>
+          <label id="f-image-label" class="label">Foto da trade</label>
           <input id="f-image" type="file" accept="image/*" />
           <img id="f-preview" class="hidden" style="margin-top:10px; max-width:100%; max-height:220px; border-radius:6px; border:1px solid var(--border); display:block;" />
         </div>
@@ -711,6 +857,8 @@
           <option value="win">Win</option>
           <option value="loss">Loss</option>
           <option value="be">Breakeven</option>
+          <option value="open">Posicoes abertas</option>
+          <option value="analysis">Analises</option>
         </select>
       </div>
 
@@ -764,8 +912,132 @@ const FieldValue = firebase.firestore.FieldValue;
 const RESULT_META = {
   win: { label: "WIN", color: "#1B8F55" },
   loss: { label: "LOSS", color: "#C4433C" },
-  be: { label: "B/E", color: "#9C927A" }
+  be: { label: "B/E", color: "#9C927A" },
+  open: { label: "ABERTA", color: "#F7931A" },
+  analysis: { label: "ANALISE", color: "#E8C15A" }
 };
+const BIAS_LABEL = { bullish: "BULLISH", bearish: "BEARISH", neutro: "NEUTRO" };
+const RESULT_TEXT_COLOR = { win: "var(--win)", loss: "var(--loss)", be: "var(--be)", open: "var(--accent)" };
+
+// ---- Swing · Crypto: ajudantes ----
+// Conta para as estatisticas: nao e analise nem posicao aberta
+function isCounted(e) { return e.kind !== "analysis" && e.status !== "open"; }
+function isOpenPos(e) { return e.status === "open"; }
+function isSwing(name) { const p = profiles[slugify(name || "")]; return !!(p && p.roomType === "swing"); }
+function isSwingRoom() { return !["all", "alunos", "own-student"].includes(activeRoom) && isSwing(activeRoom); }
+function daysBetween(a, b) {
+  if (!a || !b) return 0;
+  return Math.max(0, Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 864e5));
+}
+function fmtPrice(v) {
+  if (v === null || v === undefined || !isFinite(v)) return "—";
+  const a = Math.abs(v);
+  return new Intl.NumberFormat("pt-PT", { maximumFractionDigits: a >= 1000 ? 2 : a >= 1 ? 4 : 8 }).format(v);
+}
+function numField(id) {
+  const v = parseFloat(String(el(id).value).replace(",", "."));
+  return isFinite(v) ? v : NaN;
+}
+function readSwingForm() {
+  return {
+    direction: el("f-dir").value,
+    timeframe: el("f-tf").value,
+    entryDate: el("f-entry-date").value,
+    exitDate: el("f-exit-date").value,
+    entry: numField("f-entry"),
+    stop: numField("f-stop"),
+    exit: numField("f-exit")
+  };
+}
+function computeSwing(f) {
+  const dir = f.direction === "short" ? -1 : 1;
+  const hasStop = f.stop > 0 && f.stop !== f.entry;
+  const risk = hasStop ? Math.abs(f.entry - f.stop) : null;
+  const stopWarn = hasStop && ((dir === 1 && f.stop > f.entry) || (dir === -1 && f.stop < f.entry));
+  const riskPct = hasStop ? (risk / f.entry) * 100 : null;
+  const closed = f.exit > 0;
+  const days = f.entryDate ? daysBetween(f.entryDate, closed && f.exitDate ? f.exitDate : todayISO()) : null;
+  if (!closed) return { status: "open", result: "open", rr: null, pnlPct: null, riskPct, days, stopWarn };
+  const move = dir * (f.exit - f.entry);
+  const pnlPct = (move / f.entry) * 100;
+  const rr = risk ? move / risk : null;
+  const basis = rr !== null ? rr : pnlPct;
+  const result = basis > 0.05 ? "win" : basis < -0.05 ? "loss" : "be";
+  return {
+    status: "closed", result,
+    rr: rr === null ? null : Math.round(rr * 100) / 100,
+    pnlPct: Math.round(pnlPct * 100) / 100,
+    riskPct, days, stopWarn
+  };
+}
+function isoWeekKey(dateStr) {
+  const d = new Date(dateStr + "T12:00:00");
+  const day = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - day + 3);
+  const firstThu = new Date(d.getFullYear(), 0, 4, 12);
+  const wk = 1 + Math.round(((d - firstThu) / 864e5 - 3 + ((firstThu.getDay() + 6) % 7)) / 7);
+  return d.getFullYear() + "-W" + String(wk).padStart(2, "0");
+}
+
+let formMode = "day";
+let formKind = "trade";
+function setFormKind(kind) {
+  formKind = kind;
+  el("form-panel").classList.toggle("mode-analysis", kind === "analysis");
+  el("kind-trade-btn").classList.toggle("active", kind === "trade");
+  el("kind-analysis-btn").classList.toggle("active", kind === "analysis");
+  el("f-comment-label").textContent = kind === "analysis" ? "Analise" : "Comentario";
+  el("f-image-label").textContent = kind === "analysis" ? "Grafico da analise" : "Foto da trade";
+  el("f-comment").placeholder = kind === "analysis"
+    ? "O que estas a ver, cenario principal, o que invalida a ideia..."
+    : "O que correu bem, o que falhou, licoes...";
+  el("f-asset-label").textContent = kind === "analysis" ? "Ativo / par" : (formMode === "swing" ? "Par" : "Ativo / par");
+  if (!editingId) el("form-title").textContent = formTitle();
+  el("form-submit").textContent = formSubmitLabel();
+}
+function formTitle() {
+  if (formKind === "analysis") return editingId ? "Editar analise" : "Nova analise";
+  if (formMode === "swing") return editingId ? "Editar posicao" : "Nova posicao swing";
+  return editingId ? "Editar ticket" : "Novo ticket";
+}
+function setFormMode(mode) {
+  formMode = mode;
+  el("form-panel").classList.toggle("mode-swing", mode === "swing");
+  el("f-asset-label").textContent = mode === "swing" ? "Par" : "Ativo / par";
+  el("f-asset").placeholder = mode === "swing" ? "ex: BTC/USDT, ETH, SOL" : "ex: EURUSD, BTC, AAPL";
+  if (mode === "swing") updateSwingPreview();
+}
+function formSubmitLabel() {
+  if (editingId) return "Guardar alteracoes";
+  if (formKind === "analysis") return "Publicar analise";
+  return formMode === "swing" ? "Guardar posicao" : "Guardar ticket";
+}
+function updateSwingPreview() {
+  const box = el("f-swing-preview");
+  if (!box) return;
+  const f = readSwingForm();
+  if (!(f.entry > 0)) {
+    box.innerHTML = '<span style="color:var(--textMuted)">Preenche o preco de entrada para veres o RR e a % calculados.</span>';
+    return;
+  }
+  const c = computeSwing(Object.assign({}, f, {
+    entryDate: f.entryDate || todayISO(),
+    exitDate: f.exitDate || (f.exit > 0 ? todayISO() : "")
+  }));
+  const parts = [];
+  if (c.status === "open") {
+    parts.push('<span style="color:var(--accent)">● Posicao aberta</span>');
+    parts.push(c.riskPct !== null ? "risco ate ao stop " + c.riskPct.toFixed(2) + "%" : '<span style="color:var(--textMuted)">sem stop definido</span>');
+  } else {
+    parts.push(`<span style="color:${RESULT_TEXT_COLOR[c.result]}">${RESULT_META[c.result].label}</span>`);
+    parts.push(c.rr !== null ? `<span style="color:${rrColor(c.rr)}">${fmtR(c.rr, 2)}</span>` : '<span style="color:var(--textMuted)">sem stop = sem RR</span>');
+    parts.push(`<span style="color:${rrColor(c.pnlPct)}">${fmtPct(c.pnlPct)}</span>`);
+  }
+  if (c.days !== null) parts.push(c.days + (c.days === 1 ? " dia" : " dias"));
+  let html = parts.join(" · ");
+  if (c.stopWarn) html += '<div style="color:var(--loss); margin-top:4px; font-size:11px;">Atencao: o stop esta do lado errado para um ' + (f.direction === "short" ? "short" : "long") + ".</div>";
+  box.innerHTML = html;
+}
 
 let traderName = safeStore.getItem("tj-trader-name") || null;
 let userRole = safeStore.getItem("tj-role") || "trader";
@@ -833,6 +1105,7 @@ function fmtPct(v) {
 function rrColor(v) { return v > 0 ? "var(--win)" : v < 0 ? "var(--loss)" : "var(--textSoft)"; }
 
 function computeStats(list) {
+  list = list.filter(isCounted);
   const total = list.length;
   const wins = list.filter(e => e.result === "win").length;
   const setups = list.filter(e => e.setupFollowed).length;
@@ -854,6 +1127,8 @@ function computeStats(list) {
 
 function getTraders() {
   const s = new Set(teamEntries().map(e => e.trader));
+  Object.values(profiles).forEach(p => { if (p && p.trader) s.add(p.trader); });
+  if (userRole === "trader" && traderName) s.add(traderName);
   return Array.from(s).sort((a, b) => {
     if (a === traderName) return -1;
     if (b === traderName) return 1;
@@ -936,6 +1211,7 @@ function initNetworkBackground() {
   }
 
   function draw(progress) {
+    const UP = document.body.classList.contains("room-swing") ? "247, 147, 26" : YELLOW;
     ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
 
     // escala vertical suave
@@ -972,7 +1248,7 @@ function initNetworkBackground() {
       const c = candles[i], x = xOf(i);
       if (x < -SPACING || x > W) continue;
       const up = c.c >= c.o;
-      ctx.fillStyle = up ? `rgba(${YELLOW},0.10)` : `rgba(${WHITE},0.06)`;
+      ctx.fillStyle = up ? `rgba(${UP},0.10)` : `rgba(${WHITE},0.06)`;
       const h = c.v * volH;
       ctx.fillRect(x - BODY / 2, volTop + volH - h, BODY, h);
     }
@@ -998,7 +1274,7 @@ function initNetworkBackground() {
       if (x < -SPACING || x > W + SPACING) continue;
       const up = c.c >= c.o;
       const last = i === candles.length - 1;
-      const col = up ? YELLOW : WHITE;
+      const col = up ? UP : WHITE;
       const a = last ? 0.85 : (up ? 0.42 : 0.26);
       ctx.strokeStyle = `rgba(${col},${a})`;
       ctx.lineWidth = 1;
@@ -1023,11 +1299,11 @@ function initNetworkBackground() {
     const upNow = lc.c >= lastClose;
     ctx.save();
     ctx.setLineDash([4, 5]);
-    ctx.strokeStyle = `rgba(${YELLOW},0.45)`;
+    ctx.strokeStyle = `rgba(${UP},0.45)`;
     ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W - 62, py); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = upNow ? `rgba(${YELLOW},0.9)` : `rgba(${WHITE},0.85)`;
-    ctx.shadowColor = `rgba(${YELLOW},0.6)`; ctx.shadowBlur = 10;
+    ctx.fillStyle = upNow ? `rgba(${UP},0.9)` : `rgba(${WHITE},0.85)`;
+    ctx.shadowColor = `rgba(${UP},0.6)`; ctx.shadowBlur = 10;
     ctx.fillRect(W - 60, py - 9, 56, 18);
     ctx.shadowBlur = 0;
     ctx.fillStyle = "#000";
@@ -1150,14 +1426,17 @@ function startProfilesListener() {
   db.collection("profiles").onSnapshot((snap) => {
     profiles = {};
     snap.docs.forEach(d => { profiles[d.id] = d.data(); });
-    renderProfilePanel();
+    if (!el("main-screen").classList.contains("hidden")) render(); else renderProfilePanel();
   }, (err) => console.error("Erro a ouvir perfis", err));
 }
 
 async function saveProfile() {
   const text = el("profile-input").value.trim();
+  const target = activeRoom === traderName || !isAdmin ? traderName : activeRoom;
   try {
-    await db.collection("profiles").doc(slugify(traderName)).set({ trader: traderName, style: text, updatedAt: Date.now() });
+    await db.collection("profiles").doc(slugify(target)).set({
+      trader: target, style: text, roomType: el("profile-roomtype").value, updatedAt: Date.now()
+    }, { merge: true });
     el("profile-edit-box").classList.add("hidden");
   } catch (e) { console.error(e); }
 }
@@ -1480,6 +1759,19 @@ function startStudentDocListener() {
 function resetForm() {
   el("form-panel").classList.add("hidden");
   editingId = null;
+  el("f-dir").value = "long";
+  el("f-tf").value = "1D";
+  el("f-entry-date").value = todayISO();
+  el("f-exit-date").value = "";
+  el("f-entry").value = "";
+  el("f-stop").value = "";
+  el("f-exit").value = "";
+  setFormMode(isSwing(traderName) ? "swing" : "day");
+  el("f-an-date").value = todayISO();
+  el("f-bias").value = "bullish";
+  el("f-an-tf").value = isSwing(traderName) ? "1D" : "1H";
+  el("f-levels").value = "";
+  setFormKind("trade");
   el("f-date").value = todayISO();
   el("f-asset").value = "";
   el("f-numtrades").value = 1;
@@ -1490,13 +1782,23 @@ function resetForm() {
   el("f-image").value = "";
   el("f-preview").classList.add("hidden");
   pendingImage = null;
-  el("form-title").textContent = "Novo ticket";
-  el("form-submit").textContent = "Guardar ticket";
+  el("form-title").textContent = formTitle();
+  el("form-submit").textContent = formSubmitLabel();
 }
 
-function startEdit(entry) {
+function startEdit(entry, closing) {
   el("form-panel").classList.remove("hidden");
   editingId = entry.id;
+  const swing = entry.kind === "swing";
+  if (swing) {
+    el("f-dir").value = entry.direction === "short" ? "short" : "long";
+    el("f-tf").value = entry.timeframe || "1D";
+    el("f-entry-date").value = entry.entryDate || entry.date || "";
+    el("f-exit-date").value = entry.exitDate || (closing ? todayISO() : "");
+    el("f-entry").value = entry.entryPrice ?? "";
+    el("f-stop").value = entry.stopPrice ?? "";
+    el("f-exit").value = entry.exitPrice ?? "";
+  }
   el("f-date").value = entry.date;
   el("f-asset").value = entry.asset || "";
   el("f-numtrades").value = entry.numTrades || 1;
@@ -1507,9 +1809,19 @@ function startEdit(entry) {
   pendingImage = entry.image || null;
   if (entry.image) { el("f-preview").src = entry.image; el("f-preview").classList.remove("hidden"); }
   else { el("f-preview").classList.add("hidden"); }
-  el("form-title").textContent = "Editar ticket";
-  el("form-submit").textContent = "Guardar alteracoes";
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  setFormMode(swing ? "swing" : "day");
+  const analysis = entry.kind === "analysis";
+  if (analysis) {
+    el("f-an-date").value = entry.date || todayISO();
+    el("f-bias").value = entry.bias || "neutro";
+    el("f-an-tf").value = entry.timeframe || "1D";
+    el("f-levels").value = entry.levels || "";
+  }
+  setFormKind(analysis ? "analysis" : "trade");
+  el("form-title").textContent = closing ? "Fechar posicao" : formTitle();
+  el("form-submit").textContent = formSubmitLabel();
+  el("form-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (closing) setTimeout(() => el("f-exit").focus(), 350);
 }
 
 function canModify(entry) {
@@ -1527,7 +1839,7 @@ async function submitEntry() {
     btn.disabled = false;
     return;
   }
-  const data = {
+  let data = {
     date: el("f-date").value || todayISO(),
     trader: original ? original.trader : traderName,
     asset: el("f-asset").value.trim(),
@@ -1548,6 +1860,51 @@ async function submitEntry() {
     studentId: original ? (original.studentId || null) : (userRole === "student" ? slugify(traderName) : null),
     mentor: original ? (original.mentor || null) : (userRole === "student" ? studentMentor : null)
   };
+  if (formKind === "analysis") {
+    if (!data.asset && !data.comment) {
+      alert("Escreve pelo menos o ativo ou a analise.");
+      btn.disabled = false; btn.textContent = formSubmitLabel();
+      return;
+    }
+    data = Object.assign(data, {
+      kind: "analysis",
+      asset: data.asset.toUpperCase(),
+      date: el("f-an-date").value || todayISO(),
+      bias: el("f-bias").value,
+      timeframe: el("f-an-tf").value,
+      levels: el("f-levels").value.trim(),
+      result: "analysis",
+      rr: null,
+      numTrades: 0,
+      setupFollowed: false
+    });
+  } else if (formMode === "swing") {
+    const f = readSwingForm();
+    const fail = (msg) => { alert(msg); btn.disabled = false; btn.textContent = formSubmitLabel(); };
+    if (!(f.entry > 0)) { fail("Indica o preco de entrada."); return; }
+    if (!f.entryDate) f.entryDate = todayISO();
+    if (f.exit > 0 && !f.exitDate) f.exitDate = todayISO();
+    if (!(f.exit > 0)) f.exitDate = "";
+    if (f.exitDate && f.exitDate < f.entryDate) { fail("A data de saida nao pode ser antes da data de entrada."); return; }
+    const c = computeSwing(f);
+    data = Object.assign(data, {
+      kind: "swing",
+      asset: data.asset.toUpperCase(),
+      date: f.exitDate || f.entryDate,
+      entryDate: f.entryDate,
+      exitDate: f.exitDate || null,
+      status: c.status,
+      direction: f.direction,
+      timeframe: f.timeframe,
+      entryPrice: f.entry,
+      stopPrice: f.stop > 0 ? f.stop : null,
+      exitPrice: f.exit > 0 ? f.exit : null,
+      result: c.result,
+      rr: c.rr,
+      pnlPct: c.pnlPct,
+      numTrades: 1
+    });
+  }
   try {
     if (editingId) {
       await db.collection("entries").doc(editingId).set(data, { merge: true });
@@ -1619,9 +1976,68 @@ function showMain() {
   render();
 }
 
+function syncGranButtons() {
+  const b = document.querySelector('.gran-btn[data-gran="day"], .gran-btn[data-gran="week"]');
+  const swing = isSwingRoom();
+  if (b) { b.dataset.gran = swing ? "week" : "day"; b.textContent = swing ? "Semana" : "Dia"; }
+  if (swing && statsGranularity === "day") statsGranularity = "week";
+  if (!swing && statsGranularity === "week") statsGranularity = "day";
+  document.querySelectorAll(".gran-btn").forEach(x => x.classList.toggle("active", x.dataset.gran === statsGranularity));
+}
+
+function renderSwingPanel() {
+  const panel = el("swing-panel");
+  if (!isSwingRoom()) { panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  const room = getRoomEntries();
+  const open = room.filter(isOpenPos).sort((a, b) => (a.entryDate || "").localeCompare(b.entryDate || ""));
+  el("sw-open-title").textContent = open.length ? "Posicoes abertas (" + open.length + ")" : "Sem posicoes abertas";
+  const list = el("sw-open-list");
+  list.innerHTML = "";
+  open.forEach(e => {
+    const long = e.direction !== "short";
+    const d = daysBetween(e.entryDate || e.date, todayISO());
+    const riskPct = e.stopPrice ? (Math.abs(e.entryPrice - e.stopPrice) / e.entryPrice) * 100 : null;
+    const row = document.createElement("div");
+    row.className = "pos-row";
+    row.innerHTML = `
+      <div>
+        <div class="pair">${escapeHtml(e.asset || "sem par")} <span class="dir-chip ${long ? "long" : "short"}">${long ? "LONG" : "SHORT"}</span> <span class="tf-chip">${escapeHtml(e.timeframe || "")}</span></div>
+        <div class="sub">entrada ${fmtPrice(e.entryPrice)} · stop ${fmtPrice(e.stopPrice)}${riskPct !== null ? " · risco " + riskPct.toFixed(1) + "%" : ""}</div>
+      </div>
+      <div class="days">${d}d</div>
+      ${canModify(e) ? '<button class="btn pos-close">fechar</button>' : "<span></span>"}`;
+    const btn = row.querySelector(".pos-close");
+    if (btn) btn.onclick = () => startEdit(e, true);
+    list.appendChild(row);
+  });
+
+  const closed = room.filter(e => e.kind === "swing" && isCounted(e));
+  const side = (dir) => closed.filter(e => (e.direction === "short" ? "short" : "long") === dir);
+  const sL = computeStats(side("long")), sS = computeStats(side("short"));
+  const avgDays = closed.length ? closed.reduce((s, e) => s + daysBetween(e.entryDate, e.exitDate), 0) / closed.length : 0;
+  const withPct = closed.filter(e => typeof e.pnlPct === "number");
+  const avgPct = withPct.length ? withPct.reduce((s, e) => s + e.pnlPct, 0) / withPct.length : 0;
+  const byPair = {};
+  closed.forEach(e => { const k = e.asset || "?"; byPair[k] = (byPair[k] || 0) + rrOrUnit(e); });
+  const pairs = Object.entries(byPair).sort((a, b) => b[1] - a[1]);
+  const stat = (k, v, c) => `<div class="rr-stat"><div class="k">${k}</div><div class="v" style="color:${c || "var(--text)"}">${v}</div></div>`;
+  el("sw-stats").innerHTML =
+    stat("Long (" + sL.total + ")", sL.total ? sL.winRate + "% · " + fmtR(sL.rrTotal) : "—", sL.total ? rrColor(sL.rrTotal) : null) +
+    stat("Short (" + sS.total + ")", sS.total ? sS.winRate + "% · " + fmtR(sS.rrTotal) : "—", sS.total ? rrColor(sS.rrTotal) : null) +
+    stat("Duracao media", closed.length ? avgDays.toFixed(1) + " dias" : "—") +
+    stat("Movimento medio", withPct.length ? fmtPct(avgPct) : "—", withPct.length ? rrColor(avgPct) : null) +
+    stat("Melhor par", pairs.length ? escapeHtml(pairs[0][0]) + " " + fmtR(pairs[0][1]) : "—", pairs.length ? rrColor(pairs[0][1]) : null) +
+    stat("Pior par", pairs.length > 1 ? escapeHtml(pairs[pairs.length - 1][0]) + " " + fmtR(pairs[pairs.length - 1][1]) : "—", pairs.length > 1 ? rrColor(pairs[pairs.length - 1][1]) : null);
+}
+
 function render() {
+  document.body.classList.toggle("room-swing", isSwingRoom());
+  syncGranButtons();
+  el("new-ticket-btn").textContent = isSwing(traderName) ? "+ Nova posicao" : "+ Novo ticket";
   renderTabs();
   renderBoard();
+  renderSwingPanel();
   renderRRPanel();
   renderRoomSummaries();
   renderProfilesTable();
@@ -1657,7 +2073,7 @@ function renderTabs() {
   traders.forEach(t => {
     const b = document.createElement("button");
     b.className = "tab-btn" + (activeRoom === t ? " active" : "");
-    b.textContent = "sala de " + t + (t === traderName ? " (tu)" : "");
+    b.textContent = (isSwing(t) ? "₿ sala de " : "sala de ") + t + (t === traderName ? " (tu)" : "");
     b.onclick = () => { activeRoom = t; render(); };
     wrap.appendChild(b);
   });
@@ -1687,6 +2103,26 @@ function renderBoard() {
   const stats = computeStats(getRoomEntries());
   const wrap = el("board");
   wrap.innerHTML = "";
+  if (isSwingRoom()) {
+    const room = getRoomEntries();
+    const closedSwing = room.filter(e => e.kind === "swing" && isCounted(e));
+    const avgDays = closedSwing.length ? closedSwing.reduce((s, e) => s + daysBetween(e.entryDate, e.exitDate), 0) / closedSwing.length : 0;
+    const openCount = room.filter(isOpenPos).length;
+    [
+      { label: "Fechadas", num: stats.total, fmt: v => String(Math.round(v)), color: "var(--text)" },
+      { label: "Win rate", num: stats.winRate, fmt: v => Math.round(v) + "%", color: "var(--win)" },
+      { label: "RR total", num: stats.rrTotal, fmt: v => fmtR(v), color: rrColor(stats.rrTotal) },
+      { label: "Duracao media", num: avgDays, fmt: v => v.toFixed(1) + "d", color: "var(--text)" },
+      { label: "Abertas", num: openCount, fmt: v => String(Math.round(v)), color: "var(--accent)" }
+    ].forEach(it => {
+      const d = document.createElement("div");
+      d.className = "board-item";
+      d.innerHTML = `<div class="board-value" style="color:${it.color}"></div><div class="board-label">${it.label}</div>`;
+      wrap.appendChild(d);
+      animateNumber(d.querySelector(".board-value"), "swboard:" + it.label, it.num, it.fmt);
+    });
+    return;
+  }
   const items = [
     { label: "Trades no total", num: stats.totalTrades, fmt: v => String(Math.round(v)), color: "var(--text)" },
     { label: "Win rate", num: stats.winRate, fmt: v => Math.round(v) + "%", color: "var(--win)" },
@@ -1777,7 +2213,7 @@ function renderRRPanel() {
     stat("Pior", s.rrCount ? fmtR(s.rrWorst) : "—", s.rrCount ? rrColor(s.rrWorst) : null) +
     stat("vs mes anterior", sp.rrCount ? fmtR(diff) : "—", sp.rrCount ? rrColor(diff) : null);
 
-  const missing = month.length - s.rrCount;
+  const missing = month.filter(isCounted).length - s.rrCount;
   el("rr-note").textContent =
     "Retorno estimado = RR acumulado × " + String(risk).replace(".", ",") + "% de risco por trade (sem juros compostos)." +
     (missing > 0 ? " " + missing + " ticket(s) deste mes nao tem RR e ficam de fora." : "");
@@ -1792,7 +2228,7 @@ function renderRoomSummaries() {
     const s = computeStats(list);
     const card = document.createElement("button");
     card.className = "room-card";
-    card.innerHTML = `<div style="font-size:13px; font-weight:600; margin-bottom:6px;">${t}${t === traderName ? " (tu)" : ""}</div>
+    card.innerHTML = `<div style="font-size:13px; font-weight:600; margin-bottom:6px;">${t}${t === traderName ? " (tu)" : ""}${isSwing(t) ? '<span class="swing-tag">₿ SWING</span>' : ""}</div>
       <div class="mono" style="font-size:11px; color:var(--textSoft);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span></div>
       <div class="rr-chip" style="text-align:left; color:${rrColor(s.rrTotal)}">${fmtR(s.rrTotal)}</div>`;
     card.onclick = () => { activeRoom = t; render(); };
@@ -1803,6 +2239,7 @@ function renderRoomSummaries() {
 function periodKey(dateStr, gran) {
   if (!dateStr) return "sem-data";
   if (gran === "day") return dateStr;
+  if (gran === "week") return isoWeekKey(dateStr);
   if (gran === "month") return dateStr.slice(0, 7);
   return dateStr.slice(0, 4);
 }
@@ -1818,6 +2255,7 @@ function prettyPeriod(key, gran) {
   if (!key || key === "sem-data") return "sem data";
   const parts = key.split("-");
   if (gran === "day" && parts.length === 3) return parseInt(parts[2], 10) + " " + MESES[+parts[1] - 1];
+  if (gran === "week" && parts.length === 2 && parts[1][0] === "W") return "S" + parseInt(parts[1].slice(1), 10);
   if (gran === "month" && parts.length >= 2) return MESES[+parts[1] - 1] + " " + parts[0].slice(2);
   return key;
 }
@@ -1992,7 +2430,7 @@ function setupChartDefaults() {
 
 function renderCharts() {
   renderSentimentTable();
-  const list = getRoomEntries();
+  const list = getRoomEntries().filter(isCounted);
 
   const win = cssVar("--win") || "#2FE6A0";
   const loss = cssVar("--loss") || "#FF4D6D";
@@ -2461,13 +2899,20 @@ function renderPinnedNote() {
 
 function renderProfilePanel() {
   const panel = el("profile-panel");
-  if (activeRoom === "all" || !activeRoom) { panel.classList.add("hidden"); return; }
+  if (activeRoom === "all" || activeRoom === "alunos" || activeRoom === "own-student" || !activeRoom) { panel.classList.add("hidden"); return; }
   panel.classList.remove("hidden");
   const prof = profiles[slugify(activeRoom)];
   const isSelf = activeRoom === traderName;
+  const swing = isSwing(activeRoom);
+  el("profile-type").innerHTML = swing
+    ? '<span class="swing-tag" style="margin-left:0;">₿ SWING · CRYPTO</span>'
+    : '<span class="tf-chip">Day trading</span>';
   el("profile-text").textContent = (prof && prof.style) ? prof.style : (isSelf ? "Ainda nao definiste o teu estilo de trading." : activeRoom + " ainda nao definiu o estilo de trading.");
-  el("profile-edit-btn").classList.toggle("hidden", !isSelf);
-  el("profile-input").value = (prof && prof.style) || "";
+  el("profile-edit-btn").classList.toggle("hidden", !(isSelf || isAdmin));
+  if (el("profile-edit-box").classList.contains("hidden")) {
+    el("profile-input").value = (prof && prof.style) || "";
+    el("profile-roomtype").value = swing ? "swing" : "day";
+  }
 }
 
 function renderProfilesTable() {
@@ -2482,7 +2927,7 @@ function renderProfilesTable() {
     const s = computeStats(list);
     cols += `<td style="padding:14px 16px; border:1px solid var(--border); background:var(--panel); border-radius:14px; min-width:170px; vertical-align:top; position:relative;">
       ${isAdmin ? `<button title="apagar perfil" onclick="window.__deleteProfile('${t.replace(/'/g, "\\'")}')" style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:999px; border:1px solid var(--border); background:var(--panelAlt); color:var(--loss); font-size:13px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>` : ""}
-      <div style="font-size:13px; font-weight:600; margin-bottom:6px; padding-right:${isAdmin ? "24px" : "0"};">${t}${t === traderName ? " (tu)" : ""}</div>
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px; padding-right:${isAdmin ? "24px" : "0"};">${t}${t === traderName ? " (tu)" : ""}${isSwing(t) ? '<span class="swing-tag">₿ SWING</span>' : ""}</div>
       <div style="font-size:12px; color:var(--textSoft); line-height:1.5; margin-bottom:8px; min-height:36px;">${prof && prof.style ? escapeHtml(prof.style) : "sem perfil definido"}</div>
       <div class="mono" style="font-size:11px; color:var(--textMuted);">${s.total} ticket${s.total === 1 ? "" : "s"} · <span style="color:var(--win)">${s.winRate}% win</span> · <span style="color:${rrColor(s.rrTotal)}">${fmtR(s.rrTotal)}</span></div>
       <button class="btn" style="margin-top:8px; padding:6px 12px; font-size:11px;" onclick="window.__goRoom('${t.replace(/'/g, "\\'")}')">ver sala</button>
@@ -2526,7 +2971,7 @@ function renderSentimentTable() {
     const no = votes.filter(v => v.choice === "no").length;
     const verdict = yes > no ? "Operar" : no > yes ? "Nao operar" : "Empate";
     const verdictColor = yes > no ? "var(--win)" : no > yes ? "var(--loss)" : "var(--be)";
-    const dayEntries = entries.filter(e => e.date === date);
+    const dayEntries = entries.filter(e => e.date === date && isCounted(e));
     const stats = computeStats(dayEntries);
     const traded = dayEntries.length > 0;
     let matchIcon = "—";
@@ -2592,7 +3037,11 @@ function openTicketModal(entry) {
   el("ticket-modal-badge").style.border = `1px solid ${meta.color}55`;
   el("ticket-modal-date").textContent = entry.date;
   el("ticket-modal-asset").textContent = entry.asset || "sem ativo";
-  el("ticket-modal-meta").textContent = entry.trader + " · " + entry.numTrades + " trade" + (entry.numTrades === 1 ? "" : "s") + " · " + (entry.setupFollowed ? "seguiu o setup" : "fora do setup") + (rrOf(entry) !== null ? " · " + fmtR(entry.rr, 2) : "");
+  el("ticket-modal-meta").textContent = entry.kind === "analysis"
+    ? entry.trader + " · analise · " + (BIAS_LABEL[entry.bias] || "NEUTRO") + (entry.timeframe ? " · " + entry.timeframe : "") + (entry.levels ? " · " + entry.levels : "")
+    : entry.kind === "swing"
+    ? entry.trader + " · " + (entry.direction === "short" ? "SHORT" : "LONG") + " · entrada " + fmtPrice(entry.entryPrice) + (entry.exitPrice ? " → saida " + fmtPrice(entry.exitPrice) : " · aberta") + (typeof entry.pnlPct === "number" ? " · " + fmtPct(entry.pnlPct) : "") + (rrOf(entry) !== null ? " · " + fmtR(entry.rr, 2) : "")
+    : entry.trader + " · " + entry.numTrades + " trade" + (entry.numTrades === 1 ? "" : "s") + " · " + (entry.setupFollowed ? "seguiu o setup" : "fora do setup") + (rrOf(entry) !== null ? " · " + fmtR(entry.rr, 2) : "");
   el("ticket-modal-comment").textContent = entry.comment || "";
   el("ticket-modal").classList.remove("hidden");
 }
@@ -2601,7 +3050,111 @@ function closeTicketModal() {
   el("ticket-modal").classList.add("hidden");
 }
 
+function buildSwingCard(entry) {
+  const meta = RESULT_META[entry.result] || RESULT_META.be;
+  const open = isOpenPos(entry);
+  const long = entry.direction !== "short";
+  const start = entry.entryDate || entry.date;
+  const days = open ? daysBetween(start, todayISO()) : daysBetween(start, entry.exitDate || start);
+  const riskPct = entry.stopPrice ? (Math.abs(entry.entryPrice - entry.stopPrice) / entry.entryPrice) * 100 : null;
+  const card = document.createElement("div");
+  card.className = "ticket";
+  card.style.borderLeft = `3px solid ${meta.color}`;
+  const canEdit = canModify(entry);
+  const canDelete = canEdit && userRole !== "student";
+  const dateLine = open ? "desde " + prettyPeriod(start, "day") : prettyPeriod(start, "day") + " → " + prettyPeriod(entry.exitDate || start, "day");
+  card.innerHTML = `
+    <div class="ticket-top">
+      <div>
+        <div class="mono" style="font-size:12px; color:var(--textMuted);">${dateLine}</div>
+        <div style="font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:2px;">
+          ${escapeHtml(entry.asset || "sem par")}
+          <span class="dir-chip ${long ? "long" : "short"}">${long ? "LONG" : "SHORT"}</span>
+          ${entry.timeframe ? `<span class="tf-chip">${escapeHtml(entry.timeframe)}</span>` : ""}
+        </div>
+      </div>
+      <div class="ticket-top-right">
+        <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
+        ${rrOf(entry) !== null && !open ? `<div class="rr-chip" style="color:${rrColor(entry.rr)}">${fmtR(entry.rr, 2)}</div>` : ""}
+      </div>
+    </div>
+    <div class="sw-prices">
+      <div><span class="k">Entrada</span><span class="v">${fmtPrice(entry.entryPrice)}</span></div>
+      <div><span class="k">Stop</span><span class="v">${fmtPrice(entry.stopPrice)}</span></div>
+      <div><span class="k">${open ? "Risco" : "Saida"}</span><span class="v">${open ? (riskPct !== null ? riskPct.toFixed(1) + "%" : "—") : fmtPrice(entry.exitPrice)}</span></div>
+    </div>
+    <div class="sw-foot">${open
+      ? `<span style="color:var(--accent)">● aberta ha ${days} ${days === 1 ? "dia" : "dias"}</span>`
+      : `<span style="color:${rrColor(entry.pnlPct || 0)}">${typeof entry.pnlPct === "number" ? fmtPct(entry.pnlPct) : "—"}</span> <span style="color:var(--textMuted)">· ${days} ${days === 1 ? "dia" : "dias"}</span>`}</div>
+    <div style="font-size:12px; color:var(--textSoft); margin-bottom:10px;">
+      ${escapeHtml(entry.trader)} · ${entry.setupFollowed ? "seguiu o setup" : "fora do setup"}
+    </div>
+    ${entry.comment && !entry.image ? `<div style="font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(entry.comment)}</div>` : ""}
+    ${entry.image ? `<div class="ticket-img-wrap" style="position:relative; margin-bottom:10px; cursor:pointer;">
+      <img src="${entry.image}" alt="foto da trade" style="width:100%; max-height:170px; object-fit:cover; border-radius:12px; display:block; border:1px solid var(--border);" />
+    </div>` : ""}
+    <div class="ticket-actions" style="display:${(canEdit || canDelete) ? "flex" : "none"}; gap:14px; margin-top:10px; flex-wrap:wrap;">
+      ${canEdit && open ? '<button class="close-btn" style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:600; cursor:pointer; padding:0;">fechar posicao</button>' : ""}
+      ${canEdit ? '<button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar</button>' : ""}
+      ${canDelete ? '<button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar</button>' : ""}
+    </div>
+  `;
+  const closeBtn = card.querySelector(".close-btn");
+  if (closeBtn) closeBtn.onclick = () => startEdit(entry, true);
+  const editBtn = card.querySelector(".edit-btn");
+  if (editBtn) editBtn.onclick = () => startEdit(entry);
+  const delBtn = card.querySelector(".del-btn");
+  if (delBtn) delBtn.onclick = () => deleteEntry(entry.id);
+  const imgWrap = card.querySelector(".ticket-img-wrap");
+  if (imgWrap) imgWrap.onclick = () => openTicketModal(entry);
+  return card;
+}
+
+function buildAnalysisCard(entry) {
+  const meta = RESULT_META.analysis;
+  const bias = entry.bias || "neutro";
+  const card = document.createElement("div");
+  card.className = "ticket is-analysis";
+  card.style.borderLeft = `3px solid ${meta.color}`;
+  const canEdit = canModify(entry);
+  const canDelete = canEdit && userRole !== "student";
+  card.innerHTML = `
+    <div class="ticket-top">
+      <div>
+        <div class="mono" style="font-size:12px; color:var(--textMuted);">${prettyPeriod(entry.date, "day")}</div>
+        <div style="font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:2px;">
+          ${escapeHtml(entry.asset || "sem ativo")}
+          <span class="bias-chip ${bias}">${BIAS_LABEL[bias] || "NEUTRO"}</span>
+          ${entry.timeframe ? `<span class="tf-chip">${escapeHtml(entry.timeframe)}</span>` : ""}
+        </div>
+      </div>
+      <div class="ticket-top-right">
+        <span class="badge" style="color:${meta.color}; background:${meta.color}1A; border:1px solid ${meta.color}55;">${meta.label}</span>
+      </div>
+    </div>
+    ${entry.levels ? `<div class="an-levels"><span class="k">Niveis-chave</span>${escapeHtml(entry.levels)}</div>` : ""}
+    ${entry.image ? `<div class="ticket-img-wrap" style="position:relative; margin:10px 0; cursor:pointer;">
+      <img src="${entry.image}" alt="grafico da analise" style="width:100%; max-height:190px; object-fit:cover; border-radius:12px; display:block; border:1px solid var(--border);" />
+    </div>` : ""}
+    ${entry.comment ? `<div style="font-size:13px; line-height:1.55; white-space:pre-wrap; margin-bottom:8px;">${escapeHtml(entry.comment)}</div>` : ""}
+    <div style="font-size:12px; color:var(--textSoft);">${escapeHtml(entry.trader)}</div>
+    <div class="ticket-actions" style="display:${(canEdit || canDelete) ? "flex" : "none"}; gap:14px; margin-top:10px;">
+      ${canEdit ? '<button class="edit-btn" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; padding:0;">editar</button>' : ""}
+      ${canDelete ? '<button class="del-btn" style="background:none; border:none; color:var(--loss); font-size:11px; cursor:pointer; padding:0;">apagar</button>' : ""}
+    </div>
+  `;
+  const editBtn = card.querySelector(".edit-btn");
+  if (editBtn) editBtn.onclick = () => startEdit(entry);
+  const delBtn = card.querySelector(".del-btn");
+  if (delBtn) delBtn.onclick = () => deleteEntry(entry.id);
+  const imgWrap = card.querySelector(".ticket-img-wrap");
+  if (imgWrap) imgWrap.onclick = () => openTicketModal(entry);
+  return card;
+}
+
 function buildTicketCard(entry) {
+  if (entry.kind === "analysis") return buildAnalysisCard(entry);
+  if (entry.kind === "swing") return buildSwingCard(entry);
   const meta = RESULT_META[entry.result] || RESULT_META.be;
   const card = document.createElement("div");
   card.className = "ticket";
@@ -2818,6 +3371,12 @@ el("news-submit").onclick = submitNews;
 
 // ---- Init ----
 el("f-date").value = todayISO();
+el("kind-trade-btn").onclick = () => setFormKind("trade");
+el("kind-analysis-btn").onclick = () => setFormKind("analysis");
+["f-dir", "f-entry", "f-stop", "f-exit", "f-entry-date", "f-exit-date"].forEach(id => {
+  el(id).addEventListener("input", updateSwingPreview);
+  el(id).addEventListener("change", updateSwingPreview);
+});
 el("rr-prev").onclick = () => { rrMonthOffset -= 1; renderRRPanel(); };
 el("rr-next").onclick = () => { if (rrMonthOffset < 0) { rrMonthOffset += 1; renderRRPanel(); } };
 el("rr-risk").addEventListener("change", () => { const v = parseFloat(String(el("rr-risk").value).replace(",", ".")); if (v > 0) safeStore.setItem("tj-rr-risk", String(v)); renderRRPanel(); });
